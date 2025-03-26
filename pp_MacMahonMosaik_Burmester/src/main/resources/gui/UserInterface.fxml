@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.Pane?>
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.UserInterfaceController">
+    <top>
+        <MenuBar fx:id="menueBar" BorderPane.alignment="CENTER">
+            <menus>
+                <Menu mnemonicParsing="false" text="Spiel neustart">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#restartGame" text="Spiel neustarten" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Spielstand verwalten">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Spielstand laden" />
+                        <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Spielstand speichern" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Spiel Beenden">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#endGame" text="Spiel beenden" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Lösbarkeit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#checkSolvability" text="Lösbarkeit prüfen" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Editor">
+                    <items>
+                        <CheckMenuItem mnemonicParsing="false" onAction="#toggleEditorMode" text="Bearbeitungsmodus" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+   <center>
+       <Pane fx:id="centerPane" BorderPane.alignment="CENTER">
+      <GridPane fx:id="gridPane">
+        <columnConstraints>
+          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+        </rowConstraints>
+      </GridPane>
+       </Pane>
+   </center>
+   <right>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+   </right>
+   <left>
+       <VBox fx:id="editorControls" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" spacing="10" visible="false" managed="false">
+           <TextField fx:id="userHeightInput" promptText="Hoehe eingeben"/>
+           <TextField fx:id="userWidthInput" promptText="Breite eingeben"/>
+           <Button fx:id="applyButton" text="Anwenden" onAction="#applyEditorChanges"/>
+       </VBox>
+   </left>
+</BorderPane>
