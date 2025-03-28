@@ -3,8 +3,12 @@ package gui;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import logic.*;
+
+import java.util.Objects;
 
 /**
  * Klasse durch welche die Logik veraenderungen der GUI durchfuehren kann.
@@ -19,6 +23,8 @@ public class JavaFXGUI implements GUIConnector {
     private Pane centerPane;
 
     private BorderPane borderPane;
+
+    private ImageView[] imageViews;
 
     /**
      * Konstruktor welcher diese Klasse initialisiert
@@ -128,6 +134,34 @@ public class JavaFXGUI implements GUIConnector {
                 }
             }
         }
+        this.loadImages();
+    }
+
+    /**
+     * Methode welche alle Bilder am Anfang des Spiels laedt ohne diese anzuzeigen
+     * Die Bilder werden in dieser Klasse in einem Eindimensionalem Array
+     * in der Reihenfolge des TileNames Enums gespeichert
+     */
+    public void loadImages(){
+        ImageView[] imageViews = new ImageView[TileNames.values().length - 2];
+        String imagePath;
+        for(int i = 0; i < imageViews.length; i++){ //-2 weil HHHH und NNNN nicht als Bild vorhanden sind
+                imagePath = "/tiles/" + TileNames.values()[i] + ".png";
+                System.out.println(imagePath);
+                Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+                ImageView currIndexImage =
+                        new ImageView(image);
+                imageViews[i] = currIndexImage;
+        }
+        this.imageViews = imageViews;
+    }
+
+    /**
+     * Methode welche die Bilder der Mosaiksteine setzt
+     * @param gameField das Spielfeld
+     */
+    public void displayImages(GameField gameField){
+        //TODO
     }
 
     private void updateCellSizes(GameField gameField) {

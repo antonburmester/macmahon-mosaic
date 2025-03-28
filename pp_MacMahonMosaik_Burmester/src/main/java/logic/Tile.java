@@ -1,13 +1,14 @@
 package logic;
 
 /**
- * Klasse welche einen Spielstein darstellt inklusive der Rotation
+ * Klasse welche einen Spielstein darstellt inklusive der Rotation und ob der Spielstein valide liegt (Farben richtig)
  *
  * @author Anton Burmester
  */
 public class Tile {
     private TileNames tile;
     private int rotation;
+    private boolean isValid;
 
     /**
      * Konstruktor welcher einen bestimmten Spielstein ohne bestimmte Rotation initialisiert
@@ -55,6 +56,14 @@ public class Tile {
     }
 
     /**
+     * Getter welcher zurueckgibt, ob das Mosaikstueck valide ist
+     * @return ob das Mosaikstueck an mindestens einer Seite an eine andere Farbe grenzt
+     */
+    public boolean isValid(){
+        return(this.isValid);
+    }
+
+    /**
      * Methode welche den Namen des Spielsteins nach der Drehung zurueckgibt
      * @return der Name des Spielsteins unter Berucksichtigung der Drehung
      */
@@ -67,6 +76,14 @@ public class Tile {
         }
 
         return(sb.toString());
+    }
+
+    /**
+     * Setter welcher die isValid Variable setzt
+     * @param input ob True oder False
+     */
+    public void setIsValid(boolean input){
+        this.isValid = input;
     }
 
     /**
