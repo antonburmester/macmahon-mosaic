@@ -10,7 +10,7 @@ import java.util.Set;
  */
 
 public class Tiles {
-    private Set<TileNames> tiles;
+    private Set<Tile> tiles;
 
     /**
      * Konstruktor welche eine Menge mit allen Spielsteinen erstellt
@@ -18,7 +18,7 @@ public class Tiles {
     public Tiles(){
         this.tiles = new HashSet<>();
         for(int i = 0; i < TileNames.values().length; i++) { //durchlaeuft alle Mosaiksteine
-            this.tiles.add(TileNames.values()[i]); // fuegt alle Mosaiksteine der Menge hinzu
+            this.tiles.add(new Tile(TileNames.values()[i])); // fuegt alle Mosaiksteine der Menge hinzu
         }
     }
 
@@ -26,7 +26,7 @@ public class Tiles {
      * Public getter um die Private Nutzlast der Menge der Mosaiksteine zu bekommen
      * @return alle Mosaiksteine die in der Menge sind
      */
-    public Set<TileNames> getTiles(){
+    public Set<Tile> getTiles(){
         return(this.tiles);
     }
 
@@ -34,7 +34,7 @@ public class Tiles {
      * fuegt den zu loeschenden Mosaikstein zur Menge hinzu
      * @param tile der hinzufuegende Mosaikstein
      */
-    public void addTile(TileNames tile){
+    public void addTile(Tile tile){
         this.tiles.add(tile);
     }
 
@@ -42,7 +42,7 @@ public class Tiles {
      * loescht ein Mosaikstein aus der Menge
      * @param tile der zu loeschende Mosaikstein
      */
-    public void removeTile(TileNames tile){
+    public void removeTile(Tile tile){
         this.tiles.remove(tile);
     }
 
@@ -53,8 +53,8 @@ public class Tiles {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder("Tiles: ").append("\n");
-        for(TileNames tile : this.tiles){
-            sb.append(tile.toString()).append("\n");
+        for(Tile tile : this.tiles){
+            sb.append(tile.getTile().toString()).append("\n");
         }
         return(sb.toString());
     }

@@ -6,6 +6,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import logic.CustomException;
 import logic.Game;
 
 /**
@@ -85,8 +86,14 @@ public class UserInterfaceController {
      * Methode welche die Breite und Hoehe durch die Nutzereingaben einließt
      */
     public void applyEditorChanges(){
-        this.game = new Game(this.gui, Integer.parseInt(this.userHeightInput.getText()),
-                Integer.parseInt(this.userWidthInput.getText()));
+        int heigth = Integer.parseInt(this.userHeightInput.getText());
+        int width = Integer.parseInt(this.userWidthInput.getText());
+        if(heigth >= 2 && width >= 2 && heigth <= 6 && width <= 6) {
+            this.game = new Game(this.gui, Integer.parseInt(this.userHeightInput.getText()),
+                    Integer.parseInt(this.userWidthInput.getText()));
+        } else {
+            ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
+        }
     }
 
     /**

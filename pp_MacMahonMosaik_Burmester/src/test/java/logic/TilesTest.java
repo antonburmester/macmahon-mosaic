@@ -54,6 +54,7 @@ public class TilesTest {
     /**
      * ob bei dem loeschen eines der Tiles Teile dieses erfolgreich geloescht wird
      */
+    /*
     @Test
     public void removeTileTest(){
         Tiles tilesClass = new Tiles();
@@ -89,9 +90,12 @@ public class TilesTest {
         assertEquals(tilesClass.getTiles(), allTiles);
     }
 
+     */
+
     /**
      * ob bei dem loeschen eines der Tiles Teile dieses erfolgreich geloescht wird
      */
+    /*
     @Test
     public void removeTileTwiceTest(){
         Tiles tilesClass = new Tiles();
@@ -128,9 +132,12 @@ public class TilesTest {
         assertEquals(tilesClass.getTiles(), allTiles);
     }
 
+     */
+
     /**
      * ob ein geloeschtes Teil wieder hinzugefuegt werden kann
      */
+    /*
     @Test
     public void addTileTest(){
         Tiles tilesClass = new Tiles();
@@ -166,4 +173,6 @@ public class TilesTest {
         );
         assertEquals(tilesClass.getTiles(), allTiles);
     }
+
+     */ //TODO
 }

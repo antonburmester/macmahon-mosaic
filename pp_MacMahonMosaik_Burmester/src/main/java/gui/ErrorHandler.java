@@ -20,13 +20,13 @@ public class ErrorHandler {
     public static void showError(CustomException exception) {
         String message = switch (exception.getErrorCode()) { //Text der Exception bekommen
             case CustomException.ERROR_WINDOW_OPEN ->
-                    "Fehler: " + exception.getErrorCode() + " Fenster konnte nicht geladen/ geoeffnet werden!";
+                    "Fehler " + exception.getErrorCode() + " : Fenster konnte nicht geladen/ geoeffnet werden!";
             case CustomException.ERROR_INVALID_FILE ->
-                    "Fehler: " + exception.getErrorCode() + " Keine gültige Datei ausgewählt!";
+                    "Fehler " + exception.getErrorCode() + " : Keine gültige Datei ausgewählt!";
             case CustomException.ERROR_INVALID_GAME_SIZE ->
-                    "Fehler: " + exception.getErrorCode() + " Falsche Spielfeldgroeße! 2x2 - 6x6";
+                    "Fehler " + exception.getErrorCode() + " : Falsche Spielfeldgroeße! 2x2 - 6x6";
             case CustomException.NO_GAME_OPEN ->
-                    "Fehler: " + exception.getErrorCode() + " Kein Spiel aktiv! Erstelle oder Lade ein Spiel.";
+                    "Fehler " + exception.getErrorCode() + " : Kein Spiel aktiv! Erstelle oder Lade ein Spiel.";
             default -> "Unbekannter Fehler: " + exception.getErrorCode();
         };
         //Mit dem Text ein Fehler Fenster aufrufen

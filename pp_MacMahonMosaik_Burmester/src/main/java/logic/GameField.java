@@ -9,7 +9,7 @@ import gui.ErrorHandler;
  */
 
 public class GameField {
-    private final TileNames[][] gameField;
+    private final Tile[][] gameField;
 
     /**
      * Konstruktor welcher ein Spielfeld ohne Steine initialisiert
@@ -18,7 +18,7 @@ public class GameField {
      */
     public GameField(int height, int width){
         //if(height > 0 && height <= 6 && width > 0 && width <= 6) {
-            this.gameField = new TileNames[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
+            this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
         //} else {
             //TODO removing Error Handling removing
         //    ErrorHandler.showError(new CustomException(CustomException.Error_Invalid_GameField_Size));
@@ -33,11 +33,11 @@ public class GameField {
         int height = input.length;
         int width = input[0].length;
         //if(height > 0 && height <= 6 && width > 0 && width <= 6) {
-            this.gameField = new TileNames[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
+            this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
             for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchläuft jede Hoehe des Felds
                 for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchläuft jede Breite des Felds
                     //weist dem Feld das String Aequivalent des TileNames enum zu
-                    this.gameField[heigthIndex][widthIndex] = TileNames.valueOf(input[heigthIndex][widthIndex]);
+                    this.gameField[heigthIndex][widthIndex] = Tile.getTileClassFromTileName(input[heigthIndex][widthIndex]);
                 }
             }
         //} else {
@@ -50,7 +50,7 @@ public class GameField {
      * oeffentlicher Getter um das Private gameFiled an außerhalb dieser Klasse geben zu koennen
      * @return das Spielfeld
      */
-    public TileNames[][] getGameField() {
+    public Tile[][] getGameField() {
         return this.gameField;
     }
 
@@ -89,7 +89,7 @@ public class GameField {
      * @param yIndex Hoehenindex
      * @param tile Spielstein
      */
-    public void layTile(int xIndex, int yIndex, TileNames tile){
+    public void layTile(int xIndex, int yIndex, Tile tile){
         if(isFieldFree(xIndex, yIndex)){
             this.gameField[xIndex][yIndex] = tile;
         }
