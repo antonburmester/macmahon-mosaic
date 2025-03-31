@@ -17,4 +17,6 @@ public interface GUIConnector {
      * @param gameField das Spielfeld
      */
     void displayGridPaneTiles(GameField gameField);
+
+    void displayTiles(Tiles tiles);
 }

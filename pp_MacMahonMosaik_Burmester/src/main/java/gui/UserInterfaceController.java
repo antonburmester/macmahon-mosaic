@@ -2,10 +2,7 @@ package gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import logic.CustomException;
 import logic.Game;
 
@@ -36,12 +33,15 @@ public class UserInterfaceController {
     @FXML
     private Pane centerPane;
 
+    @FXML
+    private GridPane rightGridPane;
+
     /**
      * Initialisierung des Programms
      */
     @FXML
     public void initialize() {
-        this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane);
+        this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane);
     }
 
     /**

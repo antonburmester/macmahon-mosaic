@@ -19,6 +19,13 @@ public class GameField {
     public GameField(int height, int width){
         //if(height > 0 && height <= 6 && width > 0 && width <= 6) {
             this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
+        int counter = 0;
+            for(int x = 0; x < this.gameField.length; x++){
+                for(int y = 0; y < this.gameField[0].length; y++){
+                    counter++;
+                    this.gameField[x][y] = new Tile(TileNames.values()[counter]); //TODO do NNNN
+                }
+            }
         //} else {
             //TODO removing Error Handling removing
         //    ErrorHandler.showError(new CustomException(CustomException.Error_Invalid_GameField_Size));
@@ -37,7 +44,8 @@ public class GameField {
             for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchläuft jede Hoehe des Felds
                 for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchläuft jede Breite des Felds
                     //weist dem Feld das String Aequivalent des TileNames enum zu
-                    this.gameField[heigthIndex][widthIndex] = Tile.getTileClassFromTileName(input[heigthIndex][widthIndex]);
+                    this.gameField[heigthIndex][widthIndex] =
+                            Tile.getTileClassFromTileName(input[heigthIndex][widthIndex]);
                 }
             }
         //} else {
@@ -52,6 +60,16 @@ public class GameField {
      */
     public Tile[][] getGameField() {
         return this.gameField;
+    }
+
+    /**
+     * Methode welche die Klasse eines Spielsteins zurueckgibt
+     * @param x die Breitenkoordinate des Spielsteins
+     * @param y die Hoehenkoordinate des Spielsteins
+     * @return die Instanz des Spielsteins
+     */
+    public Tile getTile(int x, int y){
+        return(this.gameField[x][y]);
     }
 
     /**

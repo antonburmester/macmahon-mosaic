@@ -24,16 +24,19 @@ public class JavaFXGUI implements GUIConnector {
 
     private BorderPane borderPane;
 
+    private GridPane rightGridPane;
+
     private ImageView[] imageViews;
 
     /**
      * Konstruktor welcher diese Klasse initialisiert
      * @param gridPane die FXML Instanz
      */
-    public JavaFXGUI(BorderPane borderPane, Pane centerPane, GridPane gridPane){
+    public JavaFXGUI(BorderPane borderPane, Pane centerPane, GridPane gridPane, GridPane rightGridPane){
         this.borderPane = borderPane;
         this.centerPane = centerPane;
         this.gridPane = gridPane;
+        this.rightGridPane = rightGridPane;
     }
 
     /**
@@ -101,23 +104,32 @@ public class JavaFXGUI implements GUIConnector {
         gridPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
     }
 
-
     private void adjustGridPaneSize(GridPane gridPane, double width, double height) {
-        final int middleCols = gridPane.getColumnCount()-2;
-        final int middleRows = gridPane.getRowCount()-2;
-        //die äußeren beiden Spalten/Reihen zählen zusammen nur als halbe Spalte/Reihe
+        final int middleCols = gridPane.getColumnCount() - 2;
+        final int middleRows = gridPane.getRowCount() - 2;
+        // die äußeren beiden Spalten/Reihen zählen zusammen nur als halbe Spalte/Reihe
         final double colCount = middleCols + 0.5d;
         final double rowCount = middleRows + 0.5d;
 
         double cellSize = Math.min(width / colCount, height / rowCount);
         gridPane.setPrefSize(cellSize * colCount, cellSize * rowCount);
+        // Aktualisierung der Bildgrößen und Abstände, um sicherzustellen, dass keine Überlappungen auftreten
+        for (Node node : gridPane.getChildren()) {
+            if (node instanceof ImageView) {
+                ImageView imageView = (ImageView) node;
+                imageView.setFitWidth(cellSize);
+                imageView.setFitHeight(cellSize);
+                imageView.setPreserveRatio(false);
+            }
+        }
     }
+
 
     /**
      * Methode welche die GridPane fuellt
      * @param gameField das Spielfeld
      */
-    public void displayGridPaneTiles(GameField gameField){
+    public void displayGridPaneTiles2(GameField gameField){
         int columnsCount = gridPane.getColumnCount();
         int rowsCount = gridPane.getRowCount();
         // Buttons erstellen und einfügen
@@ -134,7 +146,6 @@ public class JavaFXGUI implements GUIConnector {
                 }
             }
         }
-        this.loadImages();
     }
 
     /**
@@ -160,9 +171,33 @@ public class JavaFXGUI implements GUIConnector {
      * Methode welche die Bilder der Mosaiksteine setzt
      * @param gameField das Spielfeld
      */
-    public void displayImages(GameField gameField){
-        //TODO
+    public void displayGridPaneTiles(GameField gameField) {
+        this.gridPane.getChildren().clear();  //Entfernt alle bestehenden Bilder
+        this.loadImages();//Bilder laden
+
+        int width = gameField.getGameField().length;
+        int height = gameField.getGameField()[0].length;
+
+        double hgap = gridPane.getHgap(); //Horizontaler Abstand
+        double vgap = gridPane.getVgap(); //Vertikaler Abstand
+
+        for (int x = 1; x < width - 1; x++) {
+            for (int y = 1; y < height - 1; y++) {
+                Tile currTile = gameField.getTile(x, y);
+                //if (tileEnumIndex < TileNames.values().length - 2) {
+                if(!(currTile.getTileString().equals("NNNN") || currTile.getTileString().equals("HHHH"))){
+                    int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal(); //Index des Bildes im ENUM
+                    ImageView currImage = new ImageView(this.imageViews[tileEnumIndex].getImage());
+                    this.gridPane.add(currImage, x, y);
+                }
+            }
+        }
+        this.adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
     }
+
+
+
+
 
     private void updateCellSizes(GameField gameField) {
         int columnsCount = gameField.getGameField().length;
@@ -186,6 +221,85 @@ public class JavaFXGUI implements GUIConnector {
                 } else {
                     btn.setMinSize(cellSize, cellSize);
                     btn.setMaxSize(cellSize, cellSize);
+                }
+            }
+        }
+    }
+
+    /**
+     * Methode welche die noch nicht verwendeten Spielsteine in der VBox anzeigt
+     * @param tiles die Mentge der noch nicht verwendeten Spielsteine
+     */
+    /*
+    public void displayTiles2(Tiles tiles){
+        this.rigthFlowPane.getChildren().clear();
+        loadImages();
+
+        for(Tile currTile : tiles.getTiles()) { //jeder Mosaikstein der noch in der Menge ist
+            String tileName = currTile.getTileString();
+            if (tileName != "NNNN" && tileName != "HHHH") {
+                int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
+                ImageView currImageView = this.imageViews[tileEnumIndex];
+                // **Bilder kleiner skalieren**
+                //currImageView.setFitWidth(this.rigthFlowPane.getHeight() / tiles.getTiles().size()); // Neue Breite setzen
+                //currImageView.setPreserveRatio(true); // Seitenverhältnis beibehalten
+                this.rigthFlowPane.getChildren().add(currImageView); //fuegt den aktuellen der vbox hinzu
+
+            }
+        }
+    }
+
+    public void displayTiles(Tiles tiles) {
+        this.rigthFlowPane.getChildren().clear();
+        loadImages();
+
+        int tileCount = tiles.getTiles().size();
+        double imageSize = (this.rigthFlowPane.getPrefWidth() / 4) - 10; // Größe abhängig von FlowPane-Breite
+
+        for (Tile currTile : tiles.getTiles()) {
+            String tileName = currTile.getTileString();
+
+            if (!tileName.equals("NNNN") && !tileName.equals("HHHH")) { // Richtiger String-Vergleich
+                int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
+                ImageView currImageView = this.imageViews[tileEnumIndex];
+
+                // Bilder verkleinern
+                currImageView.setFitWidth(imageSize);
+                currImageView.setPreserveRatio(true);
+
+                this.rigthFlowPane.getChildren().add(currImageView);
+            }
+        }
+    }
+    */
+
+    public void displayTiles(Tiles tiles) {
+        this.rightGridPane.getChildren().clear();
+        loadImages();
+
+        this.rightGridPane.setHgap(10); // Abstand zwischen den Spalten
+        this.rightGridPane.setVgap(10); // Abstand zwischen den Reihen
+
+        int col = 0, row = 0;
+
+        for (Tile currTile : tiles.getTiles()) {
+            String tileName = currTile.getTileString();
+            if (!tileName.equals("NNNN") && !tileName.equals("HHHH")) {
+                int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
+                ImageView currImageView = this.imageViews[tileEnumIndex];
+
+                //double tileSize =
+                       //Math.min(this.rightGridPane.getHeight() / 8, this.rightGridPane.getWidth() / 3);
+                currImageView.setFitWidth(100);
+                currImageView.setFitHeight(100);
+                //currImageView.setPreserveRatio(true);
+
+                this.rightGridPane.add(currImageView, col, row);
+
+                row++;
+                if (row == 8) { // Nach 8 Spalten neue Zeile beginnen
+                    row = 0; //wieder in der obersten Reihe beginnen
+                    col++;
                 }
             }
         }

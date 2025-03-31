@@ -24,8 +24,8 @@ public class ApplicationMain extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(ApplicationMain.class.getResource("UserInterface.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1100, 1000);
-        stage.setMinWidth(900);
+        Scene scene = new Scene(fxmlLoader.load(), 1300, 1000);
+        stage.setMinWidth(1100);
         stage.setMinHeight(800);
         stage.setMaxWidth(Double.MAX_VALUE);
         stage.setMaxHeight(Double.MAX_VALUE);
