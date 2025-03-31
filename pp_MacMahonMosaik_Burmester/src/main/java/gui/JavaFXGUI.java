@@ -50,38 +50,27 @@ public class JavaFXGUI implements GUIConnector {
 
         int columnsCount = gameField.getGameField().length;
         int rowsCount = gameField.getGameField()[0].length;
-        gridPane.setMinSize(0, 0); // Setze den minimalen Bereich auf 0, damit das Layout sofort skaliert.
+        gridPane.setMinSize(0, 0); //minimalgroeße der GridPane
 
-        // Sofortige Größenanpassung nach dem Initialisieren der GUI
-        /*
-        Platform.runLater(() -> {
-            adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
-        });
-         */
+        double middleColWidthSizePercentage = 100 / (columnsCount - 1.5d); //Breite der mittleren Felder
+        double borderColWidthSizePercentage = middleColWidthSizePercentage / 4; //Breite der Rand Spalten Felder
+        double middleRowWidthSizePercentage = 100 / (rowsCount - 1.5d); //Hoehe der mittleren Felder
+        double borderRowWidthSizePercentage = middleRowWidthSizePercentage / 4; //Breite der Rand Zeilen Felder
 
-
-        /*
-        double middleRowWidthSizePercentage = 100.0 / (rowsCount - 1); //-1 wegen des Randes
-        double middleColWidthSizePercentage = 100.0 / (columnsCount - 1); //-1 wegen des Randes
-        double borderRowWidthSizePercentage = middleRowWidthSizePercentage / 2;
-        double borderColWidthSizePercentage = middleColWidthSizePercentage / 2;
-
-         */
-        double middleColWidthSizePercentage = 100 / (columnsCount - 1.5d);
-        double borderColWidthSizePercentage = middleColWidthSizePercentage / 4;
-        double middleRowWidthSizePercentage = 100 / (rowsCount - 1.5d);
-        double borderRowWidthSizePercentage = middleRowWidthSizePercentage / 4;
-
-        //gridPane.widthProperty().addListener((obs, oldVal, newVal) -> updateCellSizes(gameField));
-        //gridPane.heightProperty().addListener((obs, oldVal, newVal) -> updateCellSizes(gameField));
+        // ChangeListener hinzufuegen, damit sich die GridPane durch die Pane an die
+        // Groeßenveraenderung der BorderPane anpasst
+        centerPane.widthProperty().addListener((obs, oldVal, newVal) ->
+                adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
+        centerPane.heightProperty().addListener((obs, oldVal, newVal) ->
+                adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
         
 
         //neue Spalten
         for(int i = 0; i < columnsCount; i++) {
             ColumnConstraints colConstraints = new ColumnConstraints();
             colConstraints.setHgrow(Priority.ALWAYS);
-            colConstraints.setPercentWidth((i == 0 || i == columnsCount - 1) ? borderColWidthSizePercentage : middleColWidthSizePercentage);
-            //colConstraints.setPercentWidth(percentageWidth);
+            colConstraints.setPercentWidth((i == 0 || i == columnsCount - 1) ? borderColWidthSizePercentage
+                    : middleColWidthSizePercentage);
             gridPane.getColumnConstraints().add(colConstraints);
         }
 
@@ -89,19 +78,15 @@ public class JavaFXGUI implements GUIConnector {
         for(int i = 0; i < rowsCount; i++) {
             RowConstraints rowConstraints = new RowConstraints();
             rowConstraints.setVgrow(Priority.ALWAYS);
-            rowConstraints.setPercentHeight((i == 0 || i == rowsCount - 1) ? borderRowWidthSizePercentage : middleRowWidthSizePercentage);
-            //rowConstraints.setPercentHeight(percentageHeight);
+            rowConstraints.setPercentHeight((i == 0 || i == rowsCount - 1) ? borderRowWidthSizePercentage
+                    : middleRowWidthSizePercentage);
             gridPane.getRowConstraints().add(rowConstraints);
         }
 
-        // ChangeListener hinzufuegen, damit sich die GridPane an die Groeßenveraenderung der BorderPane anpasst
-        centerPane.widthProperty().addListener((obs, oldVal, newVal) -> adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
-        centerPane.heightProperty().addListener((obs, oldVal, newVal) -> adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
         adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
         gridPane.setGridLinesVisible(true);
         gridPane.setStyle("-fx-background-color: lightblue;");
-        //displayGridPaneTiles(gridPane);
-        gridPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        //gridPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
     }
 
     private void adjustGridPaneSize(GridPane gridPane, double width, double height) {
@@ -171,7 +156,7 @@ public class JavaFXGUI implements GUIConnector {
      * Methode welche die Bilder der Mosaiksteine setzt
      * @param gameField das Spielfeld
      */
-    public void displayGridPaneTiles(GameField gameField) {
+    public void displayGameFieldTiles(GameField gameField) {
         this.gridPane.getChildren().clear();  //Entfernt alle bestehenden Bilder
         this.loadImages();//Bilder laden
 
@@ -184,7 +169,6 @@ public class JavaFXGUI implements GUIConnector {
         for (int x = 1; x < width - 1; x++) {
             for (int y = 1; y < height - 1; y++) {
                 Tile currTile = gameField.getTile(x, y);
-                //if (tileEnumIndex < TileNames.values().length - 2) {
                 if(!(currTile.getTileString().equals("NNNN") || currTile.getTileString().equals("HHHH"))){
                     int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal(); //Index des Bildes im ENUM
                     ImageView currImage = new ImageView(this.imageViews[tileEnumIndex].getImage());
@@ -193,12 +177,42 @@ public class JavaFXGUI implements GUIConnector {
             }
         }
         this.adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
+        displayBorder(gameField);
+    }
+
+    /**
+     * Methode welche die Raender anzeigt
+     * //TODO Raender an Spielfeld binden
+     * @param gameField das Spielfeld
+     */
+    public void displayBorder(GameField gameField){
+        int width = gameField.getGameField().length;
+        int height = gameField.getGameField()[0].length;
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if(!((x == 0 && y == 0) //linke obere Ecke
+                        || (x == 0 && y == height - 1) //linke untere Ecke
+                        || (x == width - 1 && y == 0) //rechte obere Ecke
+                        || (x == width - 1 && y == height - 1))) //rechte untere Ecke
+                if (y == 0 || y == height - 1) {
+                    Pane cell = new Pane();
+                    cell.setStyle("-fx-background-color: purple;"); // Lila Hintergrund
+                    this.gridPane.add(cell, x, y);
+                } else if (x == 0 || x == width - 1) {
+                    Pane cell = new Pane();
+                    cell.setStyle("-fx-background-color: blue;"); // Lila Hintergrund
+                    this.gridPane.add(cell, x, y);
+                }
+            }
+        }
+        this.gridPane.setGridLinesVisible(true);
     }
 
 
 
 
-
+    //TODO delete
     private void updateCellSizes(GameField gameField) {
         int columnsCount = gameField.getGameField().length;
         int rowsCount = gameField.getGameField()[0].length;
@@ -227,53 +241,10 @@ public class JavaFXGUI implements GUIConnector {
     }
 
     /**
-     * Methode welche die noch nicht verwendeten Spielsteine in der VBox anzeigt
-     * @param tiles die Mentge der noch nicht verwendeten Spielsteine
+     * Methode welche alle verfuegbaren Spielsteine rechts neben dem Spielfeld anzeigt
+     * @param tiles die verfuegbaren Spielsteine
      */
-    /*
-    public void displayTiles2(Tiles tiles){
-        this.rigthFlowPane.getChildren().clear();
-        loadImages();
-
-        for(Tile currTile : tiles.getTiles()) { //jeder Mosaikstein der noch in der Menge ist
-            String tileName = currTile.getTileString();
-            if (tileName != "NNNN" && tileName != "HHHH") {
-                int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
-                ImageView currImageView = this.imageViews[tileEnumIndex];
-                // **Bilder kleiner skalieren**
-                //currImageView.setFitWidth(this.rigthFlowPane.getHeight() / tiles.getTiles().size()); // Neue Breite setzen
-                //currImageView.setPreserveRatio(true); // Seitenverhältnis beibehalten
-                this.rigthFlowPane.getChildren().add(currImageView); //fuegt den aktuellen der vbox hinzu
-
-            }
-        }
-    }
-
-    public void displayTiles(Tiles tiles) {
-        this.rigthFlowPane.getChildren().clear();
-        loadImages();
-
-        int tileCount = tiles.getTiles().size();
-        double imageSize = (this.rigthFlowPane.getPrefWidth() / 4) - 10; // Größe abhängig von FlowPane-Breite
-
-        for (Tile currTile : tiles.getTiles()) {
-            String tileName = currTile.getTileString();
-
-            if (!tileName.equals("NNNN") && !tileName.equals("HHHH")) { // Richtiger String-Vergleich
-                int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
-                ImageView currImageView = this.imageViews[tileEnumIndex];
-
-                // Bilder verkleinern
-                currImageView.setFitWidth(imageSize);
-                currImageView.setPreserveRatio(true);
-
-                this.rigthFlowPane.getChildren().add(currImageView);
-            }
-        }
-    }
-    */
-
-    public void displayTiles(Tiles tiles) {
+    public void displayNotUsedTiles(Tiles tiles) {
         this.rightGridPane.getChildren().clear();
         loadImages();
 
@@ -288,11 +259,8 @@ public class JavaFXGUI implements GUIConnector {
                 int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
                 ImageView currImageView = this.imageViews[tileEnumIndex];
 
-                //double tileSize =
-                       //Math.min(this.rightGridPane.getHeight() / 8, this.rightGridPane.getWidth() / 3);
-                currImageView.setFitWidth(100);
-                currImageView.setFitHeight(100);
-                //currImageView.setPreserveRatio(true);
+                currImageView.setFitWidth(90);
+                currImageView.setFitHeight(90);
 
                 this.rightGridPane.add(currImageView, col, row);
 

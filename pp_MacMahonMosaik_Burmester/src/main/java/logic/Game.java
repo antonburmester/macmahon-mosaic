@@ -22,7 +22,7 @@ public class Game {
         this.gui = gui;
 
         this.gui.updateGridPaneFormat(this.gameField);
-        //this.gui.displayGridPaneTiles(this.gameField);
-        this.gui.displayTiles(this.tiles);
+        this.gui.displayGameFieldTiles(this.gameField);
+        //this.gui.displayNotUsedTiles(this.tiles);
     }
 }

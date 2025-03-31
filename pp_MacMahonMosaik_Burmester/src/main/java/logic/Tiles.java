@@ -1,4 +1,5 @@
 package logic;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,13 +11,13 @@ import java.util.Set;
  */
 
 public class Tiles {
-    private Set<Tile> tiles;
+    private ArrayList<Tile> tiles;
 
     /**
      * Konstruktor welche eine Menge mit allen Spielsteinen erstellt
      */
     public Tiles(){
-        this.tiles = new HashSet<>();
+        this.tiles = new ArrayList<>();
         for(int i = 0; i < TileNames.values().length; i++) { //durchlaeuft alle Mosaiksteine
             this.tiles.add(new Tile(TileNames.values()[i])); // fuegt alle Mosaiksteine der Menge hinzu
         }
@@ -26,7 +27,7 @@ public class Tiles {
      * Public getter um die Private Nutzlast der Menge der Mosaiksteine zu bekommen
      * @return alle Mosaiksteine die in der Menge sind
      */
-    public Set<Tile> getTiles(){
+    public ArrayList<Tile> getTiles(){
         return(this.tiles);
     }
 

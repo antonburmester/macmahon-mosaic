@@ -16,7 +16,11 @@ public interface GUIConnector {
      * Methode welche die GridPane fuellt
      * @param gameField das Spielfeld
      */
-    void displayGridPaneTiles(GameField gameField);
+    void displayGameFieldTiles(GameField gameField);
 
-    void displayTiles(Tiles tiles);
+    /**
+     * Methode welche alle verfuegbaren Spielsteine rechts neben dem Spielfeld anzeigt
+     * @param tiles die verfuegbaren Spielsteine
+     */
+    void displayNotUsedTiles(Tiles tiles);
 }

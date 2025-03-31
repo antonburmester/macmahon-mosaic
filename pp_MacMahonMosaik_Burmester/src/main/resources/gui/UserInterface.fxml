@@ -50,23 +50,23 @@
 
     <center>
         <Pane fx:id="centerPane" BorderPane.alignment="CENTER">
-        <GridPane fx:id="gridPane" BorderPane.alignment="CENTER">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="75" hgrow="ALWAYS"/> <!-- 2/3 der Breite -->
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints vgrow="ALWAYS"/>
-            </rowConstraints>
-        </GridPane>
+            <GridPane fx:id="gridPane" BorderPane.alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="ALWAYS"/>
+                </rowConstraints>
+            </GridPane>
         </Pane>
     </center>
     <right>
         <GridPane fx:id="rightGridPane" BorderPane.alignment="CENTER">
             <columnConstraints>
-                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/> <!-- 1/3 der Breite -->
+                <ColumnConstraints hgrow="ALWAYS"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints vgrow="ALWAYS"/>
+                <RowConstraints vgrow="NEVER"/>
             </rowConstraints>
         </GridPane>
     </right>
