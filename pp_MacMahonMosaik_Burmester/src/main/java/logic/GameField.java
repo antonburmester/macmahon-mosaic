@@ -17,19 +17,13 @@ public class GameField {
      * @param width die Breite des neuen Spielfeldes
      */
     public GameField(int height, int width){
-        //if(height > 0 && height <= 6 && width > 0 && width <= 6) {
-            this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
-        int counter = 0;
+
+        this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
             for(int x = 0; x < this.gameField.length; x++){
                 for(int y = 0; y < this.gameField[0].length; y++){
-                    counter++;
-                    this.gameField[x][y] = new Tile(TileNames.values()[counter]); //TODO do NNNN
+                    this.gameField[x][y] = new Tile(TileNames.NNNN); //TODO do NNNN
                 }
             }
-        //} else {
-            //TODO removing Error Handling removing
-        //    ErrorHandler.showError(new CustomException(CustomException.Error_Invalid_GameField_Size));
-        //}
     }
 
     /**
@@ -95,7 +89,7 @@ public class GameField {
      */
     public boolean isFieldFree(int xIndex, int yIndex){
         if(isFieldSelectionValid(xIndex, yIndex)) { //wenn das gewaehlte Feld Valide ist
-            return (this.gameField[xIndex][yIndex].equals(TileNames.NNNN)); //ob das Feld leer ist
+            return (this.gameField[xIndex][yIndex].getTile().equals(TileNames.NNNN)); //ob das Feld leer ist
         } else { //wenn das gewaehlte Feld invalide ist
             return(false);
         }
@@ -106,10 +100,50 @@ public class GameField {
      * @param xIndex Breitenindex
      * @param yIndex Hoehenindex
      * @param tile Spielstein
+     * @return ob der Spielstein wieder zurueckgelegt werden konnte
      */
-    public void layTile(int xIndex, int yIndex, Tile tile){
+    public boolean layTile(int xIndex, int yIndex, Tile tile){
+        System.out.println("Tile: " + tile.getTileString()); //TODO
+        boolean status = true;
         if(isFieldFree(xIndex, yIndex)){
             this.gameField[xIndex][yIndex] = tile;
+        } else {
+            status = false;
         }
+        return(status);
+    }
+
+    /**
+     * Methode welche ein Spielfeld zuruecksetzt solange es sich um kein Loch handelt
+     * @param xIndex der Spaltenindex des Feldes
+     * @param yIndex der Zeilenindex des Feldes
+     * @return ob das Spielfeld korrekt zurueckgesetzt werden konnte
+     */
+    public boolean resetTile(int xIndex, int yIndex){
+        boolean status = true;
+        if(!(this.gameField[xIndex][yIndex].getTile().equals(TileNames.HHHH))){
+            this.gameField[xIndex][yIndex] = new Tile(TileNames.NNNN);
+        } else {
+            status = false;
+        }
+        return(status);
+    }
+
+    /**
+     * Methode welche die toString Methode ueberschreibt und das Array in der Konsole ausgibt
+     * @return das Array als String
+     */
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+
+        for(int y = 0; y < this.gameField[0].length; y++) {
+            for (int x = 0; x < this.gameField.length; x++) {
+                sb.append(" ").append(this.gameField[x][y].getTileString()).append(" ");
+            }
+            sb.append("\n");
+        }
+
+        return(sb.toString());
     }
 }

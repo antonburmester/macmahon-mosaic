@@ -41,6 +41,7 @@ public class UserInterfaceController {
      */
     @FXML
     public void initialize() {
+        System.out.println(this.game == null);
         this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane);
     }
 

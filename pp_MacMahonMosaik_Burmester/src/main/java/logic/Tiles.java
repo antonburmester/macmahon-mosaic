@@ -1,50 +1,58 @@
 package logic;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
- * Klasse welche alle Spielsteine als Menge enthaelt
+ * Klasse welche Spielsteine als Array enthaelt
+ * Die Reihenfolge orientiert sich an der Reihenfolge des TileNames Enum
  *
  * @author Anton Burmester
  */
 
 public class Tiles {
-    private ArrayList<Tile> tiles;
+    private final Tile[] tiles;
 
     /**
-     * Konstruktor welche eine Menge mit allen Spielsteinen erstellt
+     * Konstruktor welche ein Array mit allen Spielsteinen erstellt
      */
     public Tiles(){
-        this.tiles = new ArrayList<>();
+        this.tiles = new Tile[TileNames.values().length];
         for(int i = 0; i < TileNames.values().length; i++) { //durchlaeuft alle Mosaiksteine
-            this.tiles.add(new Tile(TileNames.values()[i])); // fuegt alle Mosaiksteine der Menge hinzu
+            this.tiles[i] = new Tile(TileNames.values()[i]);
         }
     }
 
     /**
-     * Public getter um die Private Nutzlast der Menge der Mosaiksteine zu bekommen
+     * Public getter um die Private Nutzlast des Arrays der Mosaiksteine zu bekommen
      * @return alle Mosaiksteine die in der Menge sind
      */
-    public ArrayList<Tile> getTiles(){
+    public Tile[] getTiles(){
         return(this.tiles);
     }
 
     /**
-     * fuegt den zu loeschenden Mosaikstein zur Menge hinzu
-     * @param tile der hinzufuegende Mosaikstein
+     * Methode welche den Spielstein an der gewuenschten Stelle zurueckgibt
+     * Ist kein Spielstein vorhanden an der Stelle wird null zurueckgegeben
+     * @param index der Index es Spielsteins
+     * @return die Instanz des Spielsteins oder null falls dieser nicht vorhanden ist weil er geloescht wurde
      */
-    public void addTile(Tile tile){
-        this.tiles.add(tile);
+    public Tile getTile(int index){
+        return(this.tiles[index]);
     }
 
     /**
-     * loescht ein Mosaikstein aus der Menge
+     * fuegt den zu hinzuzufuegenden Mosaikstein dem Array an der richtigen Stelle hinzu
+     * @param tile der hinzufuegende Mosaikstein
+     */
+    public void addTile(Tile tile){
+        this.tiles[TileNames.valueOf(tile.getTileString()).ordinal()] = tile;
+    }
+
+    /**
+     * loescht ein Mosaikstein aus dem Array
+     * in wirklichkeit wird die Instanz an der Stelle nur null gesetzt
      * @param tile der zu loeschende Mosaikstein
      */
     public void removeTile(Tile tile){
-        this.tiles.remove(tile);
+        this.tiles[TileNames.valueOf(tile.getTileString()).ordinal()] = null;
     }
 
     /**
@@ -55,7 +63,7 @@ public class Tiles {
     public String toString(){
         StringBuilder sb = new StringBuilder("Tiles: ").append("\n");
         for(Tile tile : this.tiles){
-            sb.append(tile.getTile().toString()).append("\n");
+            sb.append(tile.getTileString()).append("\n");
         }
         return(sb.toString());
     }

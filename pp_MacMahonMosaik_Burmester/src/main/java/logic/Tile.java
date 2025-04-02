@@ -87,6 +87,14 @@ public class Tile {
     }
 
     /**
+     * prueft ob des sich bei dem Spielstein um ein Loch (HHHH) oder einen Platzhalter handelt (NNNN)
+     * @return
+     */
+    public boolean isTileLayable(){
+        return(!(this.tile.equals(TileNames.NNNN) || this.tile.equals(TileNames.HHHH)));
+    }
+
+    /**
      * Methode welche auf Grundlage eines Strings eine Tile Klasse zurueckgibt mit dem richtigen Spielstein
      * sowie seiner Drehung
      * @param inputTileName der String des Spielsteins (kann auch gedreht sein)
