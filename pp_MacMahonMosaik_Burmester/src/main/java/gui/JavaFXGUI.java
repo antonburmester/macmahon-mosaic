@@ -173,8 +173,17 @@ public class JavaFXGUI implements GUIConnector {
                 //die naechste Ebene der StackPane ist das ImageView in welchem ein Bild angezeigt wird
                 ImageView tileImageView = new ImageView();
                 //Breite und Hoehe des Bildes an Breite und Hoehe der TilePane binden
+                tileImageView.setFitHeight(90);
+                tileImageView.setFitWidth(90);
+                tileImageView.setPreserveRatio(false);
+                // Entferne alte Bindings (falls welche existieren)
+                /*
+                tileImageView.fitWidthProperty().unbind();
+                tileImageView.fitHeightProperty().unbind();
                 tileImageView.fitWidthProperty().bind(tilePane.widthProperty());
                 tileImageView.fitHeightProperty().bind(tilePane.heightProperty());
+
+                 */
 
                 //Drag Over Event: dass nur Bilder bewegt werden koennen und nicht z.B. kopiert
                 tilePane.setOnDragOver(event -> {
@@ -272,6 +281,7 @@ public class JavaFXGUI implements GUIConnector {
                 // aktuellen Zelle hinzufuegen
             }
         }
+        adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
         displayBorder(gameField);
     }
 
@@ -304,6 +314,19 @@ public class JavaFXGUI implements GUIConnector {
                 tileImageView.setFitHeight(80);
 
                 tilePane.getChildren().add(tileImageView); //ImageView der Stackpane hinzufuegen
+
+                //Drag Entered Event: wenn ein Bild ueber die Spielstein Auswahl gezogen wird, wird diese hervorgehoben
+                rightGridPane.setOnDragEntered(event -> {
+                    if (event.getGestureSource() != tileImageView && event.getDragboard().hasImage()) { //ist Image
+                        rightGridPane.setStyle("-fx-background-color: pink;"); //setzt die Hintergrundfarbe der StackPane
+                    }
+                });
+
+                //drag Exited Event wenn das Bild wieder aus der Spielstein Auswahl herausgezogen wird,
+                // wird diese hervorhebung zurueckgesetzt
+                rightGridPane.setOnDragExited(event -> {
+                    rightGridPane.setStyle(""); //entfernt die Hintergrundfarbe
+                });
 
                 //Drag Detected Event für die Spielstein Auswahl: wenn ein Spielstein aus der Auswahl per Drag bewegt wird
                 int finalCol = col;
