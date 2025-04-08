@@ -95,6 +95,14 @@ public class Tile {
     }
 
     /**
+     * Methode welche prueft, ob es sich bei dem Spielstein um einen handelt welcher als Randstueck genutzt werden kann
+     * @return ob das Spielstueck als Randstueck genutzt werden kann (GGGG oder RRRR oder YYYY)
+     */
+    public boolean isTileBorderCompatible(){
+        return(this.tile.equals(TileNames.GGGG) || this.tile.equals(TileNames.RRRR) || this.tile.equals(TileNames.YYYY));
+    }
+
+    /**
      * Methode welche auf Grundlage eines Strings eine Tile Klasse zurueckgibt mit dem richtigen Spielstein
      * sowie seiner Drehung
      * @param inputTileName der String des Spielsteins (kann auch gedreht sein)

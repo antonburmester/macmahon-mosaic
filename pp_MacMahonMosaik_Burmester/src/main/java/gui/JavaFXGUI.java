@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -12,6 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import logic.*;
 
+import javax.swing.text.html.ObjectView;
 import java.util.Objects;
 
 /**
@@ -156,7 +158,10 @@ public class JavaFXGUI implements GUIConnector {
      * Methode welche die Bilder der Mosaiksteine setzt
      * @param game Spiel Instanz aus welcher die Methoden kommen um die Bewegung eines Spielsteins der Logik mitzuteilen
      * @param gameField das Spielfeld
+     *
+     *                  TODO initiales setzten der Spielsteine
      */
+    /*
     public void displayGameFieldTiles(Game game, GameField gameField) {
         this.gridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
 
@@ -165,6 +170,10 @@ public class JavaFXGUI implements GUIConnector {
 
         for (int x = 1; x < width - 1; x++) { //durchlaeuft jede Spalte
             for (int y = 1; y < height - 1; y++) { //durchlaeuft jede Zeile
+                //initiales setzten der Spielsteine falls ein Spielstand geladen wurde
+
+                Tile currTile = gameField.getTile(x, y);
+
                 //StackPane für die Zelle da eine StackPane gefaerbt werden kann
                 StackPane tilePane = new StackPane();
                 tilePane.setPrefSize(90, 90); //Größe der StackPane
@@ -172,18 +181,19 @@ public class JavaFXGUI implements GUIConnector {
 
                 //die naechste Ebene der StackPane ist das ImageView in welchem ein Bild angezeigt wird
                 ImageView tileImageView = new ImageView();
+                if(currTile.getTile().equals(TileNames.NNNN)){ //noch nicht belegtes Feld
+                    //ein transparentes feld nciht gefaerbt
+                    tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+                } else if(currTile.getTile().equals(TileNames.HHHH)){ //ein Loch
+                    //ein graues Feld
+                    tilePane.setStyle("-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 2; -fx-opacity: 0.5;");
+                } else { //ein normaler Spielstein
+                    int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal();
+                    tileImageView = this.imageViews[tileEnumIndex];
+                }
                 //Breite und Hoehe des Bildes an Breite und Hoehe der TilePane binden
                 tileImageView.setFitHeight(90);
                 tileImageView.setFitWidth(90);
-                tileImageView.setPreserveRatio(false);
-                // Entferne alte Bindings (falls welche existieren)
-                /*
-                tileImageView.fitWidthProperty().unbind();
-                tileImageView.fitHeightProperty().unbind();
-                tileImageView.fitWidthProperty().bind(tilePane.widthProperty());
-                tileImageView.fitHeightProperty().bind(tilePane.heightProperty());
-
-                 */
 
                 //Drag Over Event: dass nur Bilder bewegt werden koennen und nicht z.B. kopiert
                 tilePane.setOnDragOver(event -> {
@@ -227,7 +237,7 @@ public class JavaFXGUI implements GUIConnector {
 
                             //durch eine Game Klasse Methode wird die Bewegung von der Spielstein Auswahl in
                             // das Logik Spielfeld uebernommen
-                            boolean placed = game.moveTileFromNotLaidTilesToGameField(tileIndex, targetX, targetY);
+                            boolean placed = game.moveTileFromNotLaidTilesToGameField(targetX, targetY, tileIndex);
                             if (placed) {
                                 System.out.println("Tile successfully moved from selection to game field at (" + targetX + ", " + targetY + ")");
                                 //entfernt das Bild aus der Spielstein Auswahl
@@ -282,8 +292,122 @@ public class JavaFXGUI implements GUIConnector {
             }
         }
         adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
-        displayBorder(gameField);
+        //displayBorder(game, gameField); //TODO auskommentiert zuletzt
+        //fillRightGridPaneWithEditorPieces(true); //TODO auskommentiert zuletzt
     }
+
+     */
+
+    public void displayGameFieldTiles(Game game, GameField gameField) {
+        this.gridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
+
+        int width = gameField.getGameField().length;
+        int height = gameField.getGameField()[0].length;
+
+        for (int x = 1; x < width - 1; x++) {
+            for (int y = 1; y < height - 1; y++) {
+                Tile currTile = gameField.getTile(x, y);
+
+                StackPane tilePane = new StackPane();
+                tilePane.setPrefSize(90, 90);
+                tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+
+                ImageView tileImageView = new ImageView();
+
+                if (currTile.getTile().equals(TileNames.NNNN)) {
+                    tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+                } else if (currTile.getTile().equals(TileNames.HHHH)) {
+                    tilePane.setStyle("-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 2; -fx-opacity: 0.5;");
+                } else {
+                    int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal();
+                    tileImageView = this.imageViews[tileEnumIndex];
+                }
+
+                tileImageView.setFitHeight(90);
+                tileImageView.setFitWidth(90);
+
+                // final Referenz für Lambda
+                final ImageView imageViewRef = tileImageView;
+
+                tilePane.setOnDragOver(event -> {
+                    if (event.getGestureSource() != imageViewRef && event.getDragboard().hasImage()) {
+                        event.acceptTransferModes(TransferMode.MOVE);
+                    }
+                    event.consume();
+                });
+
+                tilePane.setOnDragEntered(event -> {
+                    if (event.getGestureSource() != imageViewRef && event.getDragboard().hasImage()) {
+                        tilePane.setStyle("-fx-background-color: pink;");
+                    }
+                });
+
+                tilePane.setOnDragExited(event -> {
+                    tilePane.setStyle(""); // Hintergrund entfernen
+                    tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;"); // Rand wiederherstellen
+                });
+
+                tilePane.setOnDragDropped(event -> {
+                    Dragboard db = event.getDragboard();
+                    if (db.hasImage()) {
+                        Integer targetX = GridPane.getColumnIndex(tilePane);
+                        Integer targetY = GridPane.getRowIndex(tilePane);
+
+                        ImageView sourceImageView = (ImageView) event.getGestureSource();
+
+                        if (rightGridPane.getChildren().contains(sourceImageView.getParent())) {
+                            int tileIndex = getTileIndexFromRightGridPane(
+                                    GridPane.getColumnIndex(sourceImageView.getParent()),
+                                    GridPane.getRowIndex(sourceImageView.getParent()),
+                                    rightGridPane.getRowCount());
+
+                            boolean placed = game.moveTileFromNotLaidTilesToGameField(targetX, targetY, tileIndex);
+                            if (placed) {
+                                System.out.println("Tile successfully moved from selection to game field at (" + targetX + ", " + targetY + ")");
+                                StackPane parentPane = (StackPane) sourceImageView.getParent();
+                                ImageView imageView = (ImageView) parentPane.getChildren().getFirst();
+                                imageView.setImage(null);
+                                imageViewRef.setImage(db.getImage());
+                            }
+                        } else if (gridPane.getChildren().contains(sourceImageView.getParent())) {
+                            Integer startX = GridPane.getColumnIndex(sourceImageView.getParent());
+                            Integer startY = GridPane.getRowIndex(sourceImageView.getParent());
+
+                            if (startX != null && startY != null) {
+                                boolean moved = game.moveTileFromGamefieldToGameField(startX, startY, targetX, targetY);
+                                if (moved) {
+                                    System.out.println("Tile moved within the game field from (" + startX + ", " + startY + ") to (" + targetX + ", " + targetY + ")");
+                                    StackPane parentPane = (StackPane) sourceImageView.getParent();
+                                    ImageView imageView = (ImageView) parentPane.getChildren().getFirst();
+                                    imageView.setImage(null);
+                                    imageViewRef.setImage(db.getImage());
+                                }
+                            }
+                        }
+
+                        event.setDropCompleted(true);
+                    } else {
+                        event.setDropCompleted(false);
+                    }
+                    event.consume();
+                });
+
+                imageViewRef.setOnDragDetected(event -> {
+                    Dragboard db = imageViewRef.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putImage(imageViewRef.getImage());
+                    db.setContent(content);
+                    System.out.println("Dragging image: " + imageViewRef.getImage());
+                    event.consume();
+                });
+
+                tilePane.getChildren().add(imageViewRef);
+                this.gridPane.add(tilePane, x, y);
+            }
+        }
+        adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
+    }
+
 
     /**
      * Methode welche alle verfuegbaren Spielsteine rechts neben dem Spielfeld anzeigt
@@ -443,31 +567,223 @@ public class JavaFXGUI implements GUIConnector {
     }
 
     /**
-     * Methode welche die Raender anzeigt
-     * //TODO Raender an Spielfeld binden
+     * Methode welche den Rand des Spielfelds anzeigt
+     * @param game die Instanz des Spiels damit Aenderungen am Spielfeld auch in der Logik angepasst werden
      * @param gameField das Spielfeld
      */
-    public void displayBorder(GameField gameField){
+    public void displayBorder(Game game, GameField gameField){
         int width = gameField.getGameField().length;
         int height = gameField.getGameField()[0].length;
 
         for (int x = 0; x < width; x++) { //durchlaeuft jede Spalte
             for (int y = 0; y < height; y++) { //durchlaeuft jede Zeile
                 //filtert die Ecken raus, da diese nicht als Rand angezeigt werden sollen
-                if(!((x == 0 && y == 0) //linke obere Ecke
-                        || (x == 0 && y == height - 1) //linke untere Ecke
-                        || (x == width - 1 && y == 0) //rechte obere Ecke
-                        || (x == width - 1 && y == height - 1))) //rechte untere Ecke
-                if (y == 0 || y == height - 1) { //oberer und unterer Rand
+                //initiales Setzen des Randes (falls ein bestehendes Spiel geladen wurde)
+                if(!gameField.isFieldEdge(x, y) && gameField.isFieldBorder(x, y)) { //Randstueck und kein Eckstueck
+
                     Pane cell = new Pane();
-                    cell.setStyle("-fx-background-color: purple;"); // Lila Hintergrund
-                    this.gridPane.add(cell, x, y);
-                } else if (x == 0 || x == width - 1) { //linker und rechter Rand
-                    Pane cell = new Pane();
-                    cell.setStyle("-fx-background-color: blue;"); // Lila Hintergrund
+                    String initialCellStyle = switch (gameField.getTile(x, y).getTile()) { //Statement welches je nach Randstein den Rand faerbt
+                        case TileNames.GGGG ->
+                                "-fx-border-color: black; -fx-border-width: 2; -fx-background-color: green;"; //Gruen
+                        case TileNames.YYYY ->
+                                "-fx-border-color: black; -fx-border-width: 2; -fx-background-color: yellow;"; //Gelb
+                        case TileNames.RRRR ->
+                                "-fx-border-color: black; -fx-border-width: 2; -fx-background-color: red;"; //rot
+                        default -> "-fx-border-color: black; -fx-border-width: 2;"; //leere Zelle mit Rand
+                    };
+                    cell.setStyle(initialCellStyle);
+                    cell.setUserData(initialCellStyle);
+
+
+                    //Drag Over Event: dass die Zellen kopiert werden
+                    cell.setOnDragOver(event -> {
+                        if (event.getGestureSource() != cell && event.getDragboard().hasString()) { //ist String
+                            event.acceptTransferModes(TransferMode.COPY); //wird bewegt und nicht z.B. kopiert
+                        }
+                        event.consume(); //markiert das Event als verarbeitet
+                    });
+
+                    //Drag Entered Event: wenn ein Bild ueber ein potentielles Ziel gezogen wird, wird dieses hervorgehoben
+                    cell.setOnDragEntered(event -> {
+                        if (event.getGestureSource() != cell && event.getDragboard().hasString()) { //ist String
+                            cell.setStyle("-fx-border-color: black; -fx-border-width: 2;" +
+                                    "-fx-background-color: pink;"); //setzt die Hintergrundfarbe der StackPane
+                        }
+                    });
+
+                    //drag Exited Event wenn das Bild wieder aus dem moeglichen Ziel herausgezogen wird,
+                    // wird diese hervorhebung zurueckgesetzt
+                    cell.setOnDragExited(event -> {
+                        //cell.setStyle(""); //entfernt die Hintergrundfarbe und den Rand //TODO remove
+                        //cell.setStyle("-fx-border-color: black; -fx-border-width: 2;"); //setzt den Rand wieder
+
+                        String originalStyle = (String) cell.getUserData(); //den letzten Style
+                        cell.setStyle(originalStyle);
+                    });
+
+                    //Drop Event für das Spielfeld: wenn das Bild in einer Zelle tilePane abgelegt wird
+                    cell.setOnDragDropped(event -> {
+
+                        System.out.println("Got Dropped");
+                        Dragboard db = event.getDragboard(); //Inhalt was bewegt wird
+                        if (db.hasString()) { //wenn das zu farbkodierende Objekt ein String ist
+                            //Zielkoordinaten
+                            Integer targetX = GridPane.getColumnIndex(cell);
+                            Integer targetY = GridPane.getRowIndex(cell);
+
+                            //durch eine Game Klasse Methode wird die Bewegung von der Spielstein Auswahl in
+                            // das Logik Spielfeld uebernommen
+                            Tile newTile = new Tile(TileNames.valueOf(db.getString()));
+                            boolean placed = game.colorBorder(targetX, targetY, newTile);
+                            if (placed) {
+                                System.out.println("Tile successfully moved from selection to game field at (" + targetX + ", " + targetY + ")");
+
+                                //setzt die Farbe des RandElements im Spielfeld
+                                String cellStyle = "-fx-border-color: black; -fx-border-width: 2;" +
+                                        borderTileNameToColorNameString(newTile.getTile());
+                                cell.setStyle(cellStyle);
+
+                                //speichert den aktuellen Style damit dieser falls das Spielfeld durch setOnDragExited
+                                // zurueckgesetzt wird dieses den letzten Style anzeigt und nicht einfach nichts
+                                cell.setUserData(cellStyle);
+                            }
+
+                            event.setDropCompleted(true);
+                        } else {
+                            event.setDropCompleted(false);
+                        }
+                        event.consume(); //markiert das Event als verarbeitet
+                    });
+
                     this.gridPane.add(cell, x, y);
                 }
             }
         }
     }
+
+    /**
+     * Methode welche aus einem bestimmten TileNames Element sofern es einfarbig ist eine Farbe welche CSS kompatibel
+     * ist zurueckgibt
+     * @param input das TileNames Element
+     * @return die CSS Kompatible Farbe
+     */
+    private String borderTileNameToColorNameString(TileNames input){
+        String colorString;
+        switch (input){
+            case TileNames.GGGG:
+                colorString = "-fx-background-color: green;";
+                break;
+            case TileNames.YYYY:
+                colorString = "-fx-background-color: yellow;";
+                break;
+            case TileNames.RRRR:
+                colorString = "-fx-background-color: red;";
+                break;
+            default:
+                colorString = "";
+                break;
+        }
+        return(colorString);
+    }
+
+
+    /**
+     * Methode welche die Editor Elemente in der rechten GridPane Auswahl anzeigt
+     * @param withHoles ob in das Spielfeld auch Loecher sollen (wenn nicht wird der Loch Spielstein nicht angezeigt)
+     */
+    public void fillRightGridPaneWithEditorPieces(boolean withHoles){
+        this.rightGridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
+
+        //Abstand zwischen den Spalten und Reihen
+        this.rightGridPane.setHgap(10);
+        this.rightGridPane.setVgap(10);
+
+        //rot, gruen und gelbe Auswahl fuer den Rand
+        Label randLabel = new Label("Randsteine:"); //Schriftzug
+        this.rightGridPane.add(randLabel, 0, 4, 3, 1); // über drei Spalten, eine Zeile
+
+
+        Pane cell = new Pane();
+        cell.setPrefSize(80, 80);
+        cell.setStyle("-fx-background-color: green;"); //Gruen
+        applyDragEventsForNode(cell, TileNames.GGGG, "-fx-background-color: green; -fx-border-width: 2;");
+        this.rightGridPane.add(cell, 0, 5); //Zelle der GridPane hinzufuegen
+        cell = new Pane();
+        cell.setPrefSize(80, 80);
+        cell.setStyle("-fx-background-color: yellow;"); //Gelb
+        applyDragEventsForNode(cell, TileNames.YYYY, "-fx-background-color: yellow; -fx-border-width: 2;");
+        this.rightGridPane.add(cell, 1, 5); //Zelle der GridPane hinzufuegen
+        cell = new Pane();
+        cell.setPrefSize(80, 80);
+        cell.setStyle("-fx-background-color: red;"); //rot
+        applyDragEventsForNode(cell, TileNames.RRRR, "-fx-background-color: red; -fx-border-width: 2;");
+        this.rightGridPane.add(cell, 2, 5); //Zelle der GridPane hinzufuegen
+
+        //Loch Spielstein fuer den Editor
+        if(withHoles) {
+            Label lochSteinLabel = new Label("Lochstein:"); //Schriftzug
+            this.rightGridPane.add(lochSteinLabel, 0, 14, 3, 1); // über drei Spalten, eine Zeile
+            cell = new Pane();
+            cell.setPrefSize(80, 80);
+            cell.setStyle("-fx-background-color: gray;"); //rot
+            applyDragEventsForNode(cell, TileNames.HHHH, "-fx-background-color: gray; -fx-border-width: 2;");
+            this.rightGridPane.add(cell, 0, 15); //Zelle der GridPane hinzufuegen
+        }
+    }
+
+
+    private void applyDragEventsForNode(Node node, TileNames nodeColor, String cssDragEnteredStyle) {
+
+        // Drag starten, wenn man auf das Objekt klickt
+        node.setOnDragDetected(event -> {
+            Dragboard db = node.startDragAndDrop(TransferMode.COPY);
+            ClipboardContent content = new ClipboardContent();
+            content.putString(nodeColor.toString());
+            db.setContent(content);
+            event.consume();
+        });
+
+        /*
+        node.setOnDragEntered(event -> {
+            if (event.getGestureSource() != node && event.getDragboard().hasImage()) {
+                node.setStyle(cssDragEnteredStyle);
+            }
+            event.consume();
+        });
+
+        node.setOnDragExited(event -> {
+            node.setStyle("-fx-border-width: 2;"); // Ursprünglicher Stil wiederherstellen
+            event.consume();
+        });
+         */
+
+        node.setOnDragOver(event -> {
+            if (event.getGestureSource() != node && event.getDragboard().hasImage()) {
+                event.acceptTransferModes(TransferMode.COPY);
+            }
+            event.consume();
+        });
+
+        node.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            if (db.hasImage()) {
+                ImageView imageView = new ImageView(db.getImage());
+                imageView.setFitWidth(80);
+                imageView.setFitHeight(80);
+
+                // Optional: remove existing children first if Pane
+                if (node instanceof Pane pane) {
+                    pane.getChildren().clear();
+                    pane.getChildren().add(imageView);
+                }
+
+                event.setDropCompleted(true);
+            } else {
+                event.setDropCompleted(false);
+            }
+            event.consume();
+        });
+    }
+
+
 }

@@ -81,6 +81,8 @@ public class UserInterfaceController {
         boolean isEditorMode = !editorControls.isManaged(); //wenn sichtbar dann unsichtbar und umgekehrt (toggle)
         editorControls.setVisible(isEditorMode); //macht die Spielfeldeingaben (Breite,Hoehe,Button) sichtbar/unsichtbar
         editorControls.setManaged(isEditorMode); // Entfernt den Platz, wenn unsichtbar und nimmt ihn ein wenn sichtbar
+        if(this.game != null)
+            this.game.setEditorMode(isEditorMode);
     }
 
     /**

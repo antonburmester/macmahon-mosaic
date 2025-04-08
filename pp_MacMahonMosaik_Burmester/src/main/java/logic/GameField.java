@@ -1,6 +1,7 @@
 package logic;
 
 import gui.ErrorHandler;
+import javafx.scene.layout.Pane;
 
 /**
  * Klasse welche das Spielfeld als Zweidimensionales Array enthält
@@ -21,7 +22,7 @@ public class GameField {
         this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
             for(int x = 0; x < this.gameField.length; x++){
                 for(int y = 0; y < this.gameField[0].length; y++){
-                    this.gameField[x][y] = new Tile(TileNames.NNNN); //TODO do NNNN
+                    this.gameField[x][y] = new Tile(TileNames.NNNN);
                 }
             }
     }
@@ -67,28 +68,13 @@ public class GameField {
     }
 
     /**
-     * prüft ob das vom Spieler gewaehlte Feld valide ist
-     * @param xIndex Breitenindex
-     * @param yIndex Hoehenindex
-     * @return ob das Feld valide ist (muss im Bereich des Spielfelds sein und darf kein Randfeld sein)
-     */
-    public boolean isFieldSelectionValid(int xIndex, int yIndex){
-        int heigth = this.gameField.length;
-        int width = this.gameField[0].length;
-        return(heigth > xIndex
-                && 0 < xIndex
-                && width > yIndex
-                && 0 < yIndex);
-    }
-
-    /**
      * prueft ob das Feld schon mit einem Spielstein belegt ist und kein Loch ist
      * @param xIndex Breitenindex
      * @param yIndex Hoehenindex
      * @return ob das Feld Frei ist und kein Loch ist
      */
     public boolean isFieldFree(int xIndex, int yIndex){
-        if(isFieldSelectionValid(xIndex, yIndex)) { //wenn das gewaehlte Feld Valide ist
+        if(isFieldMiddleGamefield(xIndex, yIndex)) { //wenn das gewaehlte Feld Valide ist
             return (this.gameField[xIndex][yIndex].getTile().equals(TileNames.NNNN)); //ob das Feld leer ist
         } else { //wenn das gewaehlte Feld invalide ist
             return(false);
@@ -103,9 +89,8 @@ public class GameField {
      * @return ob der Spielstein wieder zurueckgelegt werden konnte
      */
     public boolean layTile(int xIndex, int yIndex, Tile tile){
-        System.out.println("Tile: " + tile.getTileString()); //TODO
         boolean status = true;
-        if(isFieldFree(xIndex, yIndex)){
+        if(this.isFieldFree(xIndex, yIndex) && this.isFieldMiddleGamefield(xIndex, yIndex)){
             this.gameField[xIndex][yIndex] = tile;
         } else {
             status = false;
@@ -121,12 +106,64 @@ public class GameField {
      */
     public boolean resetTile(int xIndex, int yIndex){
         boolean status = true;
-        if(!(this.gameField[xIndex][yIndex].getTile().equals(TileNames.HHHH))){
+        if(!(this.gameField[xIndex][yIndex].getTile().equals(TileNames.HHHH))
+                && this.isFieldMiddleGamefield(xIndex, yIndex)){
             this.gameField[xIndex][yIndex] = new Tile(TileNames.NNNN);
         } else {
             status = false;
         }
         return(status);
+    }
+
+    /**
+     * legt einen kompatiblen Rand Mosaikstein Rand sofern das Feld ein Randfeld ist
+     * @param xIndex Breitenindex
+     * @param yIndex Hoehenindex
+     * @param tile Spielstein
+     * @return ob der Spielstein gelegt werden konnte
+     */
+    public boolean colorBorder(int xIndex, int yIndex, Tile tile){
+        boolean status = true;
+        if(isFieldBorder(xIndex, yIndex)){
+            this.gameField[xIndex][yIndex] = tile;
+        } else {
+            status = false;
+        }
+        return(status);
+    }
+
+    /**
+     * Methode welche prueft ob es sich bei dem Feld um ein mittleres Spielfeld handelt
+     * @param xIndex die Breitenkoordinate
+     * @param yIndex die Hoehenkoordinate
+     * @return ob es sich um ein mittleres Spielfeldstueck handelt
+     */
+    public boolean isFieldMiddleGamefield(int xIndex, int yIndex){
+        return(!this.isFieldBorder(xIndex, yIndex));
+    }
+
+    /**
+     * Methode welche prueft ob es sich bei dem Feld um ein Randstueck handelt
+     * @param xIndex die Breitenkoordinate
+     * @param yIndex die Hoehenkoordinate
+     * @return ob es sich um ein Randstueck handelt
+     */
+    public boolean isFieldBorder(int xIndex, int yIndex){
+        return(yIndex == 0 || yIndex == this.gameField[0].length - 1
+                || xIndex == 0 || xIndex == this.gameField.length - 1);
+    }
+
+    /**
+     * Methdoe welche prueft ob es sich bei dem Feld um ein Eckstueck handelt
+     * @param xIndex die Breitenkoordinate
+     * @param yIndex die Hoehenkoordinate
+     * @return ob es sich um ein Eckstueck handelt
+     */
+    public boolean isFieldEdge(int xIndex, int yIndex){
+        return(((xIndex == 0 && yIndex == 0) //linke obere Ecke
+                || (xIndex == 0 && yIndex ==this.gameField[0].length - 1) //linke untere Ecke
+                || (xIndex == this.gameField.length - 1 && yIndex == 0) //rechte obere Ecke
+                || (xIndex == this.gameField.length - 1 && yIndex == this.gameField[0].length - 1))); //rechte untere Ecke
     }
 
     /**

@@ -10,6 +10,7 @@ public class Game {
     private final GUIConnector gui;
     GameField gameField;
     Tiles tiles;
+    boolean editorMode;
 
 
 
@@ -20,10 +21,28 @@ public class Game {
         this.gameField = new GameField(heigth, width);
         this.tiles = new Tiles();
         this.gui = gui;
+        this.editorMode = false;
 
         this.gui.updateGridPaneFormat(this.gameField);
         this.gui.displayGameFieldTiles(this, this.gameField);
         this.gui.displayNotUsedTiles(this, this.tiles);
+        this.gui.displayBorder(this, this.gameField);
+    }
+
+
+    /**
+     * Methode welche umschaltet ob der Editor Mode aktiv ist oder nicht
+     */
+    public void setEditorMode(boolean isEditorMode){
+        if(!isEditorMode){ //kein EditorMode
+            this.gui.displayGameFieldTiles(this, this.gameField);
+            this.gui.displayNotUsedTiles(this, this.tiles);
+            this.gui.displayBorder(this, this.gameField);
+        } else { //Editor Mode
+            this.gui.fillRightGridPaneWithEditorPieces(true); //TODO withHoles Wert an Groeße Binden
+            //this.gui.fillRightGridPaneWithEditorPieces(this.gameField.getGameField().length - 2
+            //        * this.gameField.getGameField()[0].length - 2 > 24);
+        }
     }
 
     /**
@@ -44,7 +63,7 @@ public class Game {
      * @param y in welcher Reihe des Spielfeldes der Spielstein gelegt werden soll
      * @return ob der Spielstein von der Auswahl auf das Spielfeld gelegt werden konnte
      */
-    public boolean moveTileFromNotLaidTilesToGameField(int tileIndex, int x, int y){
+    public boolean moveTileFromNotLaidTilesToGameField(int x, int y, int tileIndex){
         Tile tile  = this.tiles.getTile(tileIndex);
         boolean status = true;
         if(tile != null){
@@ -100,6 +119,24 @@ public class Game {
             this.gameField.resetTile(x, y); //Spielstein von der alten Position
             // des Spielfelds loeschen
             this.tiles.addTile(tile); //Spielstein wieder der Spielsteinauswahl hinzufuegen
+            System.out.println(this.gameField.toString());
+        } else {
+            status = false;
+        }
+        return(status);
+    }
+
+    /**
+     * Methode welche den Rand des Spielfelds einfarbt
+     * @param x die Spalte des Spielsteins
+     * @param y die Reihe des Spielsteins
+     * @return ob der Spielstein erfolgreich zurueckgelegt werden konnte
+     */
+    public boolean colorBorder(int x, int y, Tile tile){
+        boolean status = true;
+        if(tile != null && tile.isTileBorderCompatible()){
+            this.gameField.colorBorder(x, y, tile); //Spielstein von der alten Position
+            // des Spielfelds loeschen
             System.out.println(this.gameField.toString());
         } else {
             status = false;

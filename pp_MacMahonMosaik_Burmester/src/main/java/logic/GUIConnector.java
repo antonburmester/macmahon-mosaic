@@ -23,4 +23,17 @@ public interface GUIConnector {
      * @param tiles die verfuegbaren Spielsteine
      */
     void displayNotUsedTiles(Game game, Tiles tiles);
+
+    /**
+     * Methode welche den Rand des Spielfelds anzeigt
+     * @param game die Instanz des Spiels damit Aenderungen am Spielfeld auch in der Logik angepasst werden
+     * @param gameField das Spielfeld
+     */
+    void displayBorder(Game game, GameField gameField);
+
+    /**
+     * Methode welche die Editor Elemente in der rechten GridPane Auswahl anzeigt
+     * @param withHoles ob in das Spielfeld auch Loecher sollen (wenn nicht wird der Loch Spielstein nicht angezeigt)
+     */
+    void fillRightGridPaneWithEditorPieces(boolean withHoles);
 }
