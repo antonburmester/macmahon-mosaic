@@ -34,8 +34,9 @@ public class Game {
      * Methode welche umschaltet ob der Editor Mode aktiv ist oder nicht
      */
     public void setEditorMode(boolean isEditorMode){
+        System.out.println("EditorMode: " + isEditorMode);
         if(!isEditorMode){ //kein EditorMode
-            this.gui.displayGameFieldTiles(this, this.gameField);
+            //this.gui.displayGameFieldTiles(this, this.gameField); TODO hiermit werden die tiles nach neuem laden entfernt
             this.gui.displayNotUsedTiles(this, this.tiles);
             this.gui.displayBorder(this, this.gameField);
         } else { //Editor Mode
@@ -120,6 +121,7 @@ public class Game {
             // des Spielfelds loeschen
             this.tiles.addTile(tile); //Spielstein wieder der Spielsteinauswahl hinzufuegen
             System.out.println(this.gameField.toString());
+            //System.out.println(this.tiles.toString());
         } else {
             status = false;
         }

@@ -1,19 +1,14 @@
 package gui;
 
-import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import logic.*;
 
-import javax.swing.text.html.ObjectView;
 import java.util.Objects;
 
 /**
@@ -116,12 +111,13 @@ public class JavaFXGUI implements GUIConnector {
         gridPane.setPrefSize(cellSize * colCount, cellSize * rowCount); //setzt diese Zellengroeße fuer GridPane
 
         //aktualisierung der Bildgroeßen und Abstaende
-        for (Node node : gridPane.getChildren()) { //durchlaeuft jede Zelle und node ist die unterste Ebene des Inhalts
-            if (node instanceof StackPane tilePane) { //StackPane, da in meinem Code die unterste Ebene eine StackPane ist //TODO ok da instanceof genutzt
+        for(Node node : gridPane.getChildren()) { //durchlaeuft jede Zelle und node ist die unterste Ebene des Inhalts
+            // also das StackPane
+            if(node instanceof StackPane tilePane) { //StackPane, da in meinem Code die unterste Ebene eine StackPane ist //TODO ok da instanceof genutzt
                 tilePane.setPrefSize(cellSize, cellSize); //Setzt die Größe der StackPane
-                for (Node child : tilePane.getChildren()) { //durchlaeuft jede naechste Ebene der StackPane da dort
+                for(Node child : tilePane.getChildren()) { //durchlaeuft jede naechste Ebene der StackPane da dort
                     // das ImageView kommt
-                    if (child instanceof ImageView imageView) {
+                    if(child instanceof ImageView imageView) {
                         //Bindung aufheben
                         imageView.fitWidthProperty().unbind();
                         imageView.fitHeightProperty().unbind();
@@ -161,230 +157,91 @@ public class JavaFXGUI implements GUIConnector {
      *
      *                  TODO initiales setzten der Spielsteine
      */
-    /*
     public void displayGameFieldTiles(Game game, GameField gameField) {
         this.gridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
 
         int width = gameField.getGameField().length;
         int height = gameField.getGameField()[0].length;
 
-        for (int x = 1; x < width - 1; x++) { //durchlaeuft jede Spalte
-            for (int y = 1; y < height - 1; y++) { //durchlaeuft jede Zeile
-                //initiales setzten der Spielsteine falls ein Spielstand geladen wurde
-
+        for(int x = 1; x < width - 1; x++) { //Start bei 1 und Ende bei Groeße - 1 da der Rand nicht beachtet wird
+            for(int y = 1; y < height - 1; y++) { //Start bei 1 und Ende bei Groeße - 1 da der Rand nicht beachtet wird
                 Tile currTile = gameField.getTile(x, y);
 
-                //StackPane für die Zelle da eine StackPane gefaerbt werden kann
-                StackPane tilePane = new StackPane();
-                tilePane.setPrefSize(90, 90); //Größe der StackPane
-                tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;"); //rand fuer die StackPane
+                //Hintergrund als StackPane da man diese faerben kann
+                //die StackPane bleibt durchgehend an derselben Stelle der GridPane, somit muss nur einmalig ein
+                // Event Listener gesetzt werden und die Bilder werden dann einfach immer von der einen StackPane auf
+                // die andere StackPane beim verschieben gesetzt
+                StackPane slotStackPane = new StackPane();
+                slotStackPane.setPrefSize(90, 90);
+                slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
-                //die naechste Ebene der StackPane ist das ImageView in welchem ein Bild angezeigt wird
-                ImageView tileImageView = new ImageView();
-                if(currTile.getTile().equals(TileNames.NNNN)){ //noch nicht belegtes Feld
-                    //ein transparentes feld nciht gefaerbt
-                    tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
-                } else if(currTile.getTile().equals(TileNames.HHHH)){ //ein Loch
-                    //ein graues Feld
-                    tilePane.setStyle("-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 2; -fx-opacity: 0.5;");
-                } else { //ein normaler Spielstein
-                    int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal();
-                    tileImageView = this.imageViews[tileEnumIndex];
-                }
-                //Breite und Hoehe des Bildes an Breite und Hoehe der TilePane binden
-                tileImageView.setFitHeight(90);
-                tileImageView.setFitWidth(90);
-
-                //Drag Over Event: dass nur Bilder bewegt werden koennen und nicht z.B. kopiert
-                tilePane.setOnDragOver(event -> {
-                    if (event.getGestureSource() != tileImageView && event.getDragboard().hasImage()) { //ist Image
-                        event.acceptTransferModes(TransferMode.MOVE); //wird bewegt und nicht z.B. kopiert
-                    }
-                    event.consume(); //markiert das Event als verarbeitet
-                });
-
-                //Drag Entered Event: wenn ein Bild ueber ein potentielles Ziel gezogen wird, wird dieses hervorgehoben
-                tilePane.setOnDragEntered(event -> {
-                    if (event.getGestureSource() != tileImageView && event.getDragboard().hasImage()) { //ist Image
-                        tilePane.setStyle("-fx-background-color: pink;"); //setzt die Hintergrundfarbe der StackPane
-                    }
-                });
-
-                //drag Exited Event wenn das Bild wieder aus dem moeglichen Ziel herausgezogen wird,
-                // wird diese hervorhebung zurueckgesetzt
-                tilePane.setOnDragExited(event -> {
-                    tilePane.setStyle(""); //entfernt die Hintergrundfarbe und den Rand
-                    tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;"); //setzt den Rand wieder
-                });
-
-                //Drop Event für das Spielfeld: wenn das Bild in einer Zelle tilePane abgelegt wird
-                tilePane.setOnDragDropped(event -> {
-                    Dragboard db = event.getDragboard(); //Inhalt was bewegt wird
-                    if (db.hasImage()) { //wenn das zu verschiebende Objekt ein Bild ist
-                        //Zielkoordinaten
-                        Integer targetX = GridPane.getColumnIndex(tilePane);
-                        Integer targetY = GridPane.getRowIndex(tilePane);
-
-                        ImageView sourceImageView = (ImageView) event.getGestureSource(); //das zu verschiebende Bild
-
-                        //überprüfen, ob das Tile aus der Auswahl (rightGridPane) oder vom Spielfeld (gridPane) kommt
-                        if (rightGridPane.getChildren().contains(sourceImageView.getParent())) {
-                            //Tile kommt aus der Auswahl
-                            int tileIndex =
-                                    getTileIndexFromRightGridPane(GridPane.getColumnIndex(sourceImageView.getParent()),
-                                    GridPane.getRowIndex(sourceImageView.getParent()),
-                                    rightGridPane.getRowCount()); //der Index nach TileNames Reihenfolge
-
-                            //durch eine Game Klasse Methode wird die Bewegung von der Spielstein Auswahl in
-                            // das Logik Spielfeld uebernommen
-                            boolean placed = game.moveTileFromNotLaidTilesToGameField(targetX, targetY, tileIndex);
-                            if (placed) {
-                                System.out.println("Tile successfully moved from selection to game field at (" + targetX + ", " + targetY + ")");
-                                //entfernt das Bild aus der Spielstein Auswahl
-                                StackPane parentPane = (StackPane) sourceImageView.getParent();
-                                ImageView imageView = (ImageView) parentPane.getChildren().getFirst();
-                                imageView.setImage(null);//entfernt das Bild der Zelle
-                                //setzt das Bild im Spielfeld
-                                tileImageView.setImage(db.getImage());
-                            }
-                        } else if (gridPane.getChildren().contains(sourceImageView.getParent())) {
-                            //Tile kommt vom Spielfeld
-                            Integer startX = GridPane.getColumnIndex(sourceImageView.getParent());
-                            Integer startY = GridPane.getRowIndex(sourceImageView.getParent());
-
-                            if (startX != null && startY != null) {
-                                //durch eine Game Klasse Methode wird die Bewegung innerhalb des Spielfelds in
-                                // das Spielfeld der Game Instanz des Logik Package uebernommen
-                                boolean moved = game.moveTileFromGamefieldToGameField(startX, startY, targetX, targetY);
-                                if (moved) {
-                                    System.out.println("Tile moved within the game field from (" + startX + ", " + startY + ") to (" + targetX + ", " + targetY + ")");
-                                    //Spielstein aus alter Zelle loeschen
-                                    StackPane parentPane = (StackPane) sourceImageView.getParent();
-                                    ImageView imageView = (ImageView) parentPane.getChildren().getFirst();
-                                    imageView.setImage(null);//entfernt das Bild der Zelle
-                                    //setzt das Bild im Spielfeld
-                                    tileImageView.setImage(db.getImage());
-                                }
-                            }
-                        }
-
-                        event.setDropCompleted(true);
-                    } else {
-                        event.setDropCompleted(false);
-                    }
-                    event.consume(); //markiert das Event als verarbeitet
-                });
-
-                //Drag Detected Event für das Spielfeld: wenn ein Spielstein im Feld per Drag bewegt wird
-                tileImageView.setOnDragDetected(event -> {
-                    Dragboard db = tileImageView.startDragAndDrop(TransferMode.MOVE); //Dragboard um Spielstein zu ziehen
-                    ClipboardContent content = new ClipboardContent(); //Clipboard Objekt um das Bild zu speichern
-                    content.putImage(tileImageView.getImage());
-                    db.setContent(content); //fuegt das Bild in das Dragboard zum verschieben
-                    System.out.println("Dragging image: " + tileImageView.getImage());
-                    event.consume(); //markiert das Event als verarbeitet
-                });
-
-                tilePane.getChildren().add(tileImageView); //ImageView der Stackpane hinzufuegen
-
-                this.gridPane.add(tilePane, x, y); //StackPane welche das ImageView enthaelt dem GridPane in der
-                // aktuellen Zelle hinzufuegen
-            }
-        }
-        adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
-        //displayBorder(game, gameField); //TODO auskommentiert zuletzt
-        //fillRightGridPaneWithEditorPieces(true); //TODO auskommentiert zuletzt
-    }
-
-     */
-
-    public void displayGameFieldTiles(Game game, GameField gameField) {
-        this.gridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
-
-        int width = gameField.getGameField().length;
-        int height = gameField.getGameField()[0].length;
-
-        for (int x = 1; x < width - 1; x++) {
-            for (int y = 1; y < height - 1; y++) {
-                Tile currTile = gameField.getTile(x, y);
-
-                StackPane tilePane = new StackPane();
-                tilePane.setPrefSize(90, 90);
-                tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
-
-                ImageView tileImageView = new ImageView();
-
-                if (currTile.getTile().equals(TileNames.NNNN)) {
-                    tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
-                } else if (currTile.getTile().equals(TileNames.HHHH)) {
-                    tilePane.setStyle("-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 2; -fx-opacity: 0.5;");
+                if(currTile.getTile().equals(TileNames.NNNN)) {
+                    slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+                } else if(currTile.getTile().equals(TileNames.HHHH)) {
+                    slotStackPane.setStyle("-fx-background-color: gray; -fx-border-color: black; -fx-border-width: 2; -fx-opacity: 0.5;");
                 } else {
                     int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal();
+                    ImageView tileImageView;
                     tileImageView = this.imageViews[tileEnumIndex];
+                    tileImageView.setFitHeight(90);
+                    tileImageView.setFitWidth(90);
                 }
 
-                tileImageView.setFitHeight(90);
-                tileImageView.setFitWidth(90);
-
-                // final Referenz für Lambda
-                final ImageView imageViewRef = tileImageView;
-
-                tilePane.setOnDragOver(event -> {
-                    if (event.getGestureSource() != imageViewRef && event.getDragboard().hasImage()) {
-                        event.acceptTransferModes(TransferMode.MOVE);
+                //wenn ein Bild Hintergrund Konstrukt bewegt wird per Drag
+                slotStackPane.setOnDragOver(event -> {
+                    if(event.getGestureSource() != slotStackPane && event.getDragboard().hasString()) {
+                        event.acceptTransferModes(TransferMode.MOVE); //Bild bewegung registrieren
                     }
                     event.consume();
                 });
 
-                tilePane.setOnDragEntered(event -> {
-                    if (event.getGestureSource() != imageViewRef && event.getDragboard().hasImage()) {
-                        tilePane.setStyle("-fx-background-color: pink;");
+                //wenn ein Bild Hintergrund Konstrukt ueber den Slot gezogen wird
+                slotStackPane.setOnDragEntered(event -> {
+                    if(event.getGestureSource() != slotStackPane && event.getDragboard().hasString()) {
+                        slotStackPane.setStyle("-fx-background-color: pink;"); //Hintergrund faerben
                     }
                 });
 
-                tilePane.setOnDragExited(event -> {
-                    tilePane.setStyle(""); // Hintergrund entfernen
-                    tilePane.setStyle("-fx-border-color: black; -fx-border-width: 2;"); // Rand wiederherstellen
+                //wenn ein Bild Hintergrund Konstrukt ueber den Slot war und wieder weggezogen wird
+                slotStackPane.setOnDragExited(event -> {
+                    slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;"); //Hintergrund entfernen und
+                    // Rand wiederherstellen
                 });
 
-                tilePane.setOnDragDropped(event -> {
+                //wenn ein Bild Hintergrund Konstrukt auf den Slot gedropped wird
+                slotStackPane.setOnDragDropped(event -> {
                     Dragboard db = event.getDragboard();
-                    if (db.hasImage()) {
-                        Integer targetX = GridPane.getColumnIndex(tilePane);
-                        Integer targetY = GridPane.getRowIndex(tilePane);
+                    if(db.hasString()) {
+                        //int imageViewIndex = (int) event.getGestureSource();
+                        int imageViewIndex = Integer.parseInt(db.getString()); //der Index des bewegten ImageViews
+                        ImageView droppedImageView = this.imageViews[imageViewIndex]; //das bewegte ImageViews
 
-                        ImageView sourceImageView = (ImageView) event.getGestureSource();
+                        int targetX = GridPane.getColumnIndex(slotStackPane); //der Breitenindex dieses Slots
+                        int targetY = GridPane.getRowIndex(slotStackPane); //der Hoehenindex dieses Slots
+                        System.out.println(targetX + " " + targetY);
 
-                        if (rightGridPane.getChildren().contains(sourceImageView.getParent())) {
-                            int tileIndex = getTileIndexFromRightGridPane(
-                                    GridPane.getColumnIndex(sourceImageView.getParent()),
-                                    GridPane.getRowIndex(sourceImageView.getParent()),
-                                    rightGridPane.getRowCount());
-
-                            boolean placed = game.moveTileFromNotLaidTilesToGameField(targetX, targetY, tileIndex);
-                            if (placed) {
-                                System.out.println("Tile successfully moved from selection to game field at (" + targetX + ", " + targetY + ")");
-                                StackPane parentPane = (StackPane) sourceImageView.getParent();
-                                ImageView imageView = (ImageView) parentPane.getChildren().getFirst();
-                                imageView.setImage(null);
-                                imageViewRef.setImage(db.getImage());
+                        //die GridPane aus welcher das Bild kommt
+                        GridPane sourceGridPane = (GridPane) droppedImageView.getParent().getParent();
+                        //der vorherige Slot (StackPane) auf welcher das Bild vorher lag
+                        StackPane sourceSlotStackPane = (StackPane) droppedImageView.getParent();
+                        if(sourceGridPane == this.gridPane){ //das Bild kommt aus dem mittleren Spielfeld
+                            Integer startX = GridPane.getColumnIndex(sourceSlotStackPane);
+                            Integer startY = GridPane.getRowIndex(sourceSlotStackPane);
+                            boolean moved = game.moveTileFromGamefieldToGameField(startX, startY, targetX, targetY);
+                            if(moved) {
+                                System.out.println("Tile moved within the game field from (" + startX + ", " + startY + ") to (" + targetX + ", " + targetY + ")");
+                                sourceSlotStackPane.getChildren().remove(droppedImageView); //Bild aus alten Slot entfernen
+                                slotStackPane.getChildren().add(droppedImageView); //Bild in neuen Slot einfuegen
                             }
-                        } else if (gridPane.getChildren().contains(sourceImageView.getParent())) {
-                            Integer startX = GridPane.getColumnIndex(sourceImageView.getParent());
-                            Integer startY = GridPane.getRowIndex(sourceImageView.getParent());
-
-                            if (startX != null && startY != null) {
-                                boolean moved = game.moveTileFromGamefieldToGameField(startX, startY, targetX, targetY);
-                                if (moved) {
-                                    System.out.println("Tile moved within the game field from (" + startX + ", " + startY + ") to (" + targetX + ", " + targetY + ")");
-                                    StackPane parentPane = (StackPane) sourceImageView.getParent();
-                                    ImageView imageView = (ImageView) parentPane.getChildren().getFirst();
-                                    imageView.setImage(null);
-                                    imageViewRef.setImage(db.getImage());
-                                }
+                        } else if(sourceGridPane == this.rightGridPane){ //das Bild kommt aus der rechten Auswahl
+                            boolean moved = game.moveTileFromNotLaidTilesToGameField(targetX, targetY, imageViewIndex);
+                            if(moved) {
+                                System.out.println("Tile successfully moved from selection to game field at (" + targetX + ", " + targetY + ")");
+                                //Bild aus alten Slot entfernen
+                                sourceSlotStackPane.getChildren().remove(droppedImageView);
+                                slotStackPane.getChildren().add(droppedImageView); //Bild in neuen Slot einfuegen
                             }
                         }
-
                         event.setDropCompleted(true);
                     } else {
                         event.setDropCompleted(false);
@@ -392,20 +249,38 @@ public class JavaFXGUI implements GUIConnector {
                     event.consume();
                 });
 
-                imageViewRef.setOnDragDetected(event -> {
-                    Dragboard db = imageViewRef.startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
-                    content.putImage(imageViewRef.getImage());
-                    db.setContent(content);
-                    System.out.println("Dragging image: " + imageViewRef.getImage());
+                slotStackPane.setOnDragDetected(event -> {
+                    if(!slotStackPane.getChildren().isEmpty()) { //nicht leer also Bild
+                        Dragboard db = slotStackPane.startDragAndDrop(TransferMode.MOVE);
+                        ClipboardContent content = new ClipboardContent();
+                        ImageView currImageView = (ImageView) slotStackPane.getChildren().getFirst();
+                        int tileEnumIndex = this.getImageViewIndex(currImageView);
+                        content.putString(Integer.toString(tileEnumIndex));
+                        db.setContent(content);
+                        System.out.println("Dragging image Index: " + tileEnumIndex);
+                    }
                     event.consume();
                 });
 
-                tilePane.getChildren().add(imageViewRef);
-                this.gridPane.add(tilePane, x, y);
+                this.gridPane.add(slotStackPane, x, y);
             }
         }
         adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
+    }
+
+    /**
+     * Methode welche Anhand des imageViews Arrays welches alle ImageViews enthaehlt den Index des uebergebenen findet
+     * @param imageView das uebergebene ImageView zu welchem der Index gesucht wird
+     * @return der Index
+     */
+    private int getImageViewIndex(ImageView imageView){
+        int result = -1;
+        for(int i = 0; i < this.imageViews.length; i++){ //durchlaeuft jedes ImageView
+            if(this.imageViews[i].equals(imageView)){ //wenn das aktuelle ImageView das uebergebene ist
+                result = i; //den Index speichern
+            }
+        }
+        return(result);
     }
 
 
@@ -417,6 +292,13 @@ public class JavaFXGUI implements GUIConnector {
     public void displayNotUsedTiles(Game game, Tiles tiles) {
         this.rightGridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
 
+        for (Tile t : tiles.getTiles()) {
+            if (t != null)
+                System.out.println(t.getTileString());
+            else
+                System.out.println("Null");
+        }
+
         //Abstand zwischen den Spalten und Reihen
         this.rightGridPane.setHgap(10);
         this.rightGridPane.setVgap(10);
@@ -424,24 +306,28 @@ public class JavaFXGUI implements GUIConnector {
         int col = 0, row = 0; //aktuelle Spalte und Reihe der Auswahl der Spielsteine
 
         for (Tile currTile : tiles.getTiles()) { //durchlaeuft jeden Spielstein
-            String tileName = currTile.getTileString();
-            if (currTile.isTileLayable()) { //da NNNN und HHHH Tile sind aber nicht in die Auswahl sollen
-                //Index des aktuellen Spielsteins nach TileNames Reihenfolge
-                int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
-                ImageView currImageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Tile Spielsteins
+            int tileEnumIndex = - 1;
 
-                StackPane tilePane = new StackPane(); //der Hintergrund des ImageViews da diese keine Hintergrundfarbe
-                //haben koennen
-                ImageView tileImageView = new ImageView(); //das ImageView welches das Bild des Spielsteins enthaelt
-                tileImageView.setImage(currImageView.getImage()); //TODO tileImageView redundant da currImageView
-                tileImageView.setFitWidth(80); //Feste Größe
-                tileImageView.setFitHeight(80);
+            if(currTile != null && currTile.getTile() != TileNames.NNNN && currTile.getTile() != TileNames.HHHH) { //TODO da jetzt nicht mehr richtige Reihenfolge nach Editor mode
 
-                tilePane.getChildren().add(tileImageView); //ImageView der Stackpane hinzufuegen
+                StackPane slotStackPane = new StackPane();
+                slotStackPane.setPrefSize(80, 80);
+                slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+
+                if (currTile != null) {
+                    String tileName = currTile.getTileString();
+                    if (currTile.isTileLayable()) { //wenn nicht NNNN und HHHH da diese kein Bild haben
+                        tileEnumIndex = TileNames.valueOf(tileName).ordinal();
+                        ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Tile Spielsteins
+                        imageView.setFitWidth(80);
+                        imageView.setFitHeight(80);
+                        slotStackPane.getChildren().add(imageView); //ImageView der Stackpane hinzufuegen
+                    }
+                }
 
                 //Drag Entered Event: wenn ein Bild ueber die Spielstein Auswahl gezogen wird, wird diese hervorgehoben
                 rightGridPane.setOnDragEntered(event -> {
-                    if (event.getGestureSource() != tileImageView && event.getDragboard().hasImage()) { //ist Image
+                    if (((StackPane) event.getGestureSource()).getParent() != this.rightGridPane && event.getDragboard().hasString()) { //ist String
                         rightGridPane.setStyle("-fx-background-color: pink;"); //setzt die Hintergrundfarbe der StackPane
                     }
                 });
@@ -452,23 +338,28 @@ public class JavaFXGUI implements GUIConnector {
                     rightGridPane.setStyle(""); //entfernt die Hintergrundfarbe
                 });
 
-                //Drag Detected Event für die Spielstein Auswahl: wenn ein Spielstein aus der Auswahl per Drag bewegt wird
+                //Drag Detected Event für die Spielstein Auswahl: wenn dieses StackPane ImageView Konstrukt wieder aus der
+                // Auswahl per Drag bewegt wird
                 int finalCol = col;
                 int finalRow = row;
-                tileImageView.setOnDragDetected((MouseEvent event) -> {
-                    Dragboard db = tileImageView.startDragAndDrop(TransferMode.ANY); //Dragboard um Spielstein zu ziehen
-                    ClipboardContent content = new ClipboardContent(); //Clipboard Objekt um das Bild zu speichern
-                    content.putImage(tileImageView.getImage());
-                    db.setContent(content); //fuegt das Bild in das Dragboard zum verschieben
-                    System.out.println("Dragging image: " + tileImageView.getImage());
+                final int finalTileEnumIndex = tileEnumIndex;
+                slotStackPane.setOnDragDetected((MouseEvent event) -> {
+                    if (!slotStackPane.getChildren().isEmpty()) { //nicht leer also Bild
+                        Dragboard db = slotStackPane.startDragAndDrop(TransferMode.MOVE);
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(Integer.toString(finalTileEnumIndex));
+                        db.setContent(content);
+                        System.out.println("Dragging image Index: " + finalTileEnumIndex);
+                    }
                     System.out.println("Coordinates: " + finalCol + " " + finalRow);
                     System.out.println("TileNames Index of according Tile: " + getTileIndexFromRightGridPane(finalCol, finalRow, rightGridPane.getRowCount()));
                     event.consume(); //markiert das Event als verarbeitet
                 });
 
-                //Drag Over Event: dass nur Bilder bewegt werden koennen und nicht z.B. kopiert
-                tilePane.setOnDragOver(event -> {
-                    if (event.getGestureSource() != tileImageView && event.getDragboard().hasImage()) { //ist Image
+                //Drag Over Event: registiert, dass ein StackPane ImageView Konstrukt ueber dieses Slot gezogen wurde
+                slotStackPane.setOnDragOver(event -> {
+                    if (((StackPane) event.getGestureSource()).getParent() !=
+                            this.rightGridPane && event.getDragboard().hasString()) { //enthaelt einen String
                         event.acceptTransferModes(TransferMode.MOVE); //wird bewegt und nicht z.B. kopiert
                     }
                     event.consume(); //markiert das Event als verarbeitet
@@ -476,75 +367,42 @@ public class JavaFXGUI implements GUIConnector {
 
                 //Drop Event für das die Spielstein Auswahl: wenn das Bild in der rigthGridPane abgelegt wird
                 this.rightGridPane.setOnDragDropped(event -> {
-                    Dragboard db = event.getDragboard(); //Inhalt was bewegt wird
-                    if (db.hasImage()) { //wenn das zu verschiebende Objekt ein Bild ist
-                        ImageView sourceImageView = (ImageView) event.getGestureSource(); //das zu verschiebende Bild
+                    Dragboard db = event.getDragboard();
+                    if (db.hasString()) {
+                        int imageViewIndex = Integer.parseInt(db.getString());
+                        ImageView droppedImageView = this.imageViews[imageViewIndex];
 
-                        if (gridPane.getChildren().contains(sourceImageView.getParent())) {
-                            //Tile kommt vom Spielfeld zurück in die Auswahl und nicht von innerhalb der
-                            // Spielstein Auswahl
+                        //Ursprung des zu Verschiebenden Bildes (Tile) aus dem Spielfeld
+                        Integer startX = GridPane.getColumnIndex(droppedImageView.getParent());
+                        Integer startY = GridPane.getRowIndex(droppedImageView.getParent());
 
-                            //Ursprung des zu Verschiebenden Bildes (Tile) aus dem Spielfeld
-                            Integer startX = GridPane.getColumnIndex(sourceImageView.getParent());
-                            Integer startY = GridPane.getRowIndex(sourceImageView.getParent());
+                        //durch eine Game Klasse Methode wird die Bewegung vom Spielfeld in die Spielstein
+                        // Auswahl in das Spielfeld der Game Instanz des Logik Package uebernommen
+                        boolean returned = game.moveTileFromGamefieldToNotLaidTileSelection(startX, startY);
+                        if (returned) {
+                            int xIndex = imageViewIndex / 8; //die Spalte wo der Spielstein in der
+                            // Spielstein Auswahl urspruenglich mal war
+                            int yIndex = imageViewIndex % 8; //die Reihe wo der Spielstein in der
+                            // Spielstein Auswahl urspruenglich mal war
 
-                            if (startX != null && startY != null) {
-                                String TileName = game.getTileNameFromGameField(startX, startY); //der Spielsteinname
-                                // anhand der Position im GameField der Game Instanz in dem Logik Package
-                                int tileEnumPosition = TileNames.valueOf(TileName).ordinal(); //
-                                int rightPaneCol = tileEnumPosition / 8; //die Spalte wo der Spielstein in der
-                                // Spielstein Auswahl urspruenglich mal war
-                                int rightPaneRow = tileEnumPosition % 8; //die Reihe wo der Spielstein in der
-                                // Spielstein Auswahl urspruenglich mal war
+                            StackPane targetCellStackPane = this.getGridPaneCell(xIndex, yIndex, this.rightGridPane);
+                            //der vorherige Slot (StackPane) auf welcher das Bild vorher lag
+                            StackPane sourceSlotStackPane = (StackPane) droppedImageView.getParent();
+                            sourceSlotStackPane.getChildren().remove(droppedImageView); //das Bild vom alten Slot losbinden
+                            droppedImageView.setFitWidth(80);
+                            droppedImageView.setFitHeight(80);
+                            targetCellStackPane.getChildren().add(droppedImageView); //das Bild an den Slot binden
 
-                                //durch eine Game Klasse Methode wird die Bewegung vom Spielfeld in die Spielstein
-                                // Auswahl in das Spielfeld der Game Instanz des Logik Package uebernommen
-                                boolean returned = game.moveTileFromGamefieldToNotLaidTileSelection(startX, startY);
-                                if (returned) {
-                                    System.out.println("Tile moved back from game field to selection.");
-                                    //Spielstein aus alter Zelle loeschen
-                                    StackPane parentPane = (StackPane) sourceImageView.getParent();
-                                    ImageView imageView = (ImageView) parentPane.getChildren().getFirst();
-                                    imageView.setImage(null);//entfernt das Bild der Zelle
-
-                                    //setzt den neuen Spielstein fuer die Spielstein Auswahl //TODO redundant glaube ich da imageView
-                                    ImageView newTileImageView = new ImageView(db.getImage());
-                                    newTileImageView.setFitWidth(80);
-                                    newTileImageView.setFitHeight(80);
-
-                                    //der Hintergrund des ImageViews da diese keine Hintergrundfarbe
-                                    //haben koennen
-                                    StackPane newTilePane = new StackPane();
-                                    newTilePane.setPrefSize(80, 80);
-                                    newTilePane.getChildren().add(newTileImageView); //das Bild der StackPane hinzufuegen
-
-                                    //Drag Detected Event für die erneute Spielstein Auswahl: wenn ein Spielstein aus
-                                    // der Auswahl per Drag bewegt wird
-                                    newTileImageView.setOnDragDetected(e -> {
-                                        // Dragboard um Spielstein zu ziehen
-                                        Dragboard dragboard = newTileImageView.startDragAndDrop(TransferMode.MOVE);
-                                        ClipboardContent content = new ClipboardContent(); //Clipboard Objekt um das
-                                        // Bild zu speichern
-                                        content.putImage(newTileImageView.getImage());
-                                        dragboard.setContent(content); //fuegt das Bild in das Dragboard zum verschieben
-                                        e.consume(); //markiert das Event als verarbeitet
-                                    });
-
-                                    // Füge das neue StackPane an die berechnete Position in rightGridPane hinzu
-                                    rightGridPane.add(newTilePane, rightPaneCol, rightPaneRow);
-
-                                }
-                            }
+                            event.setDropCompleted(true);
+                        } else {
+                            event.setDropCompleted(false);
                         }
-
-                        event.setDropCompleted(true);
-                    } else {
-                        event.setDropCompleted(false);
                     }
+
                     event.consume(); //markiert das Event als verarbeitet
                 });
-                this.rightGridPane.add(tilePane, col, row); //Zelle dem GridPane hinzufuegen
 
+                this.rightGridPane.add(slotStackPane, col, row); //Zelle dem GridPane hinzufuegen
                 //Verwaltung fuer Reihen und Spalten
                 row++; //nach jedem durchlauf in die naechste Zeile
                 if (row == 8) { // Nach 8 Spalten neue Zeile beginnen
@@ -553,6 +411,26 @@ public class JavaFXGUI implements GUIConnector {
                 }
             }
         }
+    }
+
+    /**
+     * Methode welche die Instanz des Inhalts (StackPane) an einer Stelle in einer GridPane zurueckgibt
+     * @param xIndex der Breitenindex
+     * @param yIndex der Hoehenindex
+     * @param gridPane die GridPane in welcher gesucht wird
+     * @return die Instanz des Inhalts an der bestimmten Stelle
+     */
+    private StackPane getGridPaneCell(int xIndex, int yIndex, GridPane gridPane){
+        StackPane resultCell = null;
+        for(Node currCellNode: gridPane.getChildren()){
+            int xCoordinate = GridPane.getColumnIndex(currCellNode);
+            int yCoordinate = GridPane.getRowIndex(currCellNode);
+
+            if(xCoordinate == xIndex && yCoordinate == yIndex){
+                resultCell = (StackPane) currCellNode;
+            }
+        }
+        return(resultCell);
     }
 
     /**
@@ -575,8 +453,8 @@ public class JavaFXGUI implements GUIConnector {
         int width = gameField.getGameField().length;
         int height = gameField.getGameField()[0].length;
 
-        for (int x = 0; x < width; x++) { //durchlaeuft jede Spalte
-            for (int y = 0; y < height; y++) { //durchlaeuft jede Zeile
+        for(int x = 0; x < width; x++) { //durchlaeuft jede Spalte
+            for(int y = 0; y < height; y++) { //durchlaeuft jede Zeile
                 //filtert die Ecken raus, da diese nicht als Rand angezeigt werden sollen
                 //initiales Setzen des Randes (falls ein bestehendes Spiel geladen wurde)
                 if(!gameField.isFieldEdge(x, y) && gameField.isFieldBorder(x, y)) { //Randstueck und kein Eckstueck
@@ -597,7 +475,7 @@ public class JavaFXGUI implements GUIConnector {
 
                     //Drag Over Event: dass die Zellen kopiert werden
                     cell.setOnDragOver(event -> {
-                        if (event.getGestureSource() != cell && event.getDragboard().hasString()) { //ist String
+                        if(event.getGestureSource() != cell && event.getDragboard().hasString()) { //ist String
                             event.acceptTransferModes(TransferMode.COPY); //wird bewegt und nicht z.B. kopiert
                         }
                         event.consume(); //markiert das Event als verarbeitet
@@ -605,7 +483,7 @@ public class JavaFXGUI implements GUIConnector {
 
                     //Drag Entered Event: wenn ein Bild ueber ein potentielles Ziel gezogen wird, wird dieses hervorgehoben
                     cell.setOnDragEntered(event -> {
-                        if (event.getGestureSource() != cell && event.getDragboard().hasString()) { //ist String
+                        if(event.getGestureSource() != cell && event.getDragboard().hasString()) { //ist String
                             cell.setStyle("-fx-border-color: black; -fx-border-width: 2;" +
                                     "-fx-background-color: pink;"); //setzt die Hintergrundfarbe der StackPane
                         }
@@ -626,7 +504,7 @@ public class JavaFXGUI implements GUIConnector {
 
                         System.out.println("Got Dropped");
                         Dragboard db = event.getDragboard(); //Inhalt was bewegt wird
-                        if (db.hasString()) { //wenn das zu farbkodierende Objekt ein String ist
+                        if(db.hasString()) { //wenn das zu farbkodierende Objekt ein String ist
                             //Zielkoordinaten
                             Integer targetX = GridPane.getColumnIndex(cell);
                             Integer targetY = GridPane.getRowIndex(cell);
@@ -635,7 +513,7 @@ public class JavaFXGUI implements GUIConnector {
                             // das Logik Spielfeld uebernommen
                             Tile newTile = new Tile(TileNames.valueOf(db.getString()));
                             boolean placed = game.colorBorder(targetX, targetY, newTile);
-                            if (placed) {
+                            if(placed) {
                                 System.out.println("Tile successfully moved from selection to game field at (" + targetX + ", " + targetY + ")");
 
                                 //setzt die Farbe des RandElements im Spielfeld
@@ -745,7 +623,7 @@ public class JavaFXGUI implements GUIConnector {
 
         /*
         node.setOnDragEntered(event -> {
-            if (event.getGestureSource() != node && event.getDragboard().hasImage()) {
+            if(event.getGestureSource() != node && event.getDragboard().hasImage()) {
                 node.setStyle(cssDragEnteredStyle);
             }
             event.consume();
@@ -758,7 +636,7 @@ public class JavaFXGUI implements GUIConnector {
          */
 
         node.setOnDragOver(event -> {
-            if (event.getGestureSource() != node && event.getDragboard().hasImage()) {
+            if(event.getGestureSource() != node && event.getDragboard().hasImage()) {
                 event.acceptTransferModes(TransferMode.COPY);
             }
             event.consume();
@@ -766,13 +644,13 @@ public class JavaFXGUI implements GUIConnector {
 
         node.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
-            if (db.hasImage()) {
+            if(db.hasImage()) {
                 ImageView imageView = new ImageView(db.getImage());
                 imageView.setFitWidth(80);
                 imageView.setFitHeight(80);
 
                 // Optional: remove existing children first if Pane
-                if (node instanceof Pane pane) {
+                if(node instanceof Pane pane) {
                     pane.getChildren().clear();
                     pane.getChildren().add(imageView);
                 }

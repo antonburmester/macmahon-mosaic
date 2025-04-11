@@ -63,7 +63,7 @@ public class Tiles {
     public String toString(){
         StringBuilder sb = new StringBuilder("Tiles: ").append("\n");
         for(Tile tile : this.tiles){
-            sb.append(tile.getTileString()).append("\n");
+            sb.append(tile == null ? "null" : tile.getTileString()).append("\n");
         }
         return(sb.toString());
     }
