@@ -1,23 +1,30 @@
 package logic;
 
 /**
- * Klasse welche Spielsteine als Array enthaelt
+ * Klasse welche Spielsteine ohne NNNN und HHHH als Array enthaelt
  * Die Reihenfolge orientiert sich an der Reihenfolge des TileNames Enum
  *
  * @author Anton Burmester
  */
 
-public class Tiles {
+public class GameTiles {
     private final Tile[] tiles;
 
     /**
-     * Konstruktor welche ein Array mit allen Spielsteinen erstellt
+     * Konstruktor welcher ein Array mit allen Spielsteinen erstellt
      */
-    public Tiles(){
+    public GameTiles(){
         this.tiles = new Tile[TileNames.values().length];
-        for(int i = 0; i < TileNames.values().length; i++) { //durchlaeuft alle Mosaiksteine
+        for (int i = 0; i < TileNames.values().length - 2; i++) { //durchlaeuft alle Mosaiksteine bis auf HHHH und NNNN
             this.tiles[i] = new Tile(TileNames.values()[i]);
         }
+    }
+
+    /**
+     * Konstruktor welcher diese Klasse mit bestehenden Spielsteinen laedt
+     */
+    public GameTiles(Tile[] tiles){
+        this.tiles = tiles;
     }
 
     /**
@@ -61,7 +68,7 @@ public class Tiles {
      */
     @Override
     public String toString(){
-        StringBuilder sb = new StringBuilder("Tiles: ").append("\n");
+        StringBuilder sb = new StringBuilder("GameTiles: ").append("\n");
         for(Tile tile : this.tiles){
             sb.append(tile == null ? "null" : tile.getTileString()).append("\n");
         }

@@ -1,8 +1,5 @@
 package logic;
 
-import gui.ErrorHandler;
-import javafx.scene.layout.Pane;
-
 /**
  * Klasse welche das Spielfeld als Zweidimensionales Array enthält
  *
@@ -18,7 +15,6 @@ public class GameField {
      * @param width die Breite des neuen Spielfeldes
      */
     public GameField(int height, int width){
-
         this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
             for(int x = 0; x < this.gameField.length; x++){
                 for(int y = 0; y < this.gameField[0].length; y++){
@@ -68,50 +64,67 @@ public class GameField {
     }
 
     /**
-     * prueft ob das Feld schon mit einem Spielstein belegt ist und kein Loch ist
+     * beim mittleren Spielfeld: prueft ob das Feld schon mit einem Spielstein oder Loch belegt ist
+     * beim Rand: immer true weil beim Rand einfach die neuste Farbe zaehlt und es egal ist ob vorher eine Farbe da war
      * @param xIndex Breitenindex
      * @param yIndex Hoehenindex
-     * @return ob das Feld Frei ist und kein Loch ist
+     * @return ob das Feld Frei ist
      */
-    public boolean isFieldFree(int xIndex, int yIndex){
-        if(isFieldMiddleGamefield(xIndex, yIndex)) { //wenn das gewaehlte Feld Valide ist
-            return (this.gameField[xIndex][yIndex].getTile().equals(TileNames.NNNN)); //ob das Feld leer ist
-        } else { //wenn das gewaehlte Feld invalide ist
-            return(false);
+    public boolean isGameFieldFieldFree(int xIndex, int yIndex){
+        boolean status = false;
+        if(this.isFieldMiddleGamefield(xIndex, yIndex)) { //wenn das gewaehlte Feld Valide ist
+            status = this.gameField[xIndex][yIndex].getTile().equals(TileNames.NNNN); //ob das Feld leer ist
+        } else if(this.isFieldBorder(xIndex, yIndex)) { //wenn das gewaehlte Feld invalide ist
+            status = true;
         }
+        return(status);
     }
 
     /**
-     * legt ein Mosaikstein sofern das Feld valid und leer ist
+     * mittleren Spielfeld: legt ein Mosaikstein sofern das Feld kein Rand ist und leer ist
+     * Rand Spielfeld: legt ein Mosaikstein sofern das Feld Rand ist und der Spielstein einfarbig ist
      * @param xIndex Breitenindex
      * @param yIndex Hoehenindex
      * @param tile Spielstein
      * @return ob der Spielstein wieder zurueckgelegt werden konnte
      */
     public boolean layTile(int xIndex, int yIndex, Tile tile){
-        boolean status = true;
-        if(this.isFieldFree(xIndex, yIndex) && this.isFieldMiddleGamefield(xIndex, yIndex)){
-            this.gameField[xIndex][yIndex] = tile;
-        } else {
-            status = false;
+        boolean status = false;
+        if(this.isFieldMiddleGamefield(xIndex, yIndex)){ //mittleres Feld des Spielfelds
+            if(this.isGameFieldFieldFree(xIndex, yIndex)){ //ob das Feld frei ist
+                this.gameField[xIndex][yIndex] = tile;
+                status = true;
+            }
+        } else if(this.isFieldBorder(xIndex, yIndex)){ //Rand Feld des Spielfelds
+            if(tile.isTileBorderLayable()){ //ob der uebergebene Spielstein gueltig fuer den Rand ist
+                this.gameField[xIndex][yIndex] = tile;
+                status = true;
+            }
         }
         return(status);
     }
 
     /**
-     * Methode welche ein Spielfeld zuruecksetzt solange es sich um kein Loch handelt
+     * Methode welche ein Spielfeld zuruecksetzt
      * @param xIndex der Spaltenindex des Feldes
      * @param yIndex der Zeilenindex des Feldes
      * @return ob das Spielfeld korrekt zurueckgesetzt werden konnte
      */
     public boolean resetTile(int xIndex, int yIndex){
-        boolean status = true;
+        boolean status = false;
+        if(this.isFieldGamefield(xIndex, yIndex)){
+            this.gameField[xIndex][yIndex] = new Tile(TileNames.NNNN);
+            status = true;
+        }
+/*
         if(!(this.gameField[xIndex][yIndex].getTile().equals(TileNames.HHHH))
                 && this.isFieldMiddleGamefield(xIndex, yIndex)){
             this.gameField[xIndex][yIndex] = new Tile(TileNames.NNNN);
         } else {
             status = false;
         }
+        TODO remove
+ */
         return(status);
     }
 
@@ -121,6 +134,7 @@ public class GameField {
      * @param yIndex Hoehenindex
      * @param tile Spielstein
      * @return ob der Spielstein gelegt werden konnte
+     * TODO remove
      */
     public boolean colorBorder(int xIndex, int yIndex, Tile tile){
         boolean status = true;
@@ -130,6 +144,16 @@ public class GameField {
             status = false;
         }
         return(status);
+    }
+
+    /**
+     * Methode welche prueft ob es sich bei dem Feld um ein auf dem Spielfeld liegendes handelt
+     * @param xIndex die Breitenkoordinate
+     * @param yIndex die Hoehenkoordinate
+     * @return ob es sich das Feld auf dem Spielfeld befindet
+     */
+    public boolean isFieldGamefield(int xIndex, int yIndex){
+        return(this.isFieldMiddleGamefield(xIndex, yIndex) || this.isFieldBorder(xIndex, yIndex));
     }
 
     /**

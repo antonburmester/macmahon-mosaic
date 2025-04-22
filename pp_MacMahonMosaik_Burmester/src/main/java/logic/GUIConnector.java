@@ -20,9 +20,9 @@ public interface GUIConnector {
 
     /**
      * Methode welche alle verfuegbaren Spielsteine rechts neben dem Spielfeld anzeigt
-     * @param tiles die verfuegbaren Spielsteine
+     * @param gameTiles die verfuegbaren Spielsteine
      */
-    void displayNotUsedTiles(Game game, Tiles tiles);
+    void displayNotUsedTiles(Game game, GameTiles gameTiles);
 
     /**
      * Methode welche den Rand des Spielfelds anzeigt
@@ -36,4 +36,10 @@ public interface GUIConnector {
      * @param withHoles ob in das Spielfeld auch Loecher sollen (wenn nicht wird der Loch Spielstein nicht angezeigt)
      */
     void fillRightGridPaneWithEditorPieces(boolean withHoles);
+
+    /**
+     * Methode welche alle benoetigten Loecher Objekte in Form einer gefaerbten StackPane initialisiert und sie der
+     * holeStackPanes Menge hinzufuegt
+     */
+    void loadHolesStackPanes();
 }

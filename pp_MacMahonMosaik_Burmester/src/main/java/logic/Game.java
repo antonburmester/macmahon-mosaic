@@ -9,7 +9,7 @@ package logic;
 public class Game {
     private final GUIConnector gui;
     GameField gameField;
-    Tiles tiles;
+    GameTiles gameTiles;
     boolean editorMode;
 
 
@@ -19,13 +19,13 @@ public class Game {
      */
     public Game(GUIConnector gui, int heigth, int width){
         this.gameField = new GameField(heigth, width);
-        this.tiles = new Tiles();
+        this.gameTiles = new GameTiles();
         this.gui = gui;
         this.editorMode = false;
 
         this.gui.updateGridPaneFormat(this.gameField);
         this.gui.displayGameFieldTiles(this, this.gameField);
-        this.gui.displayNotUsedTiles(this, this.tiles);
+        this.gui.displayNotUsedTiles(this, this.gameTiles);
         this.gui.displayBorder(this, this.gameField);
     }
 
@@ -36,13 +36,15 @@ public class Game {
     public void setEditorMode(boolean isEditorMode){
         System.out.println("EditorMode: " + isEditorMode);
         if(!isEditorMode){ //kein EditorMode
-            //this.gui.displayGameFieldTiles(this, this.gameField); TODO hiermit werden die tiles nach neuem laden entfernt
-            this.gui.displayNotUsedTiles(this, this.tiles);
+            //this.gui.displayGameFieldTiles(this, this.gameField); TODO hiermit werden die gameTiles nach neuem laden entfernt
+            this.gui.displayNotUsedTiles(this, this.gameTiles);
             this.gui.displayBorder(this, this.gameField);
+            this.editorMode = false;
         } else { //Editor Mode
             this.gui.fillRightGridPaneWithEditorPieces(true); //TODO withHoles Wert an Groeße Binden
             //this.gui.fillRightGridPaneWithEditorPieces(this.gameField.getGameField().length - 2
             //        * this.gameField.getGameField()[0].length - 2 > 24);
+            this.editorMode = true;
         }
     }
 
@@ -65,11 +67,11 @@ public class Game {
      * @return ob der Spielstein von der Auswahl auf das Spielfeld gelegt werden konnte
      */
     public boolean moveTileFromNotLaidTilesToGameField(int x, int y, int tileIndex){
-        Tile tile  = this.tiles.getTile(tileIndex);
+        Tile tile  = this.gameTiles.getTile(tileIndex);
         boolean status = true;
         if(tile != null){
-            if(this.gameField.isFieldFree(x, y)){
-                this.tiles.removeTile(tile); //Spielstein aus den nicht gelegten loeschen
+            if(this.gameField.isGameFieldFieldFree(x, y)){
+                this.gameTiles.removeTile(tile); //Spielstein aus den nicht gelegten loeschen
                 this.gameField.layTile(x, y, tile); //Spielstein auf das Spielfeld legen
                 System.out.println(this.gameField.toString());
             } else {
@@ -93,7 +95,7 @@ public class Game {
         Tile tile = this.gameField.getTile(xStart, yStart);
         boolean status = true;
         if(tile != null && tile.isTileLayable()){
-            if(this.gameField.isFieldFree(xTarget, yTarget)){
+            if(this.gameField.isGameFieldFieldFree(xTarget, yTarget)){
                 this.gameField.layTile(xTarget, yTarget, tile); //Spielstein auf die neue Position des Spielfelds legen
                 this.gameField.resetTile(xStart, yStart); //Spielstein von der alten Position ////Spielstein von der alten Position
                 // des Spielfelds loeschen
@@ -119,9 +121,9 @@ public class Game {
         if(tile != null && tile.isTileLayable()){
             this.gameField.resetTile(x, y); //Spielstein von der alten Position
             // des Spielfelds loeschen
-            this.tiles.addTile(tile); //Spielstein wieder der Spielsteinauswahl hinzufuegen
+            this.gameTiles.addTile(tile); //Spielstein wieder der Spielsteinauswahl hinzufuegen
             System.out.println(this.gameField.toString());
-            //System.out.println(this.tiles.toString());
+            //System.out.println(this.gameTiles.toString());
         } else {
             status = false;
         }
@@ -144,5 +146,23 @@ public class Game {
             status = false;
         }
         return(status);
+    }
+
+    /**
+     * Getter welcher zurueckgibt ob der EditorMode aktiv ist
+     * @return ob der EditorMode aktiv ist
+     */
+    public boolean isEditorMode(){
+        return(this.editorMode);
+    }
+
+
+
+    public void setOnDragEntered(int x, int y, boolean middleGridPane){
+        if(middleGridPane){
+            if(this.gameField.isGameFieldFieldFree(x, y)){
+
+            }
+        }
     }
 }

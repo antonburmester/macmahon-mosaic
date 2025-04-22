@@ -7,18 +7,18 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test Klasse welche mithilfe von JUnit die Tiles Klasse testet
+ * Test Klasse welche mithilfe von JUnit die GameTiles Klasse testet
  * @author Anton Burmester
  */
 
-public class TilesTest {
+public class GameTilesTest {
 
     /**
-     * ob bei der Initialisierung der Tiles Klasse alle Tiles dem Set hinzugefuegt werden
+     * ob bei der Initialisierung der GameTiles Klasse alle GameTiles dem Set hinzugefuegt werden
      */
     @Test
     public void constructorTest(){
-        Tiles tilesClass = new Tiles();
+        GameTiles gameTilesClass = new GameTiles();
         Set<TileNames> allTiles = Set.of(
                 TileNames.RRRR,
                 TileNames.GGGG,
@@ -47,17 +47,17 @@ public class TilesTest {
                 TileNames.HHHH,
                 TileNames.NNNN
         );
-        assertEquals(tilesClass.getTiles(), allTiles);
+        assertEquals(gameTilesClass.getTiles(), allTiles);
     }
 
 
     /**
-     * ob bei dem loeschen eines der Tiles Teile dieses erfolgreich geloescht wird
+     * ob bei dem loeschen eines der GameTiles Teile dieses erfolgreich geloescht wird
      */
     /*
     @Test
     public void removeTileTest(){
-        Tiles tilesClass = new Tiles();
+        GameTiles tilesClass = new GameTiles();
         tilesClass.removeTile(TileNames.GRGR);
         Set<TileNames> allTiles = Set.of(
                 TileNames.RRRR,
@@ -93,12 +93,12 @@ public class TilesTest {
      */
 
     /**
-     * ob bei dem loeschen eines der Tiles Teile dieses erfolgreich geloescht wird
+     * ob bei dem loeschen eines der GameTiles Teile dieses erfolgreich geloescht wird
      */
     /*
     @Test
     public void removeTileTwiceTest(){
-        Tiles tilesClass = new Tiles();
+        GameTiles tilesClass = new GameTiles();
         tilesClass.removeTile(TileNames.GRGR);
         tilesClass.removeTile(TileNames.GRGR);
         Set<TileNames> allTiles = Set.of(
@@ -140,7 +140,7 @@ public class TilesTest {
     /*
     @Test
     public void addTileTest(){
-        Tiles tilesClass = new Tiles();
+        GameTiles tilesClass = new GameTiles();
         tilesClass.removeTile(TileNames.GRYG);
         tilesClass.addTile(TileNames.GRYG);
         Set<TileNames> allTiles = Set.of(

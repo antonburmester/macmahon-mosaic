@@ -88,10 +88,18 @@ public class Tile {
 
     /**
      * prueft ob des sich bei dem Spielstein um ein Loch (HHHH) oder einen Platzhalter handelt (NNNN)
-     * @return
+     * @return ob der Spielstein in dem mittleren Spielfeld gelegt werden kann (nicht NNNN und nicht HHHH)
      */
     public boolean isTileLayable(){
         return(!(this.tile.equals(TileNames.NNNN) || this.tile.equals(TileNames.HHHH)));
+    }
+
+    /**
+     * prueft ob des sich bei dem Spielstein ein Rand kompatiblen Spielstein handelt
+     * @return ob RRRR, GGGG oder YYYY
+     */
+    public boolean isTileBorderLayable(){
+        return(this.tile.equals(TileNames.RRRR) || this.tile.equals(TileNames.GGGG) || this.tile.equals(TileNames.YYYY));
     }
 
     /**
