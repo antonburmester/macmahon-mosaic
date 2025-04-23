@@ -9,6 +9,7 @@ public class Tile {
     private TileNames tile;
     private int rotation;
     private boolean isValid;
+    private boolean isLaid;
 
     /**
      * Konstruktor welcher einen bestimmten Spielstein ohne bestimmte Rotation initialisiert
@@ -64,6 +65,14 @@ public class Tile {
     }
 
     /**
+     * Getter welcher zurueckgibt ob der Spielstein gelegt wurde
+     * @return ob der Spielstein gelegt wurde
+     */
+    public boolean getIsLaid(){
+        return(this.isLaid);
+    }
+
+    /**
      * Methode welche den Namen des Spielsteins nach der Drehung zurueckgibt
      * @return der Name des Spielsteins unter Berucksichtigung der Drehung
      */
@@ -87,11 +96,35 @@ public class Tile {
     }
 
     /**
-     * prueft ob des sich bei dem Spielstein um ein Loch (HHHH) oder einen Platzhalter handelt (NNNN)
-     * @return ob der Spielstein in dem mittleren Spielfeld gelegt werden kann (nicht NNNN und nicht HHHH)
+     * Setter welcher Setzt dass ein Spielstein gelegt wurde oder nicht
+     * @param input ob der Spielstein gelegt wurde
      */
-    public boolean isTileLayable(){
+    public void setIsLaid(boolean input){
+        this.isLaid = input;
+    }
+
+    /**
+     * prueft ob des sich bei dem Spielstein um ein Loch (HHHH) oder einen Platzhalter handelt (NNNN)
+     * @return ob der Spielstein nicht (NNNN oder HHHH)
+     */
+    public boolean isNormalGameTile(){
         return(!(this.tile.equals(TileNames.NNNN) || this.tile.equals(TileNames.HHHH)));
+    }
+
+    /**
+     * prueft ob des sich bei dem Spielstein um einen Platzhalter (NNNN) handelt
+     * @return ob der Spielstein ein Platzhalter (NNNN) ist
+     */
+    public boolean isPlaceHolderTile(){
+        return(this.tile.equals(TileNames.NNNN));
+    }
+
+    /**
+     * prueft ob des sich bei dem Spielstein um ein Loch handelt
+     * @return ob der Spielstein ein Loch ist
+     */
+    public boolean isHoleTile(){
+        return(this.tile.equals(TileNames.HHHH));
     }
 
     /**
