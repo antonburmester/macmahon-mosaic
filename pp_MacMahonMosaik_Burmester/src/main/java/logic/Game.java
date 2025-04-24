@@ -46,11 +46,20 @@ public class Game {
             this.gui.displayBorder(this, this.gameField);
             this.editorMode = false;
         } else { //Editor Mode
-            this.gui.fillRightGridPaneWithEditorPieces(this, true); //TODO withHoles Wert an Groeße Binden
+            this.gui.fillRightGridPaneWithEditorPieces(this, true);
             //this.gui.fillRightGridPaneWithEditorPieces(this.gameField.getGameField().length - 2
             //        * this.gameField.getGameField()[0].length - 2 > 24);
             this.editorMode = true;
         }
+    }
+
+    /**
+     * Methode welche prueft ob das Spielfeld spielbar ist also ob alle Loecher falls vorhanden gelegt wurden und
+     * der Rand voll mit Randstuecken gefuellt ist
+     * @return ob das Spielfeld spielbar ist
+     */
+    public boolean isGameFieldPlayable(){
+        return(this.holeTiles.allHolesUsed() && this.gameField.isGameFieldBorderSetted());
     }
 
     /**
@@ -136,10 +145,11 @@ public class Game {
             this.gameField.resetTile(x, y); //Spielstein von der alten Position
             // des Spielfelds loeschen
             if(isGameTile) { //wenn es sich um einen Spielstein handelt
-                //this.gameTiles.addTile(tile); //Spielstein wieder der Spielsteinauswahl hinzufuegen
+                //Spielstein wieder der Spielsteinauswahl hinzufuegen
                 this.gameTiles.setTileLaidStatus(tile, false);
-            } else { //wenn es sich um einen Spielstein handelt
-                //this.holeTiles.addTile(tile); //Spielstein wieder der Lochsteinauswahl hinzufuegen
+                tile.resetTileRotation(); //Rotation in der Logik zuruecksetzen
+            } else { //wenn es sich um einen Lochstein handelt
+                //Spielstein wieder der Lochsteinauswahl hinzufuegen
                 this.holeTiles.setTileLaidStatus(tile, false);
             }
             System.out.println(this.gameField.toString());
@@ -177,12 +187,12 @@ public class Game {
     }
 
 
-
-    public void setOnDragEntered(int x, int y, boolean middleGridPane){
-        if(middleGridPane){
-            if(this.gameField.isGameFieldFieldFree(x, y)){
-
-            }
-        }
+    /**
+     * rotiert einen Spielstein
+     * @param tileIndex der Index des zu rotierenden Spielsteins
+     */
+    public void rotateGameTile(int tileIndex){
+        this.gameTiles.getTile(tileIndex).rotateTile();
+        System.out.println(this.gameField);
     }
 }

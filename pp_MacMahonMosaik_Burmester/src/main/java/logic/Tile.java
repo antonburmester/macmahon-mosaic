@@ -173,4 +173,11 @@ public class Tile {
         this.rotation = this.rotation == 270 ? 0 : this.rotation + 90; //ternaerer Operator: wenn 270 Grad + 90 = 360
         // also wieder am Anfang deshalb 0
     }
+
+    /**
+     * Methode welche die Rotation des Spielsteins zuruecksetzt
+     */
+    public void resetTileRotation(){
+        this.rotation = 0;
+    }
 }

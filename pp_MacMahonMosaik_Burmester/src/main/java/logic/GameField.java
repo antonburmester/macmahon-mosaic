@@ -191,6 +191,25 @@ public class GameField {
     }
 
     /**
+     * Methode welche prueft ob der Rand des Spielfelds komplett konfiguriert wurde
+     * @return ob der Rand des Spielfelds komplett ist
+     */
+    public boolean isGameFieldBorderSetted(){
+        boolean status = true;
+        for (int x = 0; x < this.gameField[0].length; x++) { //Zeilen des Spielfelds durchlaufen
+            for (int y = 0; y < this.gameField.length; y++) { //Spalten des Spielfelds durchlaufen
+                if (this.isFieldBorder(x, y)) { //ob das Feld ein Rand Feld ist
+                    if (!this.getTile(x, y).isTileBorderLayable()) { //wenn es sich beim Spielstein der auf dem Rand Feld
+                        // liegt nicht um ein Randstueck handelt
+                        status = false;
+                    }
+                }
+            }
+        }
+        return (status);
+    }
+
+    /**
      * Methode welche die toString Methode ueberschreibt und das Array in der Konsole ausgibt
      * @return das Array als String
      */
@@ -200,7 +219,7 @@ public class GameField {
 
         for(int y = 0; y < this.gameField[0].length; y++) {
             for (int x = 0; x < this.gameField.length; x++) {
-                sb.append(" ").append(this.gameField[x][y].getTileString()).append(" ");
+                sb.append(" ").append(this.gameField[x][y].getTileNameWithRotation()).append(" ");
             }
             sb.append("\n");
         }

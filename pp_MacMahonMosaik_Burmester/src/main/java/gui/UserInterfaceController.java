@@ -90,14 +90,16 @@ public class UserInterfaceController {
      */
     public void applyEditorChanges(){
         //TODO sicherstellen dass beide eingabefelder eine Eingabe haben
-        int heigth = Integer.parseInt(this.userHeightInput.getText());
-        int width = Integer.parseInt(this.userWidthInput.getText());
-        if(heigth >= 2 && width >= 2 && heigth <= 6 && width <= 6) {
-            //this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane);
-            this.game = new Game(this.gui, Integer.parseInt(this.userHeightInput.getText()),
-                    Integer.parseInt(this.userWidthInput.getText()));
-        } else {
-            ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
+        if(!this.userWidthInput.getText().isEmpty() && !this.userHeightInput.getText().isEmpty()) {
+            int heigth = Integer.parseInt(this.userHeightInput.getText());
+            int width = Integer.parseInt(this.userWidthInput.getText());
+            if (heigth >= 2 && width >= 2 && heigth <= 6 && width <= 6) {
+                //this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane);
+                this.game = new Game(this.gui, Integer.parseInt(this.userHeightInput.getText()),
+                        Integer.parseInt(this.userWidthInput.getText()));
+            } else {
+                ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
+            }
         }
     }
 

@@ -120,7 +120,7 @@ public class JavaFXGUI implements GUIConnector {
         //aktualisierung der Bildgroeßen und Abstaende
         for(Node node : gridPane.getChildren()) { //durchlaeuft jede Zelle und node ist die unterste Ebene des Inhalts
             // also das StackPane
-            if(node instanceof StackPane tilePane) { //StackPane, da in meinem Code die unterste Ebene eine StackPane ist //TODO ok da instanceof genutzt
+            if(node instanceof StackPane tilePane) { //StackPane, da in meinem Code die unterste Ebene eine StackPane ist
                 tilePane.setPrefSize(cellSize, cellSize); //Setzt die Größe der StackPane
                 for(Node child : tilePane.getChildren()) { //durchlaeuft jede naechste Ebene der StackPane da dort
                     // das ImageView kommt
@@ -214,6 +214,17 @@ public class JavaFXGUI implements GUIConnector {
                     tileImageView.setFitWidth(90);
                     slotStackPane.getChildren().add(tileImageView);
                 }
+
+                //Rotation des Spielsteins wenn Rechtsklick TODO noch an Logik weitergeben
+                slotStackPane.setOnMouseClicked(event -> {
+                    if(event.getButton().equals(MouseButton.SECONDARY)){
+                        Node holeOrImage = slotStackPane.getChildren().getFirst();
+                        if(holeOrImage instanceof ImageView imageView) {
+                            imageView.setRotate(imageView.getRotate() + 90); //Bild graphisch rotieren
+                            game.rotateGameTile(this.getTileIndex(imageView)); //Rotation in der Logik
+                        }
+                    }
+                });
 
                 //if(!currTile.getTile().equals(TileNames.HHHH)) { //wenn es sich um ein Loch handelt soll dieses nicht TODO vorher vorhanden
                     // bewegbar sein
@@ -493,6 +504,7 @@ public class JavaFXGUI implements GUIConnector {
                             sourceSlotStackPane.getChildren().remove(droppedImageView); //das Bild vom alten Slot losbinden
                             droppedImageView.setFitWidth(80);
                             droppedImageView.setFitHeight(80);
+                            droppedImageView.setRotate(0); //Rotation Graphisch zuruecksetzen
                             targetCellStackPane.getChildren().add(droppedImageView); //das Bild an den Slot binden
 
                             event.setDropCompleted(true);
