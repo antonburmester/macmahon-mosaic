@@ -221,11 +221,62 @@ public class GameField {
      * Spielstein: ist valide wenn alle Seiten passen
      * Loch (HHHH): ist immer valide
      * Nichts gelegt (NNNN): nie valide
+     * @param x der Breitenindex des zu ueberpruefenden Spielsteins
+     * @param y der Hoehenindex des zu ueberpruefenden Spielsteins
+     * @param acceptN ob N also nicht definiert als RandPartner zaehlt oder nicht
      * @return ob das bestimmte Feld valide ist
      */
-    public boolean isGameFieldTileMatching(){
-        boolean status = false;
-            //TODO program
+    public boolean isGameFieldTileMatching(int x, int y, boolean acceptN){
+        boolean status = true;
+        String tileNameWithRotation = this.getTile(x, y).getTileNameWithRotation(); //der Stein der ueberprueft wird
+        char sourceTileRelevantBorderLetter; //der jeweilige Buchstabe der Seite mit der Farbe des ueberprueften Stein
+        String comparedTileNameWithRotation; //der Stein rundherum
+        char comparedTileRelevantBorderLetter; //der jeweilige Buchstabe der Seite mit der Farbe des ueberprueften Stein
+        if(this.isFieldGamefield(x, y) && this.isFieldMiddleGamefield(x, y)){
+            //nach oben
+            comparedTileNameWithRotation = this.getTile(x, y - 1).getTileNameWithRotation();
+            comparedTileRelevantBorderLetter = comparedTileNameWithRotation.charAt(2);
+            sourceTileRelevantBorderLetter = tileNameWithRotation.charAt(0);
+            if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
+                    !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
+                    sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
+                    !(comparedTileRelevantBorderLetter == 'N' && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
+                status = false; //und der pruefende Stein kein Loch
+
+
+            //nach rechts
+            comparedTileNameWithRotation = this.getTile(x + 1, y).getTileNameWithRotation();
+            comparedTileRelevantBorderLetter = comparedTileNameWithRotation.charAt(3);
+            sourceTileRelevantBorderLetter = tileNameWithRotation.charAt(1);
+            if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
+                    !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
+                            sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
+                    !(comparedTileRelevantBorderLetter == 'N' && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
+                status = false; //und der pruefende Stein kein Loch
+
+
+            //nach unten
+            comparedTileNameWithRotation = this.getTile(x, y + 1).getTileNameWithRotation();
+            comparedTileRelevantBorderLetter = comparedTileNameWithRotation.charAt(0);
+            sourceTileRelevantBorderLetter = tileNameWithRotation.charAt(2);
+            if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
+                    !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
+                            sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
+                    !(comparedTileRelevantBorderLetter == 'N' && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
+                status = false; //und der pruefende Stein kein Loch
+
+
+            //nach links
+            comparedTileNameWithRotation = this.getTile(x - 1, y).getTileNameWithRotation();
+            comparedTileRelevantBorderLetter = comparedTileNameWithRotation.charAt(1);
+            sourceTileRelevantBorderLetter = tileNameWithRotation.charAt(3);
+            if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
+                    !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
+                            sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
+                    !(comparedTileRelevantBorderLetter == 'N' && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
+                status = false; //und der pruefende Stein kein Loch
+
+        }
         return(status);
     }
 
