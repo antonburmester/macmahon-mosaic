@@ -86,7 +86,7 @@ public class Game {
         Tile tile = isGameTile ? this.gameTiles.getTile(tileIndex) : this.holeTiles.getTile(tileIndex);
         System.out.println("TILELLL: " + tile.getTileString() + " Tile Index: " + tileIndex);
         boolean status = true;
-        if (this.gameField.isGameFieldFieldFree(x, y)) {
+        if (this.gameField.isFieldFieldFree(x, y)) {
             if (isGameTile) { //Spielstein aus den nicht gelegten Spielsteinen loeschen
                 //this.gameTiles.removeTile(tile);
                 //this.gameTiles.removeTile(tileIndex);
@@ -116,7 +116,7 @@ public class Game {
         boolean status = true;
         //ob der Spielstein gefunden wurde und entweder ein normaler Stein ist oder der EditorMode aktiv und Loch Stein
         if(tile != null && (tile.isNormalGameTile() || (this.editorMode && tile.isHoleTile()))){
-            if(this.gameField.isGameFieldFieldFree(xTarget, yTarget)){
+            if(this.gameField.isFieldFieldFree(xTarget, yTarget)){
                 this.gameField.layTile(xTarget, yTarget, tile); //Spielstein auf die neue Position des Spielfelds legen
                 this.gameField.resetTile(xStart, yStart); //Spielstein von der alten Position
                 // des Spielfelds loeschen
@@ -167,13 +167,12 @@ public class Game {
      * @return ob der Spielstein erfolgreich zurueckgelegt werden konnte
      */
     public boolean colorBorder(int x, int y, Tile tile){
-        boolean status = true;
-        if(tile != null && tile.isTileBorderCompatible()){
-            this.gameField.colorBorder(x, y, tile); //Spielstein von der alten Position
-            // des Spielfelds loeschen
-            System.out.println(this.gameField.toString());
-        } else {
-            status = false;
+        boolean status = false;
+        if(tile != null){
+            if(this.gameField.layTile(x, y, tile)) {
+                System.out.println(this.gameField.toString());
+                status = true;
+            }
         }
         return(status);
     }

@@ -16,11 +16,11 @@ public class GameField {
      */
     public GameField(int height, int width){
         this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
-            for(int x = 0; x < this.gameField.length; x++){
-                for(int y = 0; y < this.gameField[0].length; y++){
-                    this.gameField[x][y] = new Tile(TileNames.NNNN);
-                }
+        for(int y = 0; y < this.gameField.length; y++){
+            for(int x = 0; x < this.gameField[y].length; x++){
+                this.gameField[y][x] = new Tile(TileNames.NNNN);
             }
+        }
     }
 
     /**
@@ -30,19 +30,49 @@ public class GameField {
     public GameField(String[][] input){
         int height = input.length;
         int width = input[0].length;
-        //if(height > 0 && height <= 6 && width > 0 && width <= 6) {
-            this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
-            for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchläuft jede Hoehe des Felds
-                for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchläuft jede Breite des Felds
-                    //weist dem Feld das String Aequivalent des TileNames enum zu
-                    this.gameField[heigthIndex][widthIndex] =
-                            Tile.getTileClassFromTileName(input[heigthIndex][widthIndex]);
+        String[][] inputCompatible = this.translateSpielstandsdatei(input); //der Input aber Logik Kompatibel
+        this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
+        for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchläuft jede Hoehe des Felds
+            for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchläuft jede Breite des Felds
+                //weist dem Feld das String Aequivalent des TileNames enum zu
+                this.gameField[heigthIndex][widthIndex] =
+                        Tile.getTileClassFromTileName(inputCompatible[heigthIndex][widthIndex]);
+            }
+        }
+    }
+
+    /**
+     * Methode welche die geforderten Spielstands Eingabe eines Spielfelds mit meiner Logik Kompatibel machen.
+     * Hierbei geht es um die Raender da ich fuer die Raender RRRR, GGGG und YYYY nutze.
+     * In den uebergebenen Spielstandsdateien wird stattdessen das Randstueck so gehandhabt als wuerde es ganz liegen
+     * und deshalb ist nur die ans Spielfeld grenzende seite gefaerbt und der Rest nicht (N).
+     * @param input das uebergebene String Array der Spielstandsdatei
+     * @return das uebergebene String Array aber mit meiner Logik Kompatibel bezugelich Rand
+     */
+    private String[][] translateSpielstandsdatei(String[][] input){
+        int height = input.length;
+        int width = input[0].length;
+        String[][] inputCopy = new String[input.length][input[0].length];
+
+        for (int i = 0; i < height; i++) {
+            System.arraycopy(input[i], 0, inputCopy[i], 0, width);
+        }
+
+        for (int y = 0; y < inputCopy.length; y++) {  //jedes Element in die Hoehe durchlaufen
+            for (int x = 0; x < inputCopy[y].length; x++) {  //jedes Element in die Breite durchlaufen
+                String currentTile = inputCopy[y][x]; //das aktuelle Element
+                if(currentTile.contains("N")){ //wenn das aktuelle Element "N" enthaelt
+                    if(currentTile.contains("R")){ //und "R"
+                        inputCopy[y][x] = "RRRR"; //das Element ersetzen
+                    } else if(currentTile.contains("G")){ //und "G"
+                        inputCopy[y][x] = "GGGG"; //das Element ersetzen
+                    } else if(currentTile.contains("Y")){ // und "Y"
+                        inputCopy[y][x] = "YYYY"; //das Element ersetzen
+                    }
                 }
             }
-        //} else {
-            //TODO removing Error Handling
-        //    ErrorHandler.showError(new CustomException(CustomException.Error_Invalid_GameField_Size));
-        //}
+        }
+        return(inputCopy);
     }
 
     /**
@@ -60,7 +90,7 @@ public class GameField {
      * @return die Instanz des Spielsteins
      */
     public Tile getTile(int x, int y){
-        return(this.gameField[x][y]);
+        return(this.gameField[y][x]);
     }
 
     /**
@@ -70,11 +100,11 @@ public class GameField {
      * @param yIndex Hoehenindex
      * @return ob das Feld Frei ist
      */
-    public boolean isGameFieldFieldFree(int xIndex, int yIndex){
+    public boolean isFieldFieldFree(int xIndex, int yIndex){
         boolean status = false;
         if(this.isFieldMiddleGamefield(xIndex, yIndex)) { //wenn das gewaehlte Feld Valide ist
-            status = this.gameField[xIndex][yIndex].getTile().equals(TileNames.NNNN); //ob das Feld leer ist
-        } else if(this.isFieldBorder(xIndex, yIndex)) { //wenn das gewaehlte Feld invalide ist
+            status = this.gameField[yIndex][xIndex].getTile().equals(TileNames.NNNN); //ob das Feld leer ist
+        } else if(this.isFieldBorder(xIndex, yIndex)) { //wenn das gewaehlte Feld ein Randstueck ist
             status = true;
         }
         return(status);
@@ -91,13 +121,13 @@ public class GameField {
     public boolean layTile(int xIndex, int yIndex, Tile tile){
         boolean status = false;
         if(this.isFieldMiddleGamefield(xIndex, yIndex)){ //mittleres Feld des Spielfelds
-            if(this.isGameFieldFieldFree(xIndex, yIndex)){ //ob das Feld frei ist
-                this.gameField[xIndex][yIndex] = tile;
+            if(this.isFieldFieldFree(xIndex, yIndex)){ //ob das Feld frei ist
+                this.gameField[yIndex][xIndex] = tile;
                 status = true;
             }
         } else if(this.isFieldBorder(xIndex, yIndex)){ //Rand Feld des Spielfelds
             if(tile.isTileBorderLayable()){ //ob der uebergebene Spielstein gueltig fuer den Rand ist
-                this.gameField[xIndex][yIndex] = tile;
+                this.gameField[yIndex][xIndex] = tile;
                 status = true;
             }
         }
@@ -113,35 +143,8 @@ public class GameField {
     public boolean resetTile(int xIndex, int yIndex){
         boolean status = false;
         if(this.isFieldGamefield(xIndex, yIndex)){
-            this.gameField[xIndex][yIndex] = new Tile(TileNames.NNNN);
+            this.gameField[yIndex][xIndex] = new Tile(TileNames.NNNN);
             status = true;
-        }
-/*
-        if(!(this.gameField[xIndex][yIndex].getTile().equals(TileNames.HHHH))
-                && this.isFieldMiddleGamefield(xIndex, yIndex)){
-            this.gameField[xIndex][yIndex] = new Tile(TileNames.NNNN);
-        } else {
-            status = false;
-        }
-        TODO remove
- */
-        return(status);
-    }
-
-    /**
-     * legt einen kompatiblen Rand Mosaikstein Rand sofern das Feld ein Randfeld ist
-     * @param xIndex Breitenindex
-     * @param yIndex Hoehenindex
-     * @param tile Spielstein
-     * @return ob der Spielstein gelegt werden konnte
-     * TODO remove
-     */
-    public boolean colorBorder(int xIndex, int yIndex, Tile tile){
-        boolean status = true;
-        if(isFieldBorder(xIndex, yIndex)){
-            this.gameField[xIndex][yIndex] = tile;
-        } else {
-            status = false;
         }
         return(status);
     }
@@ -153,7 +156,8 @@ public class GameField {
      * @return ob es sich das Feld auf dem Spielfeld befindet
      */
     public boolean isFieldGamefield(int xIndex, int yIndex){
-        return(this.isFieldMiddleGamefield(xIndex, yIndex) || this.isFieldBorder(xIndex, yIndex));
+        return(xIndex >= 0 && xIndex < this.gameField[0].length //Breitenindex in der Abmessung des Spielfelds
+                && yIndex >= 0 && yIndex < this.gameField.length); //Hoehenindex in der Abmessung des Spielfelds
     }
 
     /**
@@ -163,7 +167,9 @@ public class GameField {
      * @return ob es sich um ein mittleres Spielfeldstueck handelt
      */
     public boolean isFieldMiddleGamefield(int xIndex, int yIndex){
-        return(!this.isFieldBorder(xIndex, yIndex));
+        return(xIndex >= 1 && yIndex >= 1 //Breitenindex in der Abmessung des inneren Spielfelds (ohne Rand)
+                && xIndex < this.gameField[0].length - 1 && yIndex < this.gameField.length - 1); //Hoehenindex in der
+        // Abmessung des inneren Spielfelds (ohne Rand)
     }
 
     /**
@@ -173,8 +179,8 @@ public class GameField {
      * @return ob es sich um ein Randstueck handelt
      */
     public boolean isFieldBorder(int xIndex, int yIndex){
-        return(yIndex == 0 || yIndex == this.gameField[0].length - 1
-                || xIndex == 0 || xIndex == this.gameField.length - 1);
+        return(xIndex == 0 || xIndex == this.gameField[0].length - 1
+                || yIndex == 0 || yIndex == this.gameField.length - 1);
     }
 
     /**
@@ -185,9 +191,10 @@ public class GameField {
      */
     public boolean isFieldEdge(int xIndex, int yIndex){
         return(((xIndex == 0 && yIndex == 0) //linke obere Ecke
-                || (xIndex == 0 && yIndex ==this.gameField[0].length - 1) //linke untere Ecke
-                || (xIndex == this.gameField.length - 1 && yIndex == 0) //rechte obere Ecke
-                || (xIndex == this.gameField.length - 1 && yIndex == this.gameField[0].length - 1))); //rechte untere Ecke
+                || (xIndex == 0 && yIndex == this.gameField.length - 1) //linke untere Ecke
+                || (xIndex == this.gameField[0].length - 1 && yIndex == 0) //rechte obere Ecke
+                || (xIndex == this.gameField[0].length - 1 && yIndex == this.gameField.length - 1))); //rechte untere
+                                                                                                      // Ecke
     }
 
     /**
@@ -196,8 +203,8 @@ public class GameField {
      */
     public boolean isGameFieldBorderSetted(){
         boolean status = true;
-        for (int x = 0; x < this.gameField[0].length; x++) { //Zeilen des Spielfelds durchlaufen
-            for (int y = 0; y < this.gameField.length; y++) { //Spalten des Spielfelds durchlaufen
+        for (int y = 0; y < this.gameField.length; y++) { //Zeilen des Spielfelds durchlaufen
+            for (int x = 0; x < this.gameField[y].length; x++) { //Spalten des Spielfelds durchlaufen
                 if (this.isFieldBorder(x, y)) { //ob das Feld ein Rand Feld ist
                     if (!this.getTile(x, y).isTileBorderLayable()) { //wenn es sich beim Spielstein der auf dem Rand Feld
                         // liegt nicht um ein Randstueck handelt
@@ -210,6 +217,19 @@ public class GameField {
     }
 
     /**
+     * Methode welche prueft ob ein bestimmtes Feld farblich valide
+     * Spielstein: ist valide wenn alle Seiten passen
+     * Loch (HHHH): ist immer valide
+     * Nichts gelegt (NNNN): nie valide
+     * @return ob das bestimmte Feld valide ist
+     */
+    public boolean isGameFieldTileMatching(){
+        boolean status = false;
+            //TODO program
+        return(status);
+    }
+
+    /**
      * Methode welche die toString Methode ueberschreibt und das Array in der Konsole ausgibt
      * @return das Array als String
      */
@@ -217,9 +237,9 @@ public class GameField {
     public String toString(){
         StringBuilder sb = new StringBuilder();
 
-        for(int y = 0; y < this.gameField[0].length; y++) {
-            for (int x = 0; x < this.gameField.length; x++) {
-                sb.append(" ").append(this.gameField[x][y].getTileNameWithRotation()).append(" ");
+        for (int y = 0; y < this.gameField.length; y++) { //Zeilen des Spielfelds durchlaufen
+            for (int x = 0; x < this.gameField[y].length; x++) { //Spalten des Spielfelds durchlaufen
+                sb.append(" ").append(this.gameField[y][x].getTileNameWithRotation()).append(" ");
             }
             sb.append("\n");
         }

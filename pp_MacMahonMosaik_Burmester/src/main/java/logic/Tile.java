@@ -33,6 +33,44 @@ public class Tile {
     }
 
     /**
+     * Konstruktor welcher einen bestimmten Spielstein durch seinen String initialisiert inklusive Rotation
+     * @param tileName der Name des Spielsteins (kann auch rotiert sein)
+     */
+    public Tile(String tileName){
+        for(int i = 0; i < TileNames.values().length; i++){
+            TileNames currTileName = TileNames.values()[i];
+
+            for(int r = 0; r < 360; r+=90){
+                if(getTileNameWithRotation(currTileName.name(), r).equals(tileName)){
+                    this.tile = currTileName;
+                    this.rotation = r;
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Konstruktor welcher einen bestimmten Spielstein durch seinen String initialisiert inklusive Rotation
+     * @param tileName der Name des Spielsteins (kann auch rotiert sein)
+     */
+    public Tile(String tileName, int c){
+        //for(int i = 0; i < TileNames.values().length; i++){
+        for(TileNames currTileName : TileNames.values()){
+            Tile currTile = new Tile(currTileName);
+
+            for(int r = 0; r <= 4; r++){
+                if(currTile.getTileNameWithRotation().equals(tileName)){
+                    //this = currTile;
+                    return;
+                } else {
+                    currTile.rotateTile();
+                }
+            }
+        }
+    }
+
+    /**
      * getter welcher den Spielstein bzw. das Motiv zurueckgibt
      * @return das Motiv des Spielsteins bzw. Mosaiksteins
      */
@@ -73,13 +111,21 @@ public class Tile {
     }
 
     /**
-     * Methode welche den Namen des Spielsteins nach der Drehung zurueckgibt
-     * @return der Name des Spielsteins unter Berucksichtigung der Drehung
+     * Methode welche den aktuellen Spielstein rotiert und durch die Methode getTileNameWithRotation
      */
     public String getTileNameWithRotation(){
-        StringBuilder sb = new StringBuilder(this.tile.name());
+        return(this.getTileNameWithRotation(this.tile.name(), this.rotation));
+    }
 
-        for(int i = 0; i < this.rotation; i+=90){ // durchlaeuft 90 Grad schritte
+    /**
+     * Methode welche den Namen des Spielsteins nach der Drehung zurueckgibt
+     * @param input der String welcher rotiert werden soll
+     * @return der Name des Spielsteins unter Berucksichtigung der Drehung
+     */
+    public String getTileNameWithRotation(String input, int rotation){
+        StringBuilder sb = new StringBuilder(input);
+
+        for(int i = 0; i < rotation; i+=90){ // durchlaeuft 90 Grad schritte
             sb.insert(0, sb.charAt(sb.length() - 1)); //fuegt das letzte Zeichen an den Anfang
             sb.deleteCharAt(sb.length() - 1); //entfernt das letzte Zeichen, da es wieder am Anfang ist
         }
@@ -179,5 +225,19 @@ public class Tile {
      */
     public void resetTileRotation(){
         this.rotation = 0;
+    }
+
+    /**
+     * Methode welche die toString Methode fuer die Tile Klasse ueberschreibt
+     * @return alle Nutzlasten im String
+     */
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Normal Tile Name: ").append(this.getTileString()).append("\n");
+        sb.append("Tile Name with Rotation: ").append(this.getTileNameWithRotation()).append("\n");
+        sb.append("Tile Rotation: ").append(this.getRotation()).append("\n");
+        sb.append("Tile isLaid: ").append(this.getIsLaid()).append("\n");
+        return(sb.toString());
     }
 }

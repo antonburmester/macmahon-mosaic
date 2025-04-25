@@ -205,4 +205,16 @@ public class TileTest {
         }
         assertTrue(status);
     }
+
+    /**
+     * TODO besseren Test schreiben
+     */
+    @Test
+    public void tileKonstruktorRotationStringTest(){
+        String tileNameWithRotation = "YRGY"; //YRGY YYRG GYYR RGYY YRGY
+        Tile tile = new Tile(tileNameWithRotation);
+        System.out.println("Tile Name without rotation: " + tile.getTileString());
+        System.out.println("Tile Name with rotation: " + tile.getTileNameWithRotation());
+        System.out.println("Rotation: " + tile.getRotation());
+    }
 }
