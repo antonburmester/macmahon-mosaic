@@ -137,10 +137,10 @@ public class pubTests {
     @Test
     public void test2_InEinerEckeDieAnderenZellenNochNichtBelegt_NNichtAkzeptiert(){
         String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
-                {"NGNN", "GGRG", "NNNN", "NNNN", "NNNG"},
-                {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
-                {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
-                {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+                                      {"NGNN", "GGRG", "NNNN", "NNNN", "NNNG"},
+                                      {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
+                                      {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         GameField gameField = new GameField(gameFieldInput);
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertFalse(status);
@@ -161,5 +161,223 @@ public class pubTests {
         assertTrue(status);
     }
 
+    /**
+     * Fertig-Pruefung
+     * test3
+     */
+
+    /**
+     * fuer das geloeste Feld aus obigem Beispiel
+     * ohne Loch
+     */
+    @Test
+    public void test3_FuerDasGeloesteFeldAusObigemBeispiel_OhneLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
+                                      {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.checkIfGameFieldSolved(false);
+        assertTrue(status);
+    }
+
+    /**
+     * fuer das geloeste Feld aus obigem Beispiel
+     * mit Loch
+     */
+    @Test
+    public void test3_FuerDasGeloesteFeldAusObigemBeispiel_MitLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "HHHH", "YRRG", "NNNR"},
+                                      {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.checkIfGameFieldSolved(false);
+        assertTrue(status);
+    }
+
+    /**
+     * fuer das geloeste Feld aus obigem Beispiel
+     * ohne Loch mit NNNN (nicht gefordert)
+     * um zu pruefen ob acceptN geht also das pruefen aller Spielsteine abgesehen von nicht gelegten Feldern
+     */
+    @Test
+    public void test3_FuerDasGeloesteFeldAusObigemBeispiel_OhneLoch_mitNNNN(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "NNNN", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
+                                      {"NGNN", "HHHH", "RYGY", "NNNN", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.checkIfGameFieldSolved(true);
+        assertTrue(status);
+    }
+
+    /**
+     * fuer das noch nicht fertig geloestes Feld (exampleFieldNearlySolved)
+     * ohne Loch
+     */
+    @Test
+    public void test3_FuerDasNochNichtFertigGeloestesSpielFeld_OhneLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
+                                      {"NGNN", "HHHH", "RYGY", "RGYY", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.checkIfGameFieldSolved(false);
+        assertFalse(status);
+    }
+
+    /**
+     * fuer das noch nicht fertig geloestes Feld (exampleFieldNearlySolved)
+     * mit Loch
+     */
+    @Test
+    public void test3_FuerDasNochNichtFertigGeloestesSpielFeld_MitLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
+                                      {"NGNN", "HHHH", "RYGY", "HHHH", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.checkIfGameFieldSolved(false);
+        assertFalse(status);
+    }
+
+    /**
+     * fuer das vollstaendig belegte Feld aber mit einem falsch platzierten Mosaik-Teil
+     * ohne Loch
+     */
+    @Test
+    public void test3_FuerDasVollstaendigBelegteFeldAberMitEinemFalschPlatziertenMosaikTeil_OhneLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "GYGR", "YRRG", "NNNR"}, //in der mitte Muesste YGRG sein aber
+                                      {"NGNN", "HHHH", "RYGY", "RGYY", "NNNG"}, //dort ist YGRG 90* rotiert
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.checkIfGameFieldSolved(false);
+        assertFalse(status);
+    }
+
+    /**
+     * fuer das vollstaendig belegte Feld aber mit einem falsch platzierten Mosaik-Teil
+     * mit Loch
+     */
+    @Test
+    public void test3_FuerDasVollstaendigBelegteFeldAberMitEinemFalschPlatziertenMosaikTeil_MitLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "HHHH", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "HHHH", "GYGR", "YRRG", "NNNR"}, //in der mitte Muesste YGRG sein aber
+                                      {"NGNN", "HHHH", "RYGY", "HHHH", "NNNG"}, //dort ist YGRG 90* rotiert
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.checkIfGameFieldSolved(false);
+        assertFalse(status);
+    }
+
+    /**
+     * Loesbarkeitspruefung
+     * test 4
+     */
+
+    /**
+     * Fuer ein leeres Feld wie im obigen Beispiel
+     * ohne Loch
+     */
+    @Test
+    public void test4_FuerEinLeeresFeldWieImObigenBeispiel_OhneLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
+                                      {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
+                                      {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.isGameFieldSolvable();
+        assertTrue(status);
+    }
+
+    /**
+     * Fuer ein leeres Feld wie im obigen Beispiel
+     * mit Loch
+     */
+    @Test
+    public void test4_FuerEinLeeresFeldWieImObigenBeispiel_MitLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
+                                      {"NRNN", "NNNN", "HHHH", "NNNN", "NNNR"},
+                                      {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.isGameFieldSolvable();
+        assertTrue(status);
+    }
+
+    /**
+     * fuer ein fast geloestes Feld wie im obigen Beispiel
+     * ohne Loch
+     */
+    @Test
+    public void test4_FuerEinFastGeloestesFeldWieImObigenBeispiel_OhneLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
+                                      {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.isGameFieldSolvable();
+        assertTrue(status);
+    }
+
+    /**
+     * fuer ein fast geloestes Feld wie im obigen Beispiel
+     * mit Loch
+     */
+    @Test
+    public void test4_FuerEinFastGeloestesFeldWieImObigenBeispiel_MitLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "NNNN", "HHHH", "NNNR"},
+                                      {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.isGameFieldSolvable();
+        assertTrue(status);
+    }
+
+    /**
+     * fuer ein teilweise belegtes Feld mit einem falsch gesetzten Mosaik-Teil
+     * ohne Loch
+     */
+    @Test
+    public void test4_FuerEinTeilweiseBelegtesFeldMitEinemFalschGesetztenMosaikTeil_OhneLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "NNNN", "GYRR", "NNNR"}, //bei GYRR sollte sein: YRRG
+                                      {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.isGameFieldSolvable();
+        assertTrue(status);
+    }
+
+    /**
+     * fuer ein teilweise belegtes Feld mit einem falsch gesetzten Mosaik-Teil
+     * Mit Loch
+     */
+    @Test
+    public void test4_FuerEinTeilweiseBelegtesFeldMitEinemFalschGesetztenMosaikTeil_MitLoch(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
+                                      {"NRNN", "YGRR", "HHHH", "GYRR", "NNNR"}, //bei GYRR sollte sein: YRRG
+                                      {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.isGameFieldSolvable();
+        assertTrue(status);
+    }
 
 }

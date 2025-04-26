@@ -240,7 +240,8 @@ public class GameField {
             if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
                     !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
                     sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
-                    !(comparedTileRelevantBorderLetter == 'N' && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
+                    !((comparedTileRelevantBorderLetter == 'N' ||
+                            sourceTileRelevantBorderLetter == 'N') && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
                 status = false; //und der pruefende Stein kein Loch
 
 
@@ -251,7 +252,8 @@ public class GameField {
             if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
                     !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
                             sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
-                    !(comparedTileRelevantBorderLetter == 'N' && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
+                    !((comparedTileRelevantBorderLetter == 'N' ||
+                            sourceTileRelevantBorderLetter == 'N') && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
                 status = false; //und der pruefende Stein kein Loch
 
 
@@ -262,7 +264,8 @@ public class GameField {
             if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
                     !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
                             sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
-                    !(comparedTileRelevantBorderLetter == 'N' && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
+                    !((comparedTileRelevantBorderLetter == 'N' ||
+                            sourceTileRelevantBorderLetter == 'N') && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
                 status = false; //und der pruefende Stein kein Loch
 
 
@@ -273,11 +276,38 @@ public class GameField {
             if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
                     !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
                             sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
-                    !(comparedTileRelevantBorderLetter == 'N' && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
+                    !((comparedTileRelevantBorderLetter == 'N' ||
+                            sourceTileRelevantBorderLetter == 'N') && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
                 status = false; //und der pruefende Stein kein Loch
 
         }
         return(status);
+    }
+
+    /**
+     * Methode welche prueft ob ein Spielfeld ganz gelöst wurde bzw. richtig ist.
+     * @param acceptN damit geprueft werden kann ob die bisherigen Steine korrekt liegen
+     * @return ob das Spielfeld ganz korrekt fertig ist oder bisher korrekt fertig ist abgesehen von nichts gelegten
+     * Felder
+     */
+    public boolean checkIfGameFieldSolved(boolean acceptN){
+        boolean status = true;
+        for(int y = 1; y < this.gameField.length -1; y++){
+            for(int x = 1; x < this.gameField[y].length - 1; x++){
+                if(!this.isGameFieldTileMatching(x, y, acceptN)){
+                    status = false;
+                }
+            }
+        }
+        return(status);
+    }
+
+    /**
+     * Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
+     * @return ob das Spielfeld loesbar ist
+     */
+    public boolean isGameFieldSolvable(){
+        return(true); //TODO muss noch entwickelt werden
     }
 
     /**

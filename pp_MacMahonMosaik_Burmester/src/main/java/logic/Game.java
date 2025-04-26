@@ -25,6 +25,24 @@ public class Game {
         this.gameField = new GameField(heigth, width);
         this.gameTiles = new GameTiles();
         int holesAmount = heigth * width - 24;
+        this.holeTiles = new HoleTiles(Math.max(holesAmount, 0));
+
+        this.gui.updateGridPaneFormat(this.gameField);
+        this.gui.displayGameFieldTiles(this, this.gameField);
+        this.gui.displayNotUsedTiles(this, this.gameTiles);
+        this.gui.displayBorder(this, this.gameField);
+    }
+
+    /**
+     * Konstruktor welcher ein Spiel auf Grundlage eines StringArrays erstellt
+     */
+    public Game(GUIConnector gui, String[][] inputGameField){
+        this.gui = gui;
+        this.editorMode = false;
+
+        this.gameField = new GameField(inputGameField);
+        this.gameTiles = new GameTiles(); //TODO fertig machen
+        int holesAmount = (inputGameField.length - 2) * (inputGameField[0].length - 2) - 24;
         System.out.println("holes Amount: " + Math.max(holesAmount, 0));
         this.holeTiles = new HoleTiles(Math.max(holesAmount, 0));
 
