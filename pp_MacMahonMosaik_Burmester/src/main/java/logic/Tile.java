@@ -22,12 +22,12 @@ public class Tile {
     /**
      * Konstruktor welcher einen bestimmten Spielstein inklusive Rotation initialisiert
      * @param tile der bestimmte Spielstein
-     * @param rotations die Rotation des Spielsteins
+     * @param rotation die Rotation des Spielsteins
      */
-    public Tile(TileNames tile, int rotations){
+    public Tile(TileNames tile, int rotation){
         this.tile = tile;
         this.rotation = 0;
-        for(int i = 0; i < rotations; i++){
+        for(int i = 0; i < rotation; i++){
             this.rotateTile();
         }
     }
@@ -48,6 +48,28 @@ public class Tile {
                 }
             }
         }
+    }
+
+    /**
+     * Konstruktor welcher einen Spielstein mit allen Tile Werten initialisiert
+     * @param tile der bestimmte Spielstein
+     * @param rotation die Rotation des Spielsteins
+     * @param isValid ob der Spielstein an seiner Position valide ist
+     * @param isLaid ob der Spielstein auf dem Spielfeld liegt
+     */
+    public Tile(TileNames tile, int rotation, boolean isValid, boolean isLaid){
+        this.tile = tile;
+        this.rotation = rotation;
+        this.isValid = isValid;
+        this.isLaid = isLaid;
+    }
+
+    /**
+     * Methode welche die Instanz eines Spielstein dupliziert
+     * @return die Instanz als neue unabhaengige Instanz
+     */
+    public Tile cloneTile() {
+        return(new Tile(this.tile, this.rotation, this.isValid, this.isLaid));
     }
 
     /**

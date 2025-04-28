@@ -7,13 +7,13 @@ package logic;
  * @author Anton Burmester
  */
 
-public class GameTiles {
+public class Tiles {
     private final Tile[] tiles;
 
     /**
-     * Konstruktor welcher ein Array mit allen Spielsteinen erstellt
+     * Konstruktor welcher diese Klasse mit allen Spielsteinen fuellt
      */
-    public GameTiles(){
+    public Tiles(){
         this.tiles = new Tile[TileNames.values().length - 2];
         for (int i = 0; i < TileNames.values().length - 2; i++) { //durchlaeuft alle Mosaiksteine bis auf HHHH und NNNN
             this.tiles[i] = new Tile(TileNames.values()[i]);
@@ -23,8 +23,31 @@ public class GameTiles {
     /**
      * Konstruktor welcher diese Klasse mit bestehenden Spielsteinen laedt
      */
-    public GameTiles(Tile[] tiles){
+    public Tiles(Tile[] tiles){
         this.tiles = tiles;
+    }
+
+    /**
+     * Konstruktor welcher diese Klasse mit Lochsteinen fuelt
+     * @param holesCount die Anzahl der Lochsteine
+     */
+    public Tiles(int holesCount) {
+        this.tiles = new Tile[holesCount];
+        for(int i = 0; i < holesCount; i++){
+            this.tiles[i] = new Tile(TileNames.HHHH);
+        }
+    }
+
+    /**
+     * Methode welche diese Instanz klont als DeepCopy
+     * @return eine DeepCopy dieser Instanz
+     */
+    public Tiles cloneGameTiles(){
+        Tile[] clonedTiles = new Tile[this.tiles.length];
+        for(int i = 0; i < this.tiles.length; i++){ //jeder Spielstein
+            clonedTiles[i] = this.tiles[i].cloneTile(); //Spielstein kopieren und nicht die refferenz
+        }
+        return(new Tiles(clonedTiles));
     }
 
     /**
@@ -46,6 +69,22 @@ public class GameTiles {
     }
 
     /**
+     * Methode welche den Index eines uebergebenen Spielsteins zurueckgibt
+     * @param tile der uebergebene Spielstein
+     * @return der Index des Spielsteins
+     */
+    public int getTileIndex(Tile tile){
+        int index = -1;
+        for(int i = 0; i < this.tiles.length; i++){
+            System.out.println("i: " + this.getTile(i).toString());
+            if(this.getTile(i).equals(tile)){
+                index = i;
+            }
+        }
+        return(index);
+    }
+
+    /**
      * Methode welche den Status ob ein Stein im Spielfeld gesetzt ist setzt
      * @param tile der Spielstein
      * @param status ob der Spielstein gelegt wird oder nicht
@@ -55,12 +94,26 @@ public class GameTiles {
     }
 
     /**
+     * Methode welche prueft ob alle Loecher gelegt wurden
+     * @return ob alle Loecher gelegt wurden
+     */
+    public boolean allTilesUsed(){
+        boolean status = true;
+        for(int i = 0; i < this.tiles.length; i++){
+            if(!this.getTile(i).getIsLaid()){
+                status = false;
+            }
+        }
+        return(status);
+    }
+
+    /**
      * gibt alle Mosaiksteine aus die in der Menge vorhanden sind
      * @return alle Mosaiksteine als String
      */
     @Override
     public String toString(){
-        StringBuilder sb = new StringBuilder("GameTiles: ").append("\n");
+        StringBuilder sb = new StringBuilder("Tiles: ").append("\n");
         for(Tile tile : this.tiles){
             sb.append(tile == null ? "null" : tile.getTileString()).append("\n");
         }

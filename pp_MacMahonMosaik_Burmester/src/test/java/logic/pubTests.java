@@ -295,8 +295,8 @@ public class pubTests {
                                       {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
-        boolean status = gameField.isGameFieldSolvable();
+        Game game = new Game(new FakeGUI(), gameFieldInput);
+        boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }
 
@@ -311,8 +311,8 @@ public class pubTests {
                                       {"NRNN", "NNNN", "HHHH", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
-        boolean status = gameField.isGameFieldSolvable();
+        Game game = new Game(new FakeGUI(), gameFieldInput);
+        boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }
 
@@ -327,8 +327,8 @@ public class pubTests {
                                       {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
-        boolean status = gameField.isGameFieldSolvable();
+        Game game = new Game(new FakeGUI(), gameFieldInput);
+        boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }
 
@@ -343,8 +343,8 @@ public class pubTests {
                                       {"NRNN", "YGRR", "NNNN", "HHHH", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
-        boolean status = gameField.isGameFieldSolvable();
+        Game game = new Game(new FakeGUI(), gameFieldInput);
+        boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }
 
@@ -359,8 +359,8 @@ public class pubTests {
                                       {"NRNN", "YGRR", "NNNN", "GYRR", "NNNR"}, //bei GYRR sollte sein: YRRG
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
-        boolean status = gameField.isGameFieldSolvable();
+        Game game = new Game(new FakeGUI(), gameFieldInput);
+        boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }
 
@@ -375,8 +375,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "HHHH", "GYRR", "NNNR"}, //bei GYRR sollte sein: YRRG
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
-        boolean status = gameField.isGameFieldSolvable();
+        Game game = new Game(new FakeGUI(), gameFieldInput);
+        game.printGameField();
+        game.printTiles();
+        boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }
 

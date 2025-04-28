@@ -25,12 +25,14 @@ public class GameField {
 
     /**
      * Konstruktor welcher ein bestehendes Spielfeld initialisiert
-     * @param input eingelesenes Spielfeld
+     * @param stringGameField eingelesenes Spielfeld
+     * @param gameTiles die tiles Klasse der Spielsteine mit welcher das Spielfeld gefuellt wird
+     * @param holeTiles die tiles Klasse der Lochsteine mit welcher das Spielfeld gefuellt wird
      */
-    public GameField(String[][] input){
-        int height = input.length;
-        int width = input[0].length;
-        String[][] inputCompatible = this.translateSpielstandsdatei(input); //der Input aber Logik Kompatibel
+    public GameField(String[][] stringGameField, Tiles gameTiles, Tiles holeTiles){
+        int height = stringGameField.length;
+        int width = stringGameField[0].length;
+        String[][] inputCompatible = this.translateSpielstandsdatei(stringGameField); //der Input aber Logik Kompatibel
         this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
         for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchlaeuft jede Hoehe des Felds
             for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchlaeuft jede Breite des Felds
@@ -123,11 +125,13 @@ public class GameField {
         if(this.isFieldMiddleGamefield(xIndex, yIndex)){ //mittleres Feld des Spielfelds
             if(this.isFieldFieldFree(xIndex, yIndex)){ //ob das Feld frei ist
                 this.gameField[yIndex][xIndex] = tile;
+                tile.setIsLaid(true);
                 status = true;
             }
         } else if(this.isFieldBorder(xIndex, yIndex)){ //Rand Feld des Spielfelds
             if(tile.isTileBorderLayable()){ //ob der uebergebene Spielstein gueltig fuer den Rand ist
                 this.gameField[yIndex][xIndex] = tile;
+                tile.setIsLaid(true);
                 status = true;
             }
         }
@@ -303,16 +307,33 @@ public class GameField {
     }
 
     /**
-     * Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
-     * @return ob das Spielfeld loesbar ist
+     * Methode welche eine Kopie des Spielfelds erstellt
+     * @return die Kopie des Spielfelds
      */
-    public boolean isGameFieldSolvable(){
-        return(true); //TODO muss noch entwickelt werden
-    }
+    public GameField cloneGameField(Tiles existingGameFieldTiles, Tiles existingHoleTiles,
+                                    Tiles copyGameFieldTiles, Tiles copyHoleTiles){
+        int width = this.gameField[0].length;
+        int heigth = this.gameField.length;
+        GameField copy = new GameField(heigth, width); //neue Instanz eines neuen Spielfelds
 
-    public GameField gamefieldCopy(){
-        GameField copy = new GameField(this.gameField[0].length, this.gameField.length);
-        //for(int y = 0; y < t)
+        Tile currNotCopyTile;
+        Tile copyTile;
+        for(int y = 0; y < heigth; y++){ //Hoehenindex
+            for(int x = 0; x < width; x++){ //Breitenindex
+                currNotCopyTile = this.getTile(x, y); //der aktuelle Stein welcher in das neue Spielfeld kopiert werden
+                // soll
+                if(currNotCopyTile.isNormalGameTile()){ //normaler Spielstein
+                    System.out.println(currNotCopyTile.toString());
+                    //die kopie von dem aktuell im Spielfeld liegenden Spielstein
+                    copyTile = copyGameFieldTiles.getTile(existingGameFieldTiles.getTileIndex(currNotCopyTile));
+                } else if(currNotCopyTile.isHoleTile()){ //Loch
+                    copyTile = copyHoleTiles.getTile(existingHoleTiles.getTileIndex(currNotCopyTile));
+                } else { //nichts gelegt
+                    copyTile = new Tile(TileNames.NNNN);
+                }
+                copy.layTile(x, y, copyTile); //den Stein in das neue Spielfeld legen
+            }
+        }
         return (copy);
     }
 

@@ -359,9 +359,9 @@ public class JavaFXGUI implements GUIConnector {
     /**
      * Methode welche alle verfuegbaren Spielsteine rechts neben dem Spielfeld anzeigt
      * @param game Spiel Instanz aus welcher die Methoden kommen um die Bewegung eines Spielsteins der Logik mitzuteilen
-     * @param gameTiles die verfuegbaren Spielsteine
+     * @param tiles die verfuegbaren Spielsteine
      */
-    public void displayNotUsedTiles(Game game, GameTiles gameTiles) {
+    public void displayNotUsedTiles(Game game, Tiles tiles) {
         this.rightGridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
 
         //Abstand zwischen den Spalten und Reihen
@@ -370,7 +370,7 @@ public class JavaFXGUI implements GUIConnector {
 
         int col = 0, row = 0; //aktuelle Spalte und Reihe der Auswahl der Spielsteine
 
-        for (Tile currTile : gameTiles.getTiles()) { //durchlaeuft jeden Spielstein
+        for (Tile currTile : tiles.getTiles()) { //durchlaeuft jeden Spielstein
 
             //da NNNN und HHHH nicht legbar sind, sollen sie auch nicht in der Auswahl auftauchen
             if(!(!currTile.getIsLaid() &&

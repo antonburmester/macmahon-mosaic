@@ -22,9 +22,9 @@ public interface GUIConnector {
     /**
      * Methode welche alle verfuegbaren Spielsteine rechts neben dem Spielfeld anzeigt
      * @param game die Instanz des Spiels damit Aenderungen am Spielfeld auch in der Logik angepasst werden
-     * @param gameTiles die verfuegbaren Spielsteine
+     * @param tiles die verfuegbaren Spielsteine
      */
-    void displayNotUsedTiles(Game game, GameTiles gameTiles);
+    void displayNotUsedTiles(Game game, Tiles tiles);
 
     /**
      * Methode welche den Rand des Spielfelds anzeigt

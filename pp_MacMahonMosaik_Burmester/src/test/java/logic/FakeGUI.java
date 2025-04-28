@@ -30,10 +30,10 @@ public class FakeGUI implements GUIConnector{
      * Methode welche alle verfuegbaren Spielsteine rechts neben dem Spielfeld anzeigt
      *
      * @param game      die Instanz des Spiels damit Aenderungen am Spielfeld auch in der Logik angepasst werden
-     * @param gameTiles die verfuegbaren Spielsteine
+     * @param tiles die verfuegbaren Spielsteine
      */
     @Override
-    public void displayNotUsedTiles(Game game, GameTiles gameTiles) {
+    public void displayNotUsedTiles(Game game, Tiles tiles) {
 
     }
 

@@ -10,10 +10,10 @@ package logic;
  */
 public class Game {
     private final GUIConnector gui;
-    GameField gameField;
-    GameTiles gameTiles;
-    HoleTiles holeTiles;
-    boolean editorMode;
+    private GameField gameField;
+    private Tiles tiles;
+    private Tiles holeTiles;
+    private boolean editorMode;
 
 
     /**
@@ -24,13 +24,13 @@ public class Game {
         this.editorMode = false;
 
         this.gameField = new GameField(heigth, width);
-        this.gameTiles = new GameTiles();
+        this.tiles = new Tiles();
         int holesAmount = heigth * width - 24;
-        this.holeTiles = new HoleTiles(Math.max(holesAmount, 0));
+        this.holeTiles = new Tiles(Math.max(holesAmount, 0));
 
         this.gui.updateGridPaneFormat(this.gameField);
         this.gui.displayGameFieldTiles(this, this.gameField);
-        this.gui.displayNotUsedTiles(this, this.gameTiles);
+        this.gui.displayNotUsedTiles(this, this.tiles);
         this.gui.displayBorder(this, this.gameField);
     }
 
@@ -42,15 +42,41 @@ public class Game {
         this.gui = gui;
         this.editorMode = false;
 
-        this.gameField = new GameField(inputGameField);
-        this.gameTiles = new GameTiles();
+        this.tiles = new Tiles();
+        //this.gameField = new GameField(inputGameField, this.tiles); //TODO
         int holesAmount = (inputGameField.length - 2) * (inputGameField[0].length - 2) - 24;
-        this.holeTiles = new HoleTiles(Math.max(holesAmount, 0));
+        this.holeTiles = new Tiles(Math.max(holesAmount, 0));
 
         this.gui.updateGridPaneFormat(this.gameField);
         this.gui.displayGameFieldTiles(this, this.gameField);
-        this.gui.displayNotUsedTiles(this, this.gameTiles);
+        this.gui.displayNotUsedTiles(this, this.tiles);
         this.gui.displayBorder(this, this.gameField);
+    }
+
+    /**
+     * Konstruktor welcher ein Spiel initialisiert auf Grundlage eines neuen Spielfelds, neuer Spielsteine und neuer
+     * Lochsteine
+     * @param gameField die Instanz des neuen Spielfelds
+     * @param tiles die Instanz der neuen Spielsteine
+     * @param holeTiles die Instanz der neuen Lochsteine
+     */
+    private Game(GameField gameField, Tiles tiles, Tiles holeTiles){
+        this.gui = null;
+        this.gameField = gameField;
+        this.tiles = tiles;
+        this.holeTiles = holeTiles;
+    }
+
+    /**
+     * Methode welche die Game Instanz kopiert und erneuert
+     * @return die neue Game Instanz
+     */
+    public Game cloneGame(){
+        Tiles clonedTiles = this.tiles.cloneGameTiles();
+        Tiles clonedHoleTiles = this.holeTiles.cloneGameTiles();
+        GameField clonedGameField = this.gameField.cloneGameField(
+                this.tiles, this.holeTiles, clonedTiles, clonedHoleTiles);
+        return(new Game(clonedGameField, clonedTiles, clonedHoleTiles));
     }
 
 
@@ -61,7 +87,7 @@ public class Game {
     public void setEditorMode(boolean isEditorMode){
         if(!isEditorMode){ //kein EditorMode
             //this.gui.displayGameFieldTiles(this, this.gameField);
-            this.gui.displayNotUsedTiles(this, this.gameTiles);
+            this.gui.displayNotUsedTiles(this, this.tiles);
             this.gui.displayBorder(this, this.gameField);
             this.editorMode = false;
         } else { //Editor Mode
@@ -78,7 +104,7 @@ public class Game {
      * @return ob das Spielfeld spielbar ist
      */
     public boolean isGameFieldPlayable(){
-        return(this.holeTiles.allHolesUsed() && this.gameField.isGameFieldBorderSetted());
+        return(this.holeTiles.allTilesUsed() && this.gameField.isGameFieldBorderSetted());
     }
 
     /**
@@ -92,16 +118,15 @@ public class Game {
      */
     public boolean moveTileFromNotLaidTilesToGameField(int x, int y, int tileIndex, boolean isGameTile){
         //wenn isGameTile dann wird der in den Spielsteinen gesucht und wenn nicht dann in den Lochsteinen
-        Tile tile = isGameTile ? this.gameTiles.getTile(tileIndex) : this.holeTiles.getTile(tileIndex);
+        Tile tile = isGameTile ? this.tiles.getTile(tileIndex) : this.holeTiles.getTile(tileIndex);
         boolean status = true;
         if (this.gameField.isFieldFieldFree(x, y)) {
             if (isGameTile) { //Spielstein aus den nicht gelegten Spielsteinen loeschen
-                this.gameTiles.setTileLaidStatus(tile, true);
+                this.tiles.setTileLaidStatus(tile, true); //TODO glaube ich irrelevant
             } else { //Loch aus den nicht gelegten Loechern loeschen
-                this.holeTiles.setTileLaidStatus(tile, true);
+                this.holeTiles.setTileLaidStatus(tile, true); //TODO glaube ich irrelevant
             }
             this.gameField.layTile(x, y, tile); //Spielstein auf das Spielfeld legen
-            System.out.println(this.gameField.toString());
         } else {
             status = false;
         }
@@ -125,7 +150,6 @@ public class Game {
                 this.gameField.layTile(xTarget, yTarget, tile); //Spielstein auf die neue Position des Spielfelds legen
                 this.gameField.resetTile(xStart, yStart); //Spielstein von der alten Position
                 // des Spielfelds loeschen
-                System.out.println(this.gameField.toString());
             } else {
                 status = false;
             }
@@ -151,13 +175,12 @@ public class Game {
             // des Spielfelds loeschen
             if(isGameTile) { //wenn es sich um einen Spielstein handelt
                 //Spielstein wieder der Spielsteinauswahl hinzufuegen
-                this.gameTiles.setTileLaidStatus(tile, false);
+                this.tiles.setTileLaidStatus(tile, false);
                 tile.resetTileRotation(); //Rotation in der Logik zuruecksetzen
             } else { //wenn es sich um einen Lochstein handelt
                 //Spielstein wieder der Lochsteinauswahl hinzufuegen
                 this.holeTiles.setTileLaidStatus(tile, false);
             }
-            System.out.println(this.gameField.toString());
         } else {
             status = false;
         }
@@ -174,7 +197,6 @@ public class Game {
         boolean status = false;
         if(tile != null){
             if(this.gameField.layTile(x, y, tile)) {
-                System.out.println(this.gameField.toString());
                 status = true;
             }
         }
@@ -195,7 +217,51 @@ public class Game {
      * @param tileIndex der Index des zu rotierenden Spielsteins
      */
     public void rotateGameTile(int tileIndex){
-        this.gameTiles.getTile(tileIndex).rotateTile();
-        System.out.println(this.gameField);
+        this.tiles.getTile(tileIndex).rotateTile();
+    }
+
+    /**
+     * Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
+     * @return ob das Spielfeld loesbar ist
+     */
+    public boolean isGameFieldSolvable(){
+        Tiles clonedTiles = this.tiles.cloneGameTiles();
+        Tiles clonedHoleTiles = this.holeTiles.cloneGameTiles();
+        GameField clonedGameField = this.gameField.cloneGameField(
+                this.tiles, this.holeTiles, clonedTiles, clonedHoleTiles);
+        return(this.isGameFieldSolvableRecoursive(clonedGameField, clonedTiles));
+    }
+
+    /**
+     * Rekursive Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
+     * Hierfuer wird gesucht bis ein neuer Stein gefunden wurde der auf ein leeres Feld passt
+     * Wenn an einen Punkt gekommen wird wo es keine weiteren Steine mehr gibt wird durch Backtracking zurueckgegangen
+     * und eine andere Kombination versucht
+     * Das geht solange bis das Spielfeld loesbar ist oder jede Kombination versucht wurde
+     * @param clonedGameField eine Kopie des aktuellen Spielfelds
+     * @param clonedTiles eine Kopie der Spielsteine
+     * @return ob eine passende Kombination gefunden wurde
+     */
+    private boolean isGameFieldSolvableRecoursive(GameField clonedGameField, Tiles clonedTiles){
+        if(clonedGameField.checkIfGameFieldSolved(false)) return(true);
+
+        //jedes Feld durchlaufen
+        for(int y = 0; y < clonedGameField.getGameField().length; y++){ //Hoehenindex
+            for(int x = 0; x < clonedGameField.getGameField()[y].length; x++){ //Breitenindex
+                Tile currGameFieldTile = clonedGameField.getTile(x, y); //das aktuelle Feld
+                if(currGameFieldTile.isPlaceHolderTile()){ //wenn es ein leeres Feld ist
+                    for(Tile currTile : clonedTiles.getTiles()){ //alle Spielsteine durchlaufen
+                        if(!currTile.getIsLaid()){ //wenn der aktuelle Spielstein noch nicht gelegt wurde
+                            for(int rotation = 0; rotation < 270; rotation += 90){ //alle Rotationen durchlaufen
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //return(this.isGameFieldSolvableRecoursive(clonedGameField, clonedTiles));
+        return true; //TODO
     }
 }
