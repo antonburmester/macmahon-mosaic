@@ -16,29 +16,52 @@ public class GameField {
      */
     public GameField(int height, int width){
         this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
-        for(int y = 0; y < this.gameField.length; y++){
-            for(int x = 0; x < this.gameField[y].length; x++){
-                this.gameField[y][x] = new Tile(TileNames.NNNN);
-            }
-        }
+        this.placeGameFieldEmpty();
     }
 
     /**
      * Konstruktor welcher ein bestehendes Spielfeld initialisiert
      * @param stringGameField eingelesenes Spielfeld
-     * @param gameTiles die tiles Klasse der Spielsteine mit welcher das Spielfeld gefuellt wird
-     * @param holeTiles die tiles Klasse der Lochsteine mit welcher das Spielfeld gefuellt wird
+     * @param gameTiles die tiles Instanz der Spielsteine mit welcher das Spielfeld gefuellt wird
+     * @param holeTiles die tiles Instanz der Lochsteine mit welcher das Spielfeld gefuellt wird
      */
     public GameField(String[][] stringGameField, Tiles gameTiles, Tiles holeTiles){
         int height = stringGameField.length;
         int width = stringGameField[0].length;
         String[][] inputCompatible = this.translateSpielstandsdatei(stringGameField); //der Input aber Logik Kompatibel
         this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
+        this.placeGameFieldEmpty(); //Spielfeld mit leeren feldern fuellen
+
         for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchlaeuft jede Hoehe des Felds
             for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchlaeuft jede Breite des Felds
-                //weist dem Feld das String Aequivalent des TileNames enum zu
-                this.gameField[heigthIndex][widthIndex] =
-                        Tile.getTileClassFromTileName(inputCompatible[heigthIndex][widthIndex]);
+
+                String laidTileName = inputCompatible[heigthIndex][widthIndex];
+                Tile targetTile;
+                if (laidTileName.equals(TileNames.HHHH.name())) { //ein Loch gelegt
+                    targetTile = holeTiles.getTileByNameWithRotation(laidTileName);
+                } else if (laidTileName.equals(TileNames.NNNN.name())) { //nichts gelegt
+                    targetTile = new Tile(TileNames.NNNN);
+                } else { //ein Spielstein gelegt
+                    if(!this.isFieldBorder(widthIndex, heigthIndex)) { //wenn es sich um ein Spielfeldstueck handelt
+                        targetTile = gameTiles.getTileByNameWithRotation(laidTileName);
+                    } else { //wenn es sich um ein Randstueck handelt
+                        targetTile = new Tile(laidTileName);
+                    }
+                }
+                this.layTile(widthIndex, heigthIndex, targetTile);
+                //this.gameField[heigthIndex][widthIndex] = targetTile;
+                targetTile.setIsLaid(true);
+            }
+        }
+    }
+
+    /**
+     * Methode welche das Spielfeld mit nicht platzierten Feldern (NNNN) fuellt
+     */
+    private void placeGameFieldEmpty(){
+        for(int y = 0; y < this.gameField.length; y++){
+            for(int x = 0; x < this.gameField[y].length; x++){
+                this.gameField[y][x] = new Tile(TileNames.NNNN);
             }
         }
     }
@@ -56,6 +79,7 @@ public class GameField {
         int width = input[0].length;
         String[][] inputCopy = new String[input.length][input[0].length];
 
+        //Deepcopy der Inpput Stringdatei
         for (int i = 0; i < height; i++) {
             System.arraycopy(input[i], 0, inputCopy[i], 0, width);
         }
@@ -323,7 +347,6 @@ public class GameField {
                 currNotCopyTile = this.getTile(x, y); //der aktuelle Stein welcher in das neue Spielfeld kopiert werden
                 // soll
                 if(currNotCopyTile.isNormalGameTile()){ //normaler Spielstein
-                    System.out.println(currNotCopyTile.toString());
                     //die kopie von dem aktuell im Spielfeld liegenden Spielstein
                     copyTile = copyGameFieldTiles.getTile(existingGameFieldTiles.getTileIndex(currNotCopyTile));
                 } else if(currNotCopyTile.isHoleTile()){ //Loch

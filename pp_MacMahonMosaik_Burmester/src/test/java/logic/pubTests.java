@@ -29,7 +29,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.layTile(2, 2, new Tile("YGRG"));
         assertTrue(status);
     }
@@ -45,7 +48,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.layTile(1, 1, new Tile("GRYG"));
         assertTrue(status);
     }
@@ -61,7 +67,10 @@ public class pubTests {
                                       {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.layTile(1, 1, new Tile("YYRR"));
         assertTrue(status);
     }
@@ -76,7 +85,10 @@ public class pubTests {
                                       {"NRNN", "HHHH", "NNNN", "HHHH", "NNNR"},
                                       {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(4); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.layTile(2, 2, new Tile("YYRR"));
         assertTrue(status);
     }
@@ -96,7 +108,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.isGameFieldTileMatching(2, 2, false);
         assertTrue(status);
     }
@@ -111,7 +126,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertTrue(status);
     }
@@ -126,7 +144,10 @@ public class pubTests {
                                       {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.isGameFieldTileMatching(1, 1, true);
         assertTrue(status);
     }
@@ -141,7 +162,10 @@ public class pubTests {
                                       {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertFalse(status);
     }
@@ -156,7 +180,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertTrue(status);
     }
@@ -177,7 +204,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertTrue(status);
     }
@@ -193,7 +223,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "HHHH", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertTrue(status);
     }
@@ -210,7 +243,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "HHHH", "RYGY", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.checkIfGameFieldSolved(true);
         assertTrue(status);
     }
@@ -226,7 +262,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
                                       {"NGNN", "HHHH", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
     }
@@ -242,7 +281,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
                                       {"NGNN", "HHHH", "RYGY", "HHHH", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(2); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
     }
@@ -258,7 +300,10 @@ public class pubTests {
                                       {"NRNN", "YGRR", "GYGR", "YRRG", "NNNR"}, //in der mitte Muesste YGRG sein aber
                                       {"NGNN", "HHHH", "RYGY", "RGYY", "NNNG"}, //dort ist YGRG 90* rotiert
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
     }
@@ -274,7 +319,10 @@ public class pubTests {
                                       {"NRNN", "HHHH", "GYGR", "YRRG", "NNNR"}, //in der mitte Muesste YGRG sein aber
                                       {"NGNN", "HHHH", "RYGY", "HHHH", "NNNG"}, //dort ist YGRG 90* rotiert
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(4); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
     }
@@ -311,7 +359,9 @@ public class pubTests {
                                       {"NRNN", "NNNN", "HHHH", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Game game = new Game(new FakeGUI(), gameFieldInput);
+        Game game = new Game(new FakeGUI(), gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
+        // wieviele Lochsteine es gibt, in diesem Fall sollte es 0 geben aber es ist trotzdem einer drin.
+        // Es wird somit versucht einen Lochstein zu platzieren welcher gar nicht existent ist
         boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }
@@ -339,11 +389,13 @@ public class pubTests {
     @Test
     public void test4_FuerEinFastGeloestesFeldWieImObigenBeispiel_MitLoch(){
         String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
-                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"},
-                                      {"NRNN", "YGRR", "NNNN", "HHHH", "NNNR"},
-                                      {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
+                                      {"NGNN", "GRYG", "GRYR", "GGYR", "NNNG"}, //GRYG GGRY YGGR RYGG    GRYR RGRY YRGR RYRG   GGYR RGGY YRGG GYRG
+                                      {"NRNN", "YGRR", "NNNN", "HHHH", "NNNR"}, //YGRR RYGR RRYG GRRY
+                                      {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"}, //RYYG GRYY YGRY YYGR    RYGY YRYG GYRY YGYR   RGYY YRGY YYRG GYYR
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Game game = new Game(new FakeGUI(), gameFieldInput);
+        Game game = new Game(new FakeGUI(), gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
+        // wieviele Lochsteine es gibt, in diesem Fall sollte es 0 geben aber es ist trotzdem einer drin.
+        // Es wird somit versucht einen Lochstein zu platzieren welcher gar nicht existent ist
         boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }
@@ -375,9 +427,9 @@ public class pubTests {
                                       {"NRNN", "YGRR", "HHHH", "GYRR", "NNNR"}, //bei GYRR sollte sein: YRRG
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Game game = new Game(new FakeGUI(), gameFieldInput);
-        game.printGameField();
-        game.printTiles();
+        Game game = new Game(new FakeGUI(), gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
+        // wieviele Lochsteine es gibt, in diesem Fall sollte es 0 geben aber es ist trotzdem einer drin.
+        // Es wird somit versucht einen Lochstein zu platzieren welcher gar nicht existent ist
         boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }

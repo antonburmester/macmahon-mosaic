@@ -215,11 +215,13 @@ public class JavaFXGUI implements GUIConnector {
 
                 //Rotation des Spielsteins wenn Rechtsklick
                 slotStackPane.setOnMouseClicked(event -> {
-                    if(event.getButton().equals(MouseButton.SECONDARY)){
-                        Node holeOrImage = slotStackPane.getChildren().getFirst();
-                        if(holeOrImage instanceof ImageView imageView) {
-                            imageView.setRotate(imageView.getRotate() + 90); //Bild graphisch rotieren
-                            game.rotateGameTile(this.getTileIndex(imageView)); //Rotation in der Logik
+                    if(!game.isEditorMode()) {
+                        if (event.getButton().equals(MouseButton.SECONDARY)) {
+                            Node holeOrImage = slotStackPane.getChildren().getFirst();
+                            if (holeOrImage instanceof ImageView imageView) {
+                                imageView.setRotate(imageView.getRotate() + 90); //Bild graphisch rotieren
+                                game.rotateGameTile(this.getTileIndex(imageView)); //Rotation in der Logik
+                            }
                         }
                     }
                 });

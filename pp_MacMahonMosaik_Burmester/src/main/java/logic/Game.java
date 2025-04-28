@@ -10,9 +10,9 @@ package logic;
  */
 public class Game {
     private final GUIConnector gui;
-    private GameField gameField;
-    private Tiles tiles;
-    private Tiles holeTiles;
+    private final GameField gameField;
+    private final Tiles tiles;
+    private final Tiles holeTiles;
     private boolean editorMode;
 
 
@@ -36,16 +36,15 @@ public class Game {
 
     /**
      * Konstruktor welcher ein Spiel auf Grundlage eines StringArrays erstellt
-     * TODO implementieren
      */
     public Game(GUIConnector gui, String[][] inputGameField){
         this.gui = gui;
         this.editorMode = false;
 
         this.tiles = new Tiles();
-        //this.gameField = new GameField(inputGameField, this.tiles); //TODO
         int holesAmount = (inputGameField.length - 2) * (inputGameField[0].length - 2) - 24;
         this.holeTiles = new Tiles(Math.max(holesAmount, 0));
+        this.gameField = new GameField(inputGameField, this.tiles, this.holeTiles);
 
         this.gui.updateGridPaneFormat(this.gameField);
         this.gui.displayGameFieldTiles(this, this.gameField);
@@ -127,7 +126,6 @@ public class Game {
                 this.holeTiles.setTileLaidStatus(tile, true); //TODO glaube ich irrelevant
             }
             this.gameField.layTile(x, y, tile); //Spielstein auf das Spielfeld legen
-            System.out.println(this.gameField.toString());
         } else {
             status = false;
         }
@@ -151,7 +149,6 @@ public class Game {
                 this.gameField.layTile(xTarget, yTarget, tile); //Spielstein auf die neue Position des Spielfelds legen
                 this.gameField.resetTile(xStart, yStart); //Spielstein von der alten Position
                 // des Spielfelds loeschen
-                System.out.println(this.gameField.toString());
             } else {
                 status = false;
             }
@@ -183,7 +180,6 @@ public class Game {
                 //Spielstein wieder der Lochsteinauswahl hinzufuegen
                 this.holeTiles.setTileLaidStatus(tile, false);
             }
-            System.out.println(this.gameField.toString());
         } else {
             status = false;
         }
@@ -200,7 +196,6 @@ public class Game {
         boolean status = false;
         if(tile != null){
             if(this.gameField.layTile(x, y, tile)) {
-                System.out.println(this.gameField.toString());
                 status = true;
             }
         }
@@ -222,19 +217,29 @@ public class Game {
      */
     public void rotateGameTile(int tileIndex){
         this.tiles.getTile(tileIndex).rotateTile();
-        System.out.println(this.gameField);
     }
 
     /**
      * Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
      * @return ob das Spielfeld loesbar ist
+     * TODO implement
      */
     public boolean isGameFieldSolvable(){
+        /*
         Tiles clonedTiles = this.tiles.cloneGameTiles();
         Tiles clonedHoleTiles = this.holeTiles.cloneGameTiles();
         GameField clonedGameField = this.gameField.cloneGameField(
                 this.tiles, this.holeTiles, clonedTiles, clonedHoleTiles);
         return(this.isGameFieldSolvableRecoursive(clonedGameField, clonedTiles));
+         */
+        /*
+         * Lösungsansatz:
+         * Ein Array welches das Spielfeld groß ist
+         * auf jedes noch nicht gelegtes Feld alle moeglichen Spielsteine legen
+         * nun alles durchlaufen und pruefen (alle Kombinationen) bis eine gefunden wurde
+         * oder Rekoursiv mit Backtracking
+         */
+        return(true);
     }
 
     /**
@@ -246,6 +251,7 @@ public class Game {
      * @param clonedGameField eine Kopie des aktuellen Spielfelds
      * @param clonedTiles eine Kopie der Spielsteine
      * @return ob eine passende Kombination gefunden wurde
+     * TODO IMPLEMENT
      */
     private boolean isGameFieldSolvableRecoursive(GameField clonedGameField, Tiles clonedTiles){
         if(clonedGameField.checkIfGameFieldSolved(false)) return(true);
@@ -267,23 +273,6 @@ public class Game {
         }
 
         //return(this.isGameFieldSolvableRecoursive(clonedGameField, clonedTiles));
-        return true; //TODO
+        return true;
     }
-
-    //TODO Remove
-    public void printGameField(){
-        System.out.println(this.gameField.toString());
-    }
-
-    //TODO Remove
-    public void printTiles(){
-        System.out.println(this.tiles.toString());
-    }
-
-    /**
-     * wie ich es loesen würde:
-     * Ein Array welches das Spielfeld groß ist
-     * auf jede noch nicht gelegtes Feld alle moeglichen Felder legen
-     * nun alles pruefen
-     */
 }

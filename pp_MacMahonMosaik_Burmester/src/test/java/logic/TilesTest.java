@@ -19,35 +19,13 @@ public class TilesTest {
     @Test
     public void constructorTest(){
         Tiles tilesClass = new Tiles();
-        Set<TileNames> allTiles = Set.of(
-                TileNames.RRRR,
-                TileNames.GGGG,
-                TileNames.YYYY,
-                TileNames.GRGR,
-                TileNames.YRYR,
-                TileNames.YGYG,
-                TileNames.GRRR,
-                TileNames.YRRR,
-                TileNames.RGGG,
-                TileNames.YGGG,
-                TileNames.RYYY,
-                TileNames.GYYY,
-                TileNames.RGYR,
-                TileNames.RYGR,
-                TileNames.GRYG,
-                TileNames.GYRG,
-                TileNames.YRGY,
-                TileNames.YGRY,
-                TileNames.GGRR,
-                TileNames.YYGG,
-                TileNames.RRYY,
-                TileNames.GRYR,
-                TileNames.RGYG,
-                TileNames.RYGY,
-                TileNames.HHHH,
-                TileNames.NNNN
-        );
-        assertEquals(tilesClass.getTiles(), allTiles);
+        boolean status = true;
+        for(int i = 0; i < TileNames.values().length - 2; i++){ //-2 da kein NNNN und kein HHHH
+            if(!tilesClass.getTile(i).getTileString().equals(TileNames.values()[i].name())){
+                status = false;
+            }
+        }
+        assertTrue(status);
     }
 
 

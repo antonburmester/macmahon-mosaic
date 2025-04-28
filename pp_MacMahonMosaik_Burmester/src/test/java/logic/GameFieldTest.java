@@ -27,11 +27,14 @@ public class GameFieldTest {
     @Test
     public void testFeldSchonBelegtLoch(){
         String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
-                {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
-                {"NRNN", "HHHH", "HHHH", "YGRY", "NNNR"},
-                {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
-                {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+                                      {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
+                                      {"NRNN", "HHHH", "HHHH", "YGRY", "NNNR"},
+                                      {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(4); //Loecher manuell gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.layTile(2, 2, new Tile("YYRR"));
         assertFalse(status);
     }
@@ -42,11 +45,14 @@ public class GameFieldTest {
     @Test
     public void testFeldSchonBelegtSpielstein(){
         String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
-                {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
-                {"NRNN", "HHHH", "YGRY", "YGRY", "NNNR"},
-                {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
-                {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        GameField gameField = new GameField(gameFieldInput);
+                                      {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
+                                      {"NRNN", "HHHH", "YGYY", "YGRY", "NNNR"},
+                                      {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
+                                      {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
+        Tiles gameFieldTiles = new Tiles();
+        Tiles holeTiles = new Tiles(3); //Loecher manuell gesetzt weil in dem Beispiel mehr Loecher als normal
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+
         boolean status = gameField.layTile(2, 2, new Tile("YYRR"));
         assertFalse(status);
     }

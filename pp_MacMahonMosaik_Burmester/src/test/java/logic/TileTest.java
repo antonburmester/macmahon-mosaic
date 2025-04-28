@@ -207,14 +207,16 @@ public class TileTest {
     }
 
     /**
-     * TODO besseren Test schreiben
+     * Konstruktor Test der Tile Klasse welcher auf Grundlage eines Tile Namens inklusive Rotationen die passende Tile
+     * Klasse initialisiert
      */
     @Test
     public void tileKonstruktorRotationStringTest(){
-        String tileNameWithRotation = "YRGY"; //YRGY YYRG GYYR RGYY YRGY
+        String tileNameWithRotation = "GYYR"; //YRGY YYRG GYYR RGYY YRGY
         Tile tile = new Tile(tileNameWithRotation);
-        System.out.println("Tile Name without rotation: " + tile.getTileString());
-        System.out.println("Tile Name with rotation: " + tile.getTileNameWithRotation());
-        System.out.println("Rotation: " + tile.getRotation());
+        boolean isNameWithoutRotationMatching = tile.getTileString().equals("YRGY");
+        boolean isNameWithRotationMatching = tile.getTileNameWithRotation().equals("GYYR");
+        boolean isRotationMatching = tile.getRotation() == 180;
+        assertTrue(isNameWithoutRotationMatching && isNameWithRotationMatching && isRotationMatching);
     }
 }

@@ -116,7 +116,7 @@ public class Tile {
      * Methode welche den aktuellen Spielstein rotiert und durch die Methode getTileNameWithRotation
      */
     public String getTileNameWithRotation(){
-        return(this.getTileNameWithRotation(this.tile.name(), this.rotation));
+        return(Tile.getTileNameWithRotation(this.tile.name(), this.rotation));
     }
 
     /**
@@ -124,7 +124,7 @@ public class Tile {
      * @param input der String welcher rotiert werden soll
      * @return der Name des Spielsteins unter Berucksichtigung der Drehung
      */
-    public String getTileNameWithRotation(String input, int rotation){
+    public static String getTileNameWithRotation(String input, int rotation){
         StringBuilder sb = new StringBuilder(input);
 
         for(int i = 0; i < rotation; i+=90){ // durchlaeuft 90 Grad schritte

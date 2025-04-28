@@ -76,7 +76,6 @@ public class Tiles {
     public int getTileIndex(Tile tile){
         int index = -1;
         for(int i = 0; i < this.tiles.length; i++){
-            System.out.println("i: " + this.getTile(i).toString());
             if(this.getTile(i).equals(tile)){
                 index = i;
             }
@@ -105,6 +104,35 @@ public class Tiles {
             }
         }
         return(status);
+    }
+
+    /**
+     * Methode welche die richtige Klasse aus den Spielsteinen sucht
+     * Der Name muss uebereinstimmen und der Spielstein darf noch nicht gelegt worden sein
+     * @param tileName der Name des Spielsteins inklusive Rotationen
+     * @return die Instanz welche zum uebergebenen Namen passt und die Rotationen werden gespeichert
+     */
+    public Tile getTileByNameWithRotation(String tileName){
+        Tile resultTile = null;
+        for(int i = 0; i < this.tiles.length; i++){ //jeden Spielstein durchlaufen
+            Tile currTile = this.getTile(i); //der aktuelle Spielstein
+            if(!currTile.getIsLaid()){ //Spielstein noch nicht gelegt
+                //koennte auch ersetzt werden durch isGameFieldTile
+                int rotations = currTile.isHoleTile() || currTile.isPlaceHolderTile() ? 90 : 360;
+                for(int rotation = 0; rotation < rotations; rotation += 90){ //jede Rotation durchlaufen
+                    if(currTile.getTileNameWithRotation().equals(tileName)){ //wenn der Spielstein mit Rotation
+                        // dem uebergebenen Namen gleicht
+                        resultTile = currTile;
+                    } else { //wenn der Spielstein nicht dem Namen gleicht
+                        currTile.rotateTile(); //den Spielstein rotieren
+                    }
+                }
+                if(resultTile == null) { //wenn der aktuelle Spielstein in allen Rotationen nicht passt
+                    currTile.resetTileRotation(); //die Rotation zuruecksetzen
+                }
+            }
+        }
+        return(resultTile);
     }
 
     /**
