@@ -639,9 +639,9 @@ public class JavaFXGUI implements GUIConnector {
      */
     private String borderTileNameToColorNameString(TileNames input){
         return(switch (input) {
-            case TileNames.GGGG -> "-fx-background-color: green;";
-            case TileNames.YYYY -> "-fx-background-color: yellow;";
-            case TileNames.RRRR -> "-fx-background-color: red;";
+            case TileNames.GGGG -> "-fx-background-color: #007F0E;";
+            case TileNames.YYYY -> "-fx-background-color: #FFD800;";
+            case TileNames.RRRR -> "-fx-background-color: #B60000;";
             default -> "";
         });
     }
@@ -665,17 +665,17 @@ public class JavaFXGUI implements GUIConnector {
 
         StackPane cell = new StackPane();
         cell.setPrefSize(80, 80);
-        cell.setStyle("-fx-background-color: green;"); //Gruen
+        cell.setStyle("-fx-background-color: #007F0E;"); //Gruen
         this.applyDragEventsForBorder(cell, borderID + TileNames.valueOf(TileNames.GGGG.toString()).ordinal());
         this.rightGridPane.add(cell, 0, 5); //Zelle der GridPane hinzufuegen
         cell = new StackPane();
         cell.setPrefSize(80, 80);
-        cell.setStyle("-fx-background-color: yellow;"); //Gelb
+        cell.setStyle("-fx-background-color: #FFD800;"); //Gelb
         this.applyDragEventsForBorder(cell, borderID + TileNames.valueOf(TileNames.YYYY.toString()).ordinal());
         this.rightGridPane.add(cell, 1, 5); //Zelle der GridPane hinzufuegen
         cell = new StackPane();
         cell.setPrefSize(80, 80);
-        cell.setStyle("-fx-background-color: red;"); //rot
+        cell.setStyle("-fx-background-color: #B60000;"); //rot
         this.applyDragEventsForBorder(cell, borderID + TileNames.valueOf(TileNames.RRRR.toString()).ordinal());
         this.rightGridPane.add(cell, 2, 5); //Zelle der GridPane hinzufuegen
 

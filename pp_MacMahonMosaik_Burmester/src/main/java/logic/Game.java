@@ -127,6 +127,7 @@ public class Game {
                 this.holeTiles.setTileLaidStatus(tile, true); //TODO glaube ich irrelevant
             }
             this.gameField.layTile(x, y, tile); //Spielstein auf das Spielfeld legen
+            System.out.println(this.gameField.toString());
         } else {
             status = false;
         }
@@ -150,6 +151,7 @@ public class Game {
                 this.gameField.layTile(xTarget, yTarget, tile); //Spielstein auf die neue Position des Spielfelds legen
                 this.gameField.resetTile(xStart, yStart); //Spielstein von der alten Position
                 // des Spielfelds loeschen
+                System.out.println(this.gameField.toString());
             } else {
                 status = false;
             }
@@ -181,6 +183,7 @@ public class Game {
                 //Spielstein wieder der Lochsteinauswahl hinzufuegen
                 this.holeTiles.setTileLaidStatus(tile, false);
             }
+            System.out.println(this.gameField.toString());
         } else {
             status = false;
         }
@@ -197,6 +200,7 @@ public class Game {
         boolean status = false;
         if(tile != null){
             if(this.gameField.layTile(x, y, tile)) {
+                System.out.println(this.gameField.toString());
                 status = true;
             }
         }
@@ -218,6 +222,7 @@ public class Game {
      */
     public void rotateGameTile(int tileIndex){
         this.tiles.getTile(tileIndex).rotateTile();
+        System.out.println(this.gameField);
     }
 
     /**
@@ -264,4 +269,21 @@ public class Game {
         //return(this.isGameFieldSolvableRecoursive(clonedGameField, clonedTiles));
         return true; //TODO
     }
+
+    //TODO Remove
+    public void printGameField(){
+        System.out.println(this.gameField.toString());
+    }
+
+    //TODO Remove
+    public void printTiles(){
+        System.out.println(this.tiles.toString());
+    }
+
+    /**
+     * wie ich es loesen würde:
+     * Ein Array welches das Spielfeld groß ist
+     * auf jede noch nicht gelegtes Feld alle moeglichen Felder legen
+     * nun alles pruefen
+     */
 }
