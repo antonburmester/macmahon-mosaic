@@ -51,26 +51,6 @@ public class Tile {
     }
 
     /**
-     * Konstruktor welcher einen bestimmten Spielstein durch seinen String initialisiert inklusive Rotation
-     * @param tileName der Name des Spielsteins (kann auch rotiert sein)
-     */
-    public Tile(String tileName, int c){
-        //for(int i = 0; i < TileNames.values().length; i++){
-        for(TileNames currTileName : TileNames.values()){
-            Tile currTile = new Tile(currTileName);
-
-            for(int r = 0; r <= 4; r++){
-                if(currTile.getTileNameWithRotation().equals(tileName)){
-                    //this = currTile;
-                    return;
-                } else {
-                    currTile.rotateTile();
-                }
-            }
-        }
-    }
-
-    /**
      * getter welcher den Spielstein bzw. das Motiv zurueckgibt
      * @return das Motiv des Spielsteins bzw. Mosaiksteins
      */

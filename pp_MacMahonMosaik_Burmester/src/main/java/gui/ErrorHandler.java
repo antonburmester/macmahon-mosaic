@@ -22,7 +22,7 @@ public class ErrorHandler {
             case CustomException.ERROR_WINDOW_OPEN ->
                     "Fehler " + exception.getErrorCode() + " : Fenster konnte nicht geladen/ geoeffnet werden!";
             case CustomException.ERROR_INVALID_FILE ->
-                    "Fehler " + exception.getErrorCode() + " : Keine gültige Datei ausgewählt!";
+                    "Fehler " + exception.getErrorCode() + " : Keine gueltige Datei ausgewaehlt!";
             case CustomException.ERROR_INVALID_GAME_SIZE ->
                     "Fehler " + exception.getErrorCode() + " : Falsche Spielfeldgroeße! 2x2 - 6x6";
             case CustomException.NO_GAME_OPEN ->

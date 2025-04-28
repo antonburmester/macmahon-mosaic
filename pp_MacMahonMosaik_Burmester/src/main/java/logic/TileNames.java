@@ -1,9 +1,9 @@
 package logic;
 
 /**
- * Klasse vom Typ enum welche alle möglichen Mosaik Steine enthaelt
+ * Klasse vom Typ enum welche alle moeglichen Mosaik Steine enthaelt
  * R: Rot
- * G: Grün
+ * G: Gruen
  * Y: Gelb
  * Besonderheiten:
  * HHHH: ein Loch

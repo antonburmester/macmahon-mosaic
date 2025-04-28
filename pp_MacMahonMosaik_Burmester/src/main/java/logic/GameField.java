@@ -1,7 +1,7 @@
 package logic;
 
 /**
- * Klasse welche das Spielfeld als Zweidimensionales Array enthält
+ * Klasse welche das Spielfeld als Zweidimensionales Array enthaelt
  *
  * @author Anton Burmester
  */
@@ -32,8 +32,8 @@ public class GameField {
         int width = input[0].length;
         String[][] inputCompatible = this.translateSpielstandsdatei(input); //der Input aber Logik Kompatibel
         this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
-        for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchläuft jede Hoehe des Felds
-            for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchläuft jede Breite des Felds
+        for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchlaeuft jede Hoehe des Felds
+            for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchlaeuft jede Breite des Felds
                 //weist dem Feld das String Aequivalent des TileNames enum zu
                 this.gameField[heigthIndex][widthIndex] =
                         Tile.getTileClassFromTileName(inputCompatible[heigthIndex][widthIndex]);
@@ -285,7 +285,7 @@ public class GameField {
     }
 
     /**
-     * Methode welche prueft ob ein Spielfeld ganz gelöst wurde bzw. richtig ist.
+     * Methode welche prueft ob ein Spielfeld ganz geloest wurde bzw. richtig ist.
      * @param acceptN damit geprueft werden kann ob die bisherigen Steine korrekt liegen
      * @return ob das Spielfeld ganz korrekt fertig ist oder bisher korrekt fertig ist abgesehen von nichts gelegten
      * Felder
@@ -308,6 +308,12 @@ public class GameField {
      */
     public boolean isGameFieldSolvable(){
         return(true); //TODO muss noch entwickelt werden
+    }
+
+    public GameField gamefieldCopy(){
+        GameField copy = new GameField(this.gameField[0].length, this.gameField.length);
+        //for(int y = 0; y < t)
+        return (copy);
     }
 
     /**

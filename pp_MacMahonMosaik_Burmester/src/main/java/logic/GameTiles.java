@@ -55,42 +55,6 @@ public class GameTiles {
     }
 
     /**
-     * fuegt den zu hinzuzufuegenden Mosaikstein dem Array an der richtigen Stelle hinzu
-     * @param tile der hinzufuegende Mosaikstein
-     */
-    /*
-    public void addTile(Tile tile){
-        this.tiles[TileNames.valueOf(tile.getTileString()).ordinal()] = tile;
-    }
-
-     */
-
-    /**
-     * loescht ein Mosaikstein aus dem Array
-     * in wirklichkeit wird die Instanz an der Stelle nur null gesetzt
-     * @param tile der zu loeschende Mosaikstein
-     *             //TODO vielleicht loeschen
-     */
-    /*
-    public void removeTile(Tile tile){
-        this.tiles[TileNames.valueOf(tile.getTileString()).ordinal()] = null;
-    }
-
-     */
-
-    /**
-     * loescht ein Mosaikstein aus dem Array
-     * in wirklichkeit wird die Instanz an der Stelle nur null gesetzt
-     * @param tileIndex der Index des zu loeschenden Mosaiksteins
-     */
-    /*
-    public void removeTile(int tileIndex){
-        this.getTiles()[tileIndex] = null;
-    }
-
-     */
-
-    /**
      * gibt alle Mosaiksteine aus die in der Menge vorhanden sind
      * @return alle Mosaiksteine als String
      */

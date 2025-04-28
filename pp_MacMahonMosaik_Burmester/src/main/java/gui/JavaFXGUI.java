@@ -120,8 +120,8 @@ public class JavaFXGUI implements GUIConnector {
         //aktualisierung der Bildgroeßen und Abstaende
         for(Node node : gridPane.getChildren()) { //durchlaeuft jede Zelle und node ist die unterste Ebene des Inhalts
             // also das StackPane
-            if(node instanceof StackPane tilePane) { //StackPane, da in meinem Code die unterste Ebene eine StackPane ist
-                tilePane.setPrefSize(cellSize, cellSize); //Setzt die Größe der StackPane
+            if(node instanceof StackPane tilePane) { //StackPane, da die unterste Ebene eine StackPane ist
+                tilePane.setPrefSize(cellSize, cellSize); //Setzt die Groeße der StackPane
                 for(Node child : tilePane.getChildren()) { //durchlaeuft jede naechste Ebene der StackPane da dort
                     // das ImageView kommt
                     if(child instanceof ImageView imageView) {
@@ -159,10 +159,9 @@ public class JavaFXGUI implements GUIConnector {
      */
     public void loadHolesStackPanes(){
         //Anzahl der benoetigten Loecher da fuer jede Zelle die es im Spielfeld mehr gibt als Bilder ein Loch sein muss
-        int holesAmount = (this.gridPane.getColumnCount() - 2) * (this.gridPane.getRowCount() - 2) - 24; //-2 da Rand nicht beachtet
+        // -2 da Rand nicht beachtet
+        int holesAmount = (this.gridPane.getColumnCount() - 2) * (this.gridPane.getRowCount() - 2) - 24;
         StackPane[] holeStackPanes = new StackPane[Math.max(holesAmount, 0)];
-        System.out.println("Should be Holes: " + holesAmount);
-        System.out.println(this.gridPane.getColumnCount() + " " + this.gridPane.getRowCount());
         if(holesAmount > 0){ //wenn es Loecher gibt
             for(int i = 0; i < holesAmount; i++){ //soviele Loecher wie noetig
                 StackPane holeStackPane = new StackPane();
@@ -182,11 +181,6 @@ public class JavaFXGUI implements GUIConnector {
     public void displayGameFieldTiles(Game game, GameField gameField) {
         this.gridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
 
-        int width = gameField.getGameField().length; //TODO
-        int height = gameField.getGameField()[0].length;
-
-        //for(int x = 1; x < width - 1; x++) { //Start bei 1 und Ende bei Groeße - 1 da der Rand nicht beachtet wird
-            //for(int y = 1; y < height - 1; y++) { //Start bei 1 und Ende bei Groeße - 1 da der Rand nicht beachtet wird
         for(int y = 1; y < gameField.getGameField().length - 1; y++) { //Start bei 1 und Ende bei Groeße - 1
             // da der Rand nicht beachtet wird
             for(int x = 1; x < gameField.getGameField()[y].length - 1; x++) { //Start bei 1 und Ende bei Groeße - 1
@@ -230,8 +224,6 @@ public class JavaFXGUI implements GUIConnector {
                     }
                 });
 
-                //if(!currTile.getTile().equals(TileNames.HHHH)) { //wenn es sich um ein Loch handelt soll dieses nicht TODO vorher vorhanden
-                // bewegbar sein
                 //wenn ein Bild Hintergrund Konstrukt bewegt wird per Drag
                 slotStackPane.setOnDragOver(event -> {
                     Dragboard dragboard = event.getDragboard(); //der Inhalt der verschoben wird
@@ -268,7 +260,7 @@ public class JavaFXGUI implements GUIConnector {
 
                 //wenn ein Bild Hintergrund Konstrukt ueber den Slot war und wieder weggezogen wird
                 slotStackPane.setOnDragExited(event -> {
-                    slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;"); //Hintergrund entfernen und NEW TODO
+                    slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;"); //Hintergrund entfernen und
                     // Rand wiederherstellen
                 });
 
@@ -283,10 +275,8 @@ public class JavaFXGUI implements GUIConnector {
 
                         int targetX = GridPane.getColumnIndex(slotStackPane); //der Breitenindex dieses Slots
                         int targetY = GridPane.getRowIndex(slotStackPane); //der Hoehenindex dieses Slots
-                        System.out.println(targetX + " " + targetY);
 
-                        //if(!inputString.equals("HHHH")) { //wenn es sich nicht um ein Loch handelt
-                        if(inputString.startsWith(pieceID)) { //wenn es sich nicht um ein Loch handelt
+                        if(inputString.startsWith(pieceID)) { //wenn ein nicht Loch ueber ein Feld gedropped wurde
                             //der Index des bewegten ImageViews
                             int imageViewIndex = Integer.parseInt(pieceOrHoleStringIndex);
                             ImageView droppedImageView = this.imageViews[imageViewIndex]; //das bewegte ImageViews
@@ -300,25 +290,26 @@ public class JavaFXGUI implements GUIConnector {
                                 Integer startY = GridPane.getRowIndex(sourceSlotStackPane);
                                 boolean moved = game.moveTileFromGamefieldToGameField(startX, startY, targetX, targetY);
                                 if (moved) {
-                                    System.out.println("Tile moved within the game field from (" + startX + ", " + startY + ") to (" + targetX + ", " + targetY + ")");
-                                    sourceSlotStackPane.getChildren().remove(droppedImageView); //Bild aus alten Slot entfernen
-                                    slotStackPane.getChildren().add(droppedImageView); //Bild in neuen Slot einfuegen
+                                    //Bild aus alten Slot entfernen
+                                    sourceSlotStackPane.getChildren().remove(droppedImageView);
+                                    //Bild in neuen Slot einfuegen
+                                    slotStackPane.getChildren().add(droppedImageView);
                                 }
                             } else if (sourceGridPane == this.rightGridPane) { //das Bild kommt aus der rechten Auswahl
-                                boolean moved = game.moveTileFromNotLaidTilesToGameField(targetX, targetY, imageViewIndex, true);
+                                boolean moved = game.moveTileFromNotLaidTilesToGameField(targetX, targetY,
+                                        imageViewIndex, true);
                                 if (moved) {
-                                    System.out.println("Tile successfully moved from selection to game field at (" + targetX + ", " + targetY + ")");
                                     //Bild aus alten Slot entfernen
                                     sourceSlotStackPane.getChildren().remove(droppedImageView);
                                     //Bild an die groeße des Hintergrunds (StackPane) anpassen
                                     droppedImageView.setFitWidth(slotStackPane.getWidth());
                                     droppedImageView.setFitHeight(slotStackPane.getHeight());
-                                    slotStackPane.getChildren().add(droppedImageView); //Bild in neuen Slot einfuegen
+                                    //Bild in neuen Slot einfuegen
+                                    slotStackPane.getChildren().add(droppedImageView);
                                 }
                             }
-                        } else if(inputString.startsWith(holeID)){ //wenn es sich um ein Loch handelt soll dieses nicht bewegbar sein
+                        } else if(inputString.startsWith(holeID)){ //wenn ein Loch ueber ein Feld gedropped wurde
                             int holeIndex = Integer.parseInt(pieceOrHoleStringIndex);
-                            System.out.println("Hole Index: " + pieceOrHoleStringIndex);
                             StackPane holeStackPane = this.holeStackPanes[holeIndex];
                             //die GridPane aus welcher das Bild kommt
                             GridPane sourceGridPane = (GridPane) holeStackPane.getParent().getParent();
@@ -354,30 +345,9 @@ public class JavaFXGUI implements GUIConnector {
                         String contentPayload = (currNode instanceof ImageView ? pieceID : holeID) + tileEnumIndex;
                         content.putString(contentPayload);
                         db.setContent(content);
-                        System.out.println("Dragging Image or Hole Index: " + tileEnumIndex);
-                        /*
-                        if(this.getTileIndex(movedNode) < 24) { //Bild
-                            Dragboard db = slotStackPane.startDragAndDrop(TransferMode.MOVE);
-                            ClipboardContent content = new ClipboardContent();
-                            ImageView currImageView = (ImageView) slotStackPane.getChildren().getFirst();
-                            int tileEnumIndex = this.getTileIndex(currImageView);
-                            content.putString(Integer.toString(tileEnumIndex));
-                            db.setContent(content);
-                            System.out.println("Dragging image Index: " + tileEnumIndex);
-                        } else { //Loch
-                            Dragboard db = slotStackPane.startDragAndDrop(TransferMode.MOVE);
-                            ClipboardContent content = new ClipboardContent();
-                            StackPane currHoleStackPane = (StackPane) slotStackPane.getChildren().getFirst();
-                            int tileEnumIndex = this.getTileIndex(currHoleStackPane);
-                            System.out.println("Tile Loch Index: " + tileEnumIndex);
-                            //TODO
-                        }
-
-                         */
                     }
                     event.consume();
                 });
-                //}
 
                 this.gridPane.add(slotStackPane, x, y);
             }
@@ -394,13 +364,6 @@ public class JavaFXGUI implements GUIConnector {
     public void displayNotUsedTiles(Game game, GameTiles gameTiles) {
         this.rightGridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
 
-        for (Tile t : gameTiles.getTiles()) {
-            if (t != null)
-                System.out.println(t.getTileString());
-            else
-                System.out.println("Null");
-        }
-
         //Abstand zwischen den Spalten und Reihen
         this.rightGridPane.setHgap(10);
         this.rightGridPane.setVgap(10);
@@ -410,7 +373,8 @@ public class JavaFXGUI implements GUIConnector {
         for (Tile currTile : gameTiles.getTiles()) { //durchlaeuft jeden Spielstein
 
             //da NNNN und HHHH nicht legbar sind, sollen sie auch nicht in der Auswahl auftauchen
-            if(!(!currTile.getIsLaid() && (currTile.getTile() == TileNames.NNNN || currTile.getTile() == TileNames.HHHH))) {
+            if(!(!currTile.getIsLaid() &&
+                    (currTile.getTile() == TileNames.NNNN || currTile.getTile() == TileNames.HHHH))) {
 
                 //Hintergrund als StackPane da man diese faerben kann
                 //die StackPane bleibt durchgehend an derselben Stelle der GridPane, somit muss nur einmalig ein
@@ -424,7 +388,7 @@ public class JavaFXGUI implements GUIConnector {
                     String tileName = currTile.getTileString();
                     if (currTile.isNormalGameTile()) { //wenn nicht NNNN und HHHH da diese kein Bild haben
                         int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
-                        ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Tile Spielsteins
+                        ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Spielsteins
                         imageView.setFitWidth(80);
                         imageView.setFitHeight(80);
                         slotStackPane.getChildren().add(imageView); //ImageView der Stackpane hinzufuegen
@@ -433,8 +397,9 @@ public class JavaFXGUI implements GUIConnector {
 
                 //Drag Entered Event: wenn ein Bild ueber die Spielstein Auswahl gezogen wird, wird diese hervorgehoben
                 rightGridPane.setOnDragEntered(event -> {
-                    if (((StackPane) event.getGestureSource()).getParent() != this.rightGridPane && event.getDragboard().hasString()) { //ist String
-                        rightGridPane.setStyle("-fx-background-color: pink;"); //setzt die Hintergrundfarbe der StackPane
+                    if (((StackPane) event.getGestureSource()).getParent() !=
+                            this.rightGridPane && event.getDragboard().hasString()) { //ist String
+                        rightGridPane.setStyle("-fx-background-color: pink;"); //setzt Hintergrundfarbe der StackPane
                     }
                 });
 
@@ -444,21 +409,17 @@ public class JavaFXGUI implements GUIConnector {
                     rightGridPane.setStyle(""); //entfernt die Hintergrundfarbe
                 });
 
-                //Drag Detected Event für die Spielstein Auswahl: wenn dieses StackPane ImageView Konstrukt wieder aus der
-                // Auswahl per Drag bewegt wird
-                int finalCol = col;
-                int finalRow = row;
+                //Drag Detected Event fuer die Spielstein Auswahl: wenn dieses StackPane ImageView Konstrukt wieder aus
+                // der Auswahl per Drag bewegt wird
                 slotStackPane.setOnDragDetected((MouseEvent event) -> {
                     if (!slotStackPane.getChildren().isEmpty()) { //nicht leer also Bild
                         Dragboard db = slotStackPane.startDragAndDrop(TransferMode.MOVE);
                         ClipboardContent content = new ClipboardContent();
                         ImageView currImageView = (ImageView) slotStackPane.getChildren().getFirst();
                         int tileEnumIndex = this.getTileIndex(currImageView);
-                        content.putString(pieceID + Integer.toString(tileEnumIndex));
+                        content.putString(pieceID + tileEnumIndex);
                         db.setContent(content);
-                        System.out.println("Dragging image Index: " + tileEnumIndex);
                     }
-                    System.out.println("Coordinates: " + finalCol + " " + finalRow);
                     event.consume(); //markiert das Event als verarbeitet
                 });
 
@@ -471,7 +432,7 @@ public class JavaFXGUI implements GUIConnector {
                     event.consume(); //markiert das Event als verarbeitet
                 });
 
-                //Drop Event für das die Spielstein Auswahl: wenn das Bild in der rigthGridPane abgelegt wird
+                //Drop Event fuer das die Spielstein Auswahl: wenn das Bild in der rigthGridPane abgelegt wird
                 this.rightGridPane.setOnDragDropped(event -> {
                     Dragboard db = event.getDragboard();
                     if (db.hasString()) {
@@ -484,7 +445,8 @@ public class JavaFXGUI implements GUIConnector {
 
                         //durch eine Game Klasse Methode wird die Bewegung vom Spielfeld in die Spielstein
                         // Auswahl in das Spielfeld der Game Instanz des Logik Package uebernommen
-                        boolean returned = game.moveTileFromGamefieldToNotLaidTileSelection(startX, startY, true);
+                        boolean returned = game.moveTileFromGamefieldToNotLaidTileSelection(startX, startY,
+                                true);
                         if (returned) {
                             int xIndex = imageViewIndex % 3; //die Spalte wo der Spielstein in der
                             // Spielstein Auswahl urspruenglich mal war
@@ -494,7 +456,9 @@ public class JavaFXGUI implements GUIConnector {
                             StackPane targetCellStackPane = this.getGridPaneCell(xIndex, yIndex, this.rightGridPane);
                             //der vorherige Slot (StackPane) auf welcher das Bild vorher lag
                             StackPane sourceSlotStackPane = (StackPane) droppedImageView.getParent();
-                            sourceSlotStackPane.getChildren().remove(droppedImageView); //das Bild vom alten Slot losbinden
+
+                            //das Bild vom alten Slot losbinden
+                            sourceSlotStackPane.getChildren().remove(droppedImageView);
                             droppedImageView.setFitWidth(80);
                             droppedImageView.setFitHeight(80);
                             droppedImageView.setRotate(0); //Rotation Graphisch zuruecksetzen
@@ -523,7 +487,7 @@ public class JavaFXGUI implements GUIConnector {
     /**
      * Methode welche Anhand des imageViews Arrays welches alle ImageViews enthaehlt den Index des uebergebenen findet
      * sofern es sich beim Objekt um ein ImageView handelt
-     * dasselbe auch mit den Löchern
+     * dasselbe auch mit den Loechern
      * nichts angegeben bekommt einfach immer den Index 25 da dieser dem Index von NNNN in TileNames entspricht
      * @param input das uebergebene Objekt zu welchem der Index gesucht wird
      * @return der Index des uebergebenen Objekts
@@ -560,7 +524,6 @@ public class JavaFXGUI implements GUIConnector {
         for(Node currCellNode: gridPane.getChildren()){
             int xCoordinate = GridPane.getColumnIndex(currCellNode);
             int yCoordinate = GridPane.getRowIndex(currCellNode);
-            System.out.println("GridPaneCell: " + xCoordinate + " " + yCoordinate);
             if(xCoordinate == xIndex && yCoordinate == yIndex){
                 resultCell = (StackPane) currCellNode;
             }
@@ -574,8 +537,6 @@ public class JavaFXGUI implements GUIConnector {
      * @param gameField das Spielfeld
      */
     public void displayBorder(Game game, GameField gameField){
-        int width = gameField.getGameField().length;
-        int height = gameField.getGameField()[0].length;
 
         for(int y = 0; y < gameField.getGameField().length; y++) { //durchlaeuft jede Zeile
             for(int x = 0; x < gameField.getGameField()[y].length; x++) { //durchlaeuft jede Spalte
@@ -584,7 +545,8 @@ public class JavaFXGUI implements GUIConnector {
                 if(!gameField.isFieldEdge(x, y) && gameField.isFieldBorder(x, y)) { //Randstueck und kein Eckstueck
 
                     Pane slotStackPane = new Pane();
-                    String initialCellStyle = switch (gameField.getTile(x, y).getTile()) { //Statement welches je nach Randstein den Rand faerbt
+                    //switch Statement welches je nach Randstein den Rand faerbt
+                    String initialCellStyle = switch (gameField.getTile(x, y).getTile()) {
                         case TileNames.GGGG ->
                                 "-fx-border-color: black; -fx-border-width: 2; -fx-background-color: green;"; //Gruen
                         case TileNames.YYYY ->
@@ -627,7 +589,7 @@ public class JavaFXGUI implements GUIConnector {
                         slotStackPane.setStyle(originalStyle); //den letzten Style setzen
                     });
 
-                    //Drop Event für das Spielfeld: wenn das Bild in einer Zelle tilePane abgelegt wird
+                    //Drop Event fuer das Spielfeld: wenn das Bild in einer Zelle tilePane abgelegt wird
                     slotStackPane.setOnDragDropped(event -> {
                         Dragboard db = event.getDragboard(); //Inhalt was bewegt wird
                         if(db.hasString()) { //wenn das zu farbkodierende Objekt ein String ist
@@ -641,11 +603,8 @@ public class JavaFXGUI implements GUIConnector {
                                 //durch eine Game Klasse Methode wird die Bewegung von der Spielstein Auswahl in
                                 // das Logik Spielfeld uebernommen
                                 Tile newTile = new Tile(TileNames.values()[Integer.parseInt(inputString)]);
-                                System.out.println("Border Tile: " + newTile.getTileString());
                                 boolean placed = game.colorBorder(targetX, targetY, newTile);
                                 if (placed) {
-                                    System.out.println("Tile successfully moved from selection to game field at (" + targetX + ", " + targetY + ")");
-
                                     //setzt die Farbe des RandElements im Spielfeld
                                     String cellStyle = "-fx-border-color: black; -fx-border-width: 2;" +
                                             borderTileNameToColorNameString(newTile.getTile());
@@ -679,22 +638,12 @@ public class JavaFXGUI implements GUIConnector {
      * @return die css Kompatible Farbe
      */
     private String borderTileNameToColorNameString(TileNames input){
-        String colorString;
-        switch (input){
-            case TileNames.GGGG:
-                colorString = "-fx-background-color: green;";
-                break;
-            case TileNames.YYYY:
-                colorString = "-fx-background-color: yellow;";
-                break;
-            case TileNames.RRRR:
-                colorString = "-fx-background-color: red;";
-                break;
-            default:
-                colorString = "";
-                break;
-        }
-        return(colorString);
+        return(switch (input) {
+            case TileNames.GGGG -> "-fx-background-color: green;";
+            case TileNames.YYYY -> "-fx-background-color: yellow;";
+            case TileNames.RRRR -> "-fx-background-color: red;";
+            default -> "";
+        });
     }
 
 
@@ -712,7 +661,7 @@ public class JavaFXGUI implements GUIConnector {
 
         //rot, gruen und gelbe Auswahl fuer den Rand
         Label randLabel = new Label("Randsteine:"); //Schriftzug
-        this.rightGridPane.add(randLabel, 0, 4, 3, 1); // über drei Spalten, eine Zeile
+        this.rightGridPane.add(randLabel, 0, 4, 3, 1); // ueber drei Spalten, eine Zeile
 
         StackPane cell = new StackPane();
         cell.setPrefSize(80, 80);
@@ -733,17 +682,17 @@ public class JavaFXGUI implements GUIConnector {
         //Loch Spielstein fuer den Editor
         if(this.holeStackPanes.length > 0) {
             Label lochSteinLabel = new Label("Lochstein:"); //Schriftzug
-            this.rightGridPane.add(lochSteinLabel, 0, 14, 3, 1); // über drei Spalten, eine Zeile
+            this.rightGridPane.add(lochSteinLabel, 0, 14, 3, 1); // ueber drei Spalten, eine Zeile
             int row = 15, col = 0;
-            for (int i = 0; i < this.holeStackPanes.length; i++) { //jedes Loch hinzufuegen
+            for (StackPane holeStackPane : this.holeStackPanes) { //jedes Loch hinzufuegen
                 StackPane slotStackPane = new StackPane();
                 slotStackPane.setPrefSize(80, 80);
                 slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
-                if(this.holeStackPanes[i].getParent() == null || //noch nie gelegt
-                        (this.holeStackPanes[i].getParent() != null && //gelegt und nicht mehr auf dem Spielfeld
-                                this.holeStackPanes[i].getParent().getParent() == null)) {
-                    cell = this.holeStackPanes[i]; //das aktuelle Loch
+                if (holeStackPane.getParent() == null || //noch nie gelegt
+                        (holeStackPane.getParent() != null && //gelegt und nicht mehr auf dem Spielfeld
+                                holeStackPane.getParent().getParent() == null)) {
+                    cell = holeStackPane; //das aktuelle Loch
                     cell.setPrefSize(80, 80);
                     cell.setStyle("-fx-background-color: gray;"); //graues Loch
 
@@ -792,7 +741,7 @@ public class JavaFXGUI implements GUIConnector {
 
         //DragExited Event: wenn der potentielle Lochstein wieder sein Ziel verlaesst
         this.rightGridPane.setOnDragExited(event -> {
-            this.rightGridPane.setStyle("-fx-border-width: 2;"); // Ursprünglicher Stil wiederherstellen
+            this.rightGridPane.setStyle("-fx-border-width: 2;"); // Urspruenglichen Stil wiederherstellen
             event.consume();
         });
 
@@ -820,7 +769,6 @@ public class JavaFXGUI implements GUIConnector {
                     // Spielstein Auswahl urspruenglich mal war
                     int yIndex = holeIndex / 3; //die Reihe wo der Spielstein in der
                     // Spielstein Auswahl urspruenglich mal war
-                    System.out.println("x Index: " + xIndex + " y Index: " + yIndex);
 
                     //+ 15 weil ab Reihe 15 erst die Lochsteine anfangen in der Editorauswahl
                     StackPane targetCellStackPane = this.getGridPaneCell(xIndex, yIndex + 15, this.rightGridPane);
@@ -832,7 +780,6 @@ public class JavaFXGUI implements GUIConnector {
                     Integer startX = GridPane.getColumnIndex(sourceSlotStackPane);
                     Integer startY = GridPane.getRowIndex(sourceSlotStackPane);
                     boolean moved = game.moveTileFromGamefieldToNotLaidTileSelection(startX, startY, false);
-                    System.out.println("X, Y:" + startX + " " + startY);
                     if (moved) {
                         sourceSlotStackPane.getChildren().remove(holeStackPane);
                         targetCellStackPane.getChildren().add(holeStackPane);

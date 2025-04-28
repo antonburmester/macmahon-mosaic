@@ -19,7 +19,6 @@ public class ApplicationMain extends Application {
      * title of the window are set.
      *
      * @param stage the stage to be shown
-     * @throws IOException
      */
     @Override
     public void start(Stage stage) throws IOException {

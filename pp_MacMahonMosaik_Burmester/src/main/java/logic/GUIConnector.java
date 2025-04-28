@@ -1,7 +1,7 @@
 package logic;
 
 /**
- * Interface, welches die Logik nutzt, um der Oberfläche (GUI) etwas mitzuteilen.
+ * Interface, welches die Logik nutzt, um der Oberflaeche (GUI) etwas mitzuteilen.
  *
  * @author Anton Burmester
  */

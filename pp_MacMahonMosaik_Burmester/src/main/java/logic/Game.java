@@ -2,7 +2,9 @@ package logic;
 
 /**
  * Klasse welche das Spiel koodiniert
- * //TODO
+ * Diese Klasse ist die Schnittstelle zwischen GUI und Logik seitens des UserInterfaceController und der JavaFXGUI
+ * Der UserInterfaceController speichert immer die aktuelle Instanz der Game Klasse und die JavaFXGUI nutzt
+ * die Game Klasse nur zum setzen der Listener aber speichert nicht wie der UserInterfaceController die Instanz
  *
  * @author Anton Burmester
  */
@@ -12,7 +14,6 @@ public class Game {
     GameTiles gameTiles;
     HoleTiles holeTiles;
     boolean editorMode;
-
 
 
     /**
@@ -35,15 +36,15 @@ public class Game {
 
     /**
      * Konstruktor welcher ein Spiel auf Grundlage eines StringArrays erstellt
+     * TODO implementieren
      */
     public Game(GUIConnector gui, String[][] inputGameField){
         this.gui = gui;
         this.editorMode = false;
 
         this.gameField = new GameField(inputGameField);
-        this.gameTiles = new GameTiles(); //TODO fertig machen
+        this.gameTiles = new GameTiles();
         int holesAmount = (inputGameField.length - 2) * (inputGameField[0].length - 2) - 24;
-        System.out.println("holes Amount: " + Math.max(holesAmount, 0));
         this.holeTiles = new HoleTiles(Math.max(holesAmount, 0));
 
         this.gui.updateGridPaneFormat(this.gameField);
@@ -55,11 +56,11 @@ public class Game {
 
     /**
      * Methode welche umschaltet ob der Editor Mode aktiv ist oder nicht
+     * //TODO richtig implementieren
      */
     public void setEditorMode(boolean isEditorMode){
-        System.out.println("EditorMode: " + isEditorMode);
         if(!isEditorMode){ //kein EditorMode
-            //this.gui.displayGameFieldTiles(this, this.gameField); TODO hiermit werden die gameTiles nach neuem laden entfernt
+            //this.gui.displayGameFieldTiles(this, this.gameField);
             this.gui.displayNotUsedTiles(this, this.gameTiles);
             this.gui.displayBorder(this, this.gameField);
             this.editorMode = false;
@@ -81,16 +82,6 @@ public class Game {
     }
 
     /**
-     * Methode welche den Enum Namen des Spielsteins welcher im Spielfeld an einer Position liegt zurueckgibt
-     * @param x die Spalte
-     * @param y die Reihe
-     * @return den Namen des Spielsteins
-     */
-    public String getTileNameFromGameField(int x, int y){
-        return(this.gameField.getTile(x,y).getTileString());
-    }
-
-    /**
      * Methode welche einen Spielstein von der Auswahl der Spielsteine auf das Spielfeld legt
      * der gelegte Spielstein wird dann aus der Auswahl geloescht
      * @param tileIndex Index des zu legenden Spielsteins (orientiert sich an der TileNames Reihenfolge)
@@ -102,15 +93,11 @@ public class Game {
     public boolean moveTileFromNotLaidTilesToGameField(int x, int y, int tileIndex, boolean isGameTile){
         //wenn isGameTile dann wird der in den Spielsteinen gesucht und wenn nicht dann in den Lochsteinen
         Tile tile = isGameTile ? this.gameTiles.getTile(tileIndex) : this.holeTiles.getTile(tileIndex);
-        System.out.println("TILELLL: " + tile.getTileString() + " Tile Index: " + tileIndex);
         boolean status = true;
         if (this.gameField.isFieldFieldFree(x, y)) {
             if (isGameTile) { //Spielstein aus den nicht gelegten Spielsteinen loeschen
-                //this.gameTiles.removeTile(tile);
-                //this.gameTiles.removeTile(tileIndex);
                 this.gameTiles.setTileLaidStatus(tile, true);
             } else { //Loch aus den nicht gelegten Loechern loeschen
-                //this.holeTiles.removeTile(tileIndex);
                 this.holeTiles.setTileLaidStatus(tile, true);
             }
             this.gameField.layTile(x, y, tile); //Spielstein auf das Spielfeld legen
@@ -171,7 +158,6 @@ public class Game {
                 this.holeTiles.setTileLaidStatus(tile, false);
             }
             System.out.println(this.gameField.toString());
-            //System.out.println(this.gameTiles.toString());
         } else {
             status = false;
         }
