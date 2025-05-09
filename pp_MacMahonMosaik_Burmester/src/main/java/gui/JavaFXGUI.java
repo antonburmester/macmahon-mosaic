@@ -54,6 +54,7 @@ public class JavaFXGUI implements GUIConnector {
     /**
      * Methode welche dieForm der GridPane anzeigt
      * @param gameField das Spielfeld und seine darauf liegenden Spielsteine
+     *                  TODO old
      */
     public void updateGridPaneFormat(GameField gameField){
         this.gridPane.getChildren().clear(); //entfernt alte Zellen
@@ -96,6 +97,100 @@ public class JavaFXGUI implements GUIConnector {
             gridPane.getRowConstraints().add(rowConstraints);
         }
 
+        adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
+        this.loadHolesStackPanes();
+    }
+
+    /**
+     * Methode welche die Form der GridPane anzeigt
+     * @param rows die neue hoehe des Spielfelds
+     * @param columns die neue Breite des Spielfelds
+     */
+    public void updateGridPaneFormat(int rows, int columns){
+        //Die Differenz der bestehenden GridSize Breite zur neuen
+        int widthGrowLoss = columns - gridPane.getColumnCount();
+        //Die Differenz der bestehenden GridSize Hoehe zur neuen
+        int heigthGrowLoss = rows - gridPane.getRowCount();
+
+        gridPane.setMinSize(0, 0); //minimalgroeße der GridPane
+
+        double middleColWidthSizePercentage = 100 / (columns - 1.5d); //Breite der mittleren Felder
+        double borderColWidthSizePercentage = middleColWidthSizePercentage / 4; //Breite der Rand Spalten Felder
+        double middleRowWidthSizePercentage = 100 / (rows - 1.5d); //Hoehe der mittleren Felder
+        double borderRowWidthSizePercentage = middleRowWidthSizePercentage / 4; //Breite der Rand Zeilen Felder
+
+        // ChangeListener hinzufuegen, damit sich die GridPane durch die Pane an die
+        // Groeßenveraenderung der BorderPane anpasst TODO Listener nur einmal setzen
+        centerPane.widthProperty().addListener((obs, oldVal, newVal) ->
+                adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
+        centerPane.heightProperty().addListener((obs, oldVal, newVal) ->
+                adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
+
+        if(widthGrowLoss > 0){ //GirdPane soll groeßer bezueglich Breite werden (Spalten)
+
+            int existingCols = gridPane.getColumnCount();
+            for(int i = 0; i < columns; i++) { //von den bestehenden bis zur neuen Breite
+                ColumnConstraints colConstraints;
+                if(i >= existingCols){ //wenn das Spaltenobjekt noch nicht existiert
+                    colConstraints = new ColumnConstraints();
+                    colConstraints.setHgrow(Priority.ALWAYS);
+                    gridPane.getColumnConstraints().add(i, colConstraints); //neue Constraints den Constraints
+                    // hinzufuegen
+                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
+                    colConstraints = gridPane.getColumnConstraints().get(i);
+                }
+                colConstraints.setPercentWidth((i == 0 || i == columns - 1) ? borderColWidthSizePercentage
+                        : middleColWidthSizePercentage); //Ternaerer Operator: wenn linkeste oder rechteste Reihe dann
+                // eine schmale Zelle in Bezug auf die Breite sonst fuer die mittleren dicke Zellen
+            }
+        } else if(widthGrowLoss < 0){ //GirdPane soll kleiner bezueglich Breite werden (Spalten)
+
+            int existingCols = gridPane.getColumnCount();
+            for(int i = existingCols - 1; i >= 0; i--) { //von den bestehenden bis zur neuen Breite
+                if(i >= columns){ //wenn die zu loeschenden Spalten erreicht wurden
+                    gridPane.getColumnConstraints().remove(i); //bestehende Constraints aus den Constraints loeschen
+                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
+                    ColumnConstraints colConstraints;
+                    colConstraints = gridPane.getColumnConstraints().get(i);
+                    colConstraints.setPercentWidth((i == 0 || i == columns - 1) ? borderColWidthSizePercentage
+                            : middleColWidthSizePercentage); //Ternaerer Operator: wenn linkeste oder rechteste Reihe dann
+                    // eine schmale Zelle in Bezug auf die Breite sonst fuer die mittleren dicke Zellen
+                }
+            }
+        }
+
+        if(heigthGrowLoss > 0){ //GirdPane soll groeßer bezueglich Hoehe werden (mehr Zeilen)
+
+            int existingRows = this.gridPane.getRowCount();
+            for (int i = 0; i < rows; i++) {
+                RowConstraints rowConstraints;
+                if(i >= existingRows) { //wenn das Reihenobjekt noch nicht existiert
+                    rowConstraints = new RowConstraints();
+                    rowConstraints.setVgrow(Priority.ALWAYS);
+                    gridPane.getRowConstraints().add(i, rowConstraints); //neue Constraints den Constraints
+                    // hinzufuegen
+                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
+                    rowConstraints = gridPane.getRowConstraints().get(i);
+                }
+                rowConstraints.setPercentHeight((i == 0 || i == rows - 1) ? borderRowWidthSizePercentage
+                        : middleRowWidthSizePercentage);//Ternaerer Operator: wenn oberste oder unterste Reihe dann eine
+                // schmale Zelle in Bezug auf die Hoehe sonst fuer die mittleren dicke Zellen
+            }
+        } else if(heigthGrowLoss < 0){ //GirdPane soll kleiner bezueglich Hoehe werden (weniger Zeilen)
+
+            int existingRows = gridPane.getRowCount();
+            for(int i = existingRows - 1; i >= 0; i--) { //von den bestehenden bis zur neuen Hoehe
+                if(i >= rows){ //wenn die zu loeschenden Reihen erreicht wurden
+                    gridPane.getRowConstraints().remove(i); //bestehende Constraints aus den Constraints loeschen
+                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
+                    RowConstraints rowConstraints;
+                    rowConstraints = gridPane.getRowConstraints().get(i);
+                    rowConstraints.setPercentHeight((i == 0 || i == rows - 1) ? borderRowWidthSizePercentage
+                            : middleRowWidthSizePercentage);//Ternaerer Operator: wenn oberste oder unterste Reihe dann eine
+                    // schmale Zelle in Bezug auf die Hoehe sonst fuer die mittleren dicke Zellen
+                }
+            }
+        }
         adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
         this.loadHolesStackPanes();
     }
@@ -179,11 +274,11 @@ public class JavaFXGUI implements GUIConnector {
      * @param gameField das Spielfeld
      */
     public void displayGameFieldTiles(Game game, GameField gameField) {
-        this.gridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
+        //this.gridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
 
-        for(int y = 1; y < gameField.getGameField().length - 1; y++) { //Start bei 1 und Ende bei Groeße - 1
+        for (int y = 1; y < gameField.getGameField().length - 1; y++) { //Start bei 1 und Ende bei Groeße - 1
             // da der Rand nicht beachtet wird
-            for(int x = 1; x < gameField.getGameField()[y].length - 1; x++) { //Start bei 1 und Ende bei Groeße - 1
+            for (int x = 1; x < gameField.getGameField()[y].length - 1; x++) { //Start bei 1 und Ende bei Groeße - 1
                 // da der Rand nicht beachtet wird
                 Tile currTile = gameField.getTile(x, y);
 
@@ -191,13 +286,14 @@ public class JavaFXGUI implements GUIConnector {
                 //die StackPane bleibt durchgehend an derselben Stelle der GridPane, somit muss nur einmalig ein
                 // Event Listener gesetzt werden und die Bilder werden dann einfach immer von der einen StackPane auf
                 // die andere StackPane beim verschieben gesetzt
-                StackPane slotStackPane = new StackPane();
-                slotStackPane.setPrefSize(90, 90);
+                StackPane slotStackPane = this.getGridPaneCell(x, y, this.gridPane);
+
+                //slotStackPane.setPrefSize(90, 90);
                 slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
-                if(currTile.getTile().equals(TileNames.NNNN)) { //ein leeres Feld
+                if (currTile.getTile().equals(TileNames.NNNN)) { //ein leeres Feld
                     slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
-                } else if(currTile.getTile().equals(TileNames.HHHH)) { //ein Loch
+                } else if (currTile.getTile().equals(TileNames.HHHH)) { //ein Loch
                     //die aktuelle holeStackPane
                     for (StackPane currStackPane : this.holeStackPanes) { //durchlaeuft jede holeStackPane
                         if (currStackPane.getParent() == null) { //wenn holeStackPane nirgendwo gelegt wurde
@@ -212,6 +308,28 @@ public class JavaFXGUI implements GUIConnector {
                     tileImageView.setFitWidth(90);
                     slotStackPane.getChildren().add(tileImageView);
                 }
+            }
+        }
+    }
+
+    /**
+     * Methode die Listener auf eine StackPane setzten und diese in die Zellen der GridPane einfuegen
+     * @param game Spiel Instanz aus welcher die Methoden kommen um die Bewegung eines Spielsteins der Logik mitzuteilen
+     * @param gameField das Spielfeld
+     */
+    public void addListenerToMiddleGamefField(Game game, GameField gameField) {
+        this.gridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
+
+        for(int y = 1; y < gameField.getGameField().length - 1; y++) { //Start bei 1 und Ende bei Groeße - 1
+            // da der Rand nicht beachtet wird
+            for(int x = 1; x < gameField.getGameField()[y].length - 1; x++) { //Start bei 1 und Ende bei Groeße - 1
+                // da der Rand nicht beachtet wird
+
+                //Hintergrund als StackPane da man diese faerben kann
+                //die StackPane bleibt durchgehend an derselben Stelle der GridPane, somit muss nur einmalig ein
+                // Event Listener gesetzt werden und die Bilder werden dann einfach immer von der einen StackPane auf
+                // die andere StackPane beim verschieben gesetzt
+                StackPane slotStackPane = new StackPane();
 
                 //Rotation des Spielsteins wenn Rechtsklick
                 slotStackPane.setOnMouseClicked(event -> {
@@ -526,6 +644,7 @@ public class JavaFXGUI implements GUIConnector {
         for(Node currCellNode: gridPane.getChildren()){
             int xCoordinate = GridPane.getColumnIndex(currCellNode);
             int yCoordinate = GridPane.getRowIndex(currCellNode);
+            System.out.println("Search");
             if(xCoordinate == xIndex && yCoordinate == yIndex){
                 resultCell = (StackPane) currCellNode;
             }

@@ -28,7 +28,9 @@ public class Game {
         int holesAmount = heigth * width - 24;
         this.holeTiles = new Tiles(Math.max(holesAmount, 0));
 
-        this.gui.updateGridPaneFormat(this.gameField);
+        //this.gui.updateGridPaneFormat(this.gameField);
+        this.gui.updateGridPaneFormat(heigth + 2, width + 2);
+        this.gui.addListenerToMiddleGamefField(this, this.gameField);
         this.gui.displayGameFieldTiles(this, this.gameField);
         this.gui.displayNotUsedTiles(this, this.tiles);
         this.gui.displayBorder(this, this.gameField);

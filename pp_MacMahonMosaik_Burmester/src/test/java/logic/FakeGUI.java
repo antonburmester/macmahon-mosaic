@@ -5,6 +5,19 @@ package logic;
  * @author Anton Burmester
  */
 public class FakeGUI implements GUIConnector{
+
+
+    /**
+     * Methode die Listener auf eine StackPane setzten und diese in die Zellen der GridPane einfuegen
+     *
+     * @param game      Spiel Instanz aus welcher die Methoden kommen um die Bewegung eines Spielsteins der Logik mitzuteilen
+     * @param gameField das Spielfeld
+     */
+    @Override
+    public void addListenerToMiddleGamefField(Game game, GameField gameField) {
+
+    }
+
     /**
      * Methode welche Form der GridPane anzeigt
      *
@@ -12,6 +25,17 @@ public class FakeGUI implements GUIConnector{
      */
     @Override
     public void updateGridPaneFormat(GameField gameField) {
+
+    }
+
+    /**
+     * Methode welche dieForm der GridPane anzeigt
+     *
+     * @param columns die neue Breite des Spielfelds
+     * @param rows    die neue hoehe des Spielfelds
+     */
+    @Override
+    public void updateGridPaneFormat(int columns, int rows) {
 
     }
 

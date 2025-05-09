@@ -20,9 +20,9 @@ public class UserInterfaceController {
     @FXML
     private VBox editorControls;
     @FXML
-    private TextField userHeightInput;
+    private Spinner<Integer> userHeightInput;
     @FXML
-    private TextField userWidthInput;
+    private Spinner<Integer> userWidthInput;
 
     @FXML
     private GridPane gridPane;
@@ -41,7 +41,9 @@ public class UserInterfaceController {
      */
     @FXML
     public void initialize() {
-        System.out.println(this.game == null);
+        //BorderPane.setMargin(rightGridPane, new Insets(0, 0, 0, 10)); // Abstand links vom right-Bereich (10px) TODO abstand zwischen mittleren Spielfeld und rechtem Spielfeld
+        this.userHeightInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
+        this.userWidthInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
         this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane);
     }
 
@@ -89,16 +91,15 @@ public class UserInterfaceController {
      * Methode welche die Breite und Hoehe durch die Nutzereingaben einließt
      */
     public void applyEditorChanges(){
-        if(!this.userWidthInput.getText().isEmpty() && !this.userHeightInput.getText().isEmpty()) {
-            int heigth = Integer.parseInt(this.userHeightInput.getText());
-            int width = Integer.parseInt(this.userWidthInput.getText());
+        //if(!this.userWidthInput.getText().isEmpty() && !this.userHeightInput.getText().isEmpty()) {
+            int heigth = this.userHeightInput.getValue();
+            int width = this.userWidthInput.getValue();
             if (heigth >= 2 && width >= 2 && heigth <= 6 && width <= 6) {
-                this.game = new Game(this.gui, Integer.parseInt(this.userHeightInput.getText()),
-                        Integer.parseInt(this.userWidthInput.getText()));
+                this.game = new Game(this.gui, heigth, width);
             } else {
                 ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
             }
-        }
+        //}
     }
 
     /**

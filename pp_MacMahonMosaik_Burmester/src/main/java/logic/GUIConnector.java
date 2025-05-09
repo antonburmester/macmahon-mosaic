@@ -6,11 +6,25 @@ package logic;
  * @author Anton Burmester
  */
 public interface GUIConnector {
+
+    /**
+     * Methode die Listener auf eine StackPane setzten und diese in die Zellen der GridPane einfuegen
+     * @param game Spiel Instanz aus welcher die Methoden kommen um die Bewegung eines Spielsteins der Logik mitzuteilen
+     * @param gameField das Spielfeld
+     */
+    void addListenerToMiddleGamefField(Game game, GameField gameField);
     /**
      * Methode welche Form der GridPane anzeigt
      * @param gameField das Spielfeld
      */
     void updateGridPaneFormat(GameField gameField);
+
+    /**
+     * Methode welche dieForm der GridPane anzeigt
+     * @param columns die neue Breite des Spielfelds
+     * @param rows die neue hoehe des Spielfelds
+     */
+    void updateGridPaneFormat(int columns, int rows);
 
     /**
      * Methode welche die GridPane fuellt
