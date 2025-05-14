@@ -37,6 +37,17 @@ public class Game {
     }
 
     /**
+     * Konstruktor welcher das Standard Spiel erstellt nutzt hierfür den Konstruktor welcher ein Spiel auf Grundlage
+     * eines StringArrays erstellt
+     */
+    public Game(GUIConnector gui){
+        this(gui, new String[][] {{"NNNN", "NNGN", "NNGN", "NNNN"},
+                                  {"NGNN", "NNNN", "NNNN", "NNNG"},
+                                  {"NRNN", "NNNN", "NNNN", "NNNR"},
+                                  {"NNNN", "YNNN", "YNNN", "NNNN"}});
+    }
+
+    /**
      * Konstruktor welcher ein Spiel auf Grundlage eines StringArrays erstellt
      */
     public Game(GUIConnector gui, String[][] inputGameField){
@@ -48,7 +59,8 @@ public class Game {
         this.holeTiles = new Tiles(Math.max(holesAmount, 0));
         this.gameField = new GameField(inputGameField, this.tiles, this.holeTiles);
 
-        this.gui.updateGridPaneFormat(this.gameField);
+        this.gui.updateGridPaneFormat(inputGameField.length, inputGameField[0].length);
+        this.gui.addListenerToMiddleGamefField(this, this.gameField);
         this.gui.displayGameFieldTiles(this, this.gameField);
         this.gui.displayNotUsedTiles(this, this.tiles);
         this.gui.displayBorder(this, this.gameField);

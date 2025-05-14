@@ -1,10 +1,12 @@
 package gui;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import logic.CustomException;
 import logic.Game;
+
 
 /**
  * Main class for the user interface.
@@ -41,10 +43,12 @@ public class UserInterfaceController {
      */
     @FXML
     public void initialize() {
-        //BorderPane.setMargin(rightGridPane, new Insets(0, 0, 0, 10)); // Abstand links vom right-Bereich (10px) TODO abstand zwischen mittleren Spielfeld und rechtem Spielfeld
+        //luecke zwischen der Mitte und der rechten GridPane
+        BorderPane.setMargin(rightGridPane, new Insets(0, 0, 0, 10));
         this.userHeightInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
         this.userWidthInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
         this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane);
+        this.game = new Game(this.gui); //erstaufruf welcher das beispielspiel initialisiert
     }
 
     /**
@@ -107,6 +111,14 @@ public class UserInterfaceController {
      * werden kann
      */
     public void checkSolvability(){
+
+    }
+
+    /**
+     * Methode welche aus dem Menue aufgerufen wird um einen Tipp (richtiger Spielstein an der richtigen Stelle)
+     * zu legen
+     */
+    public void layHint(){
 
     }
 }

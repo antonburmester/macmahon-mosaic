@@ -23,9 +23,9 @@ public class ApplicationMain extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(ApplicationMain.class.getResource("UserInterface.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1180, 900);
-        stage.setMinWidth(1000);
-        stage.setMinHeight(900);
+        Scene scene = new Scene(fxmlLoader.load(), 1280, 1024);
+        stage.setMinWidth(900);
+        stage.setMinHeight(800);
         stage.setMaxWidth(Double.MAX_VALUE);
         stage.setMaxHeight(Double.MAX_VALUE);
         stage.setTitle("MacMahonMosaik");

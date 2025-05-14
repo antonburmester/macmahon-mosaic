@@ -2,15 +2,12 @@ package logic;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * fuer den Zwischenstand geforderte Tests
  */
-public class pubTests {
+public class ZwischenstandsTests {
 
     /**
      *

@@ -19,25 +19,18 @@
     <top>
         <MenuBar fx:id="menueBar" BorderPane.alignment="CENTER">
             <menus>
-                <Menu mnemonicParsing="false" text="Spiel neustart">
+                <Menu mnemonicParsing="false" text="Spiel">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#restartGame" text="Spiel neustarten" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Spielstand verwalten">
-                    <items>
                         <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Spielstand laden" />
                         <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Spielstand speichern" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Spiel Beenden">
-                    <items>
                         <MenuItem mnemonicParsing="false" onAction="#endGame" text="Spiel beenden" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Lösbarkeit">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#checkSolvability" text="Lösbarkeit prüfen" />
+                        <MenuItem mnemonicParsing="false" onAction="#layHint" text="Lösungstipp" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Editor">

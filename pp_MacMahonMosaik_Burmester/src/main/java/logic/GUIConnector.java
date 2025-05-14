@@ -13,11 +13,6 @@ public interface GUIConnector {
      * @param gameField das Spielfeld
      */
     void addListenerToMiddleGamefField(Game game, GameField gameField);
-    /**
-     * Methode welche Form der GridPane anzeigt
-     * @param gameField das Spielfeld
-     */
-    void updateGridPaneFormat(GameField gameField);
 
     /**
      * Methode welche dieForm der GridPane anzeigt
