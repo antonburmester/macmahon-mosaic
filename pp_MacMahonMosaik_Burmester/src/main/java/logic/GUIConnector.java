@@ -19,7 +19,7 @@ public interface GUIConnector {
      * @param columns die neue Breite des Spielfelds
      * @param rows die neue hoehe des Spielfelds
      */
-    void updateGridPaneFormat(int columns, int rows);
+    //void updateGridPaneFormat(int columns, int rows);
 
     /**
      * Methode welche die GridPane fuellt

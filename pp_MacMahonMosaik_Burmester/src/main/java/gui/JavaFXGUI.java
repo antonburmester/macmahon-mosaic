@@ -8,6 +8,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import logic.*;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -31,14 +32,16 @@ public class JavaFXGUI implements GUIConnector {
     private StackPane[] holeStackPanes;
 
     //die Kennungen der verschiedenen Drag and Drop Objekte
-    final String ID_PIECE = "0";
-    final String ID_HOLE = "1";
-    final String ID_BORDER = "2";
+    public static final String ID_PIECE = "0";
+    public static final String ID_HOLE = "1";
+    public static final String ID_BORDER = "2";
+
+    public static final int BORDER_SIZE = 2;
 
     //die HEX Farbkennungen des Randes damit die Randfarben den Spielsteinen gleichen
-    final String COLOR_HEX_CODE_GREEN = "#007F0E;";
-    final String COLOR_HEX_CODE_YELLOW = "#FFD800;";
-    final String COLOR_HEX_CODE_RED = "#B60000;";
+    public static final String COLOR_HEX_CODE_GREEN = "#007F0E;";
+    public static final String COLOR_HEX_CODE_YELLOW = "#FFD800;";
+    public static final String COLOR_HEX_CODE_RED = "#B60000;";
 
     /**
      * Konstruktor welcher diese Klasse initialisiert
@@ -54,134 +57,7 @@ public class JavaFXGUI implements GUIConnector {
         this.rightGridPane = rightGridPane;
 
         this.loadImages();
-    }
-
-    /**
-     * Methode welche die Form der GridPane anzeigt
-     * @param rows die neue hoehe des Spielfelds
-     * @param columns die neue Breite des Spielfelds
-     */
-    public void updateGridPaneFormat(int rows, int columns){
-        //Die Differenz der bestehenden GridSize Breite zur neuen
-        int widthGrowLoss = columns - gridPane.getColumnCount();
-        //Die Differenz der bestehenden GridSize Hoehe zur neuen
-        int heigthGrowLoss = rows - gridPane.getRowCount();
-
-        gridPane.setMinSize(0, 0); //minimalgroeße der GridPane
-
-        double middleColWidthSizePercentage = 100 / (columns - 1.5d); //Breite der mittleren Felder
-        double borderColWidthSizePercentage = middleColWidthSizePercentage / 4; //Breite der Rand Spalten Felder
-        double middleRowWidthSizePercentage = 100 / (rows - 1.5d); //Hoehe der mittleren Felder
-        double borderRowWidthSizePercentage = middleRowWidthSizePercentage / 4; //Breite der Rand Zeilen Felder
-
-        // ChangeListener hinzufuegen, damit sich die GridPane durch die Pane an die
-        // Groeßenveraenderung der BorderPane anpasst TODO Listener nur einmal setzen
-        centerPane.widthProperty().addListener((obs, oldVal, newVal) ->
-                adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
-        centerPane.heightProperty().addListener((obs, oldVal, newVal) ->
-                adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
-
-        if(widthGrowLoss > 0){ //GirdPane soll groeßer bezueglich Breite werden (Spalten)
-
-            int existingCols = gridPane.getColumnCount();
-            for(int i = 0; i < columns; i++) { //von den bestehenden bis zur neuen Breite
-                ColumnConstraints colConstraints;
-                if(i >= existingCols){ //wenn das Spaltenobjekt noch nicht existiert
-                    colConstraints = new ColumnConstraints();
-                    colConstraints.setHgrow(Priority.ALWAYS);
-                    gridPane.getColumnConstraints().add(i, colConstraints); //neue Constraints den Constraints
-                    // hinzufuegen
-                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
-                    colConstraints = gridPane.getColumnConstraints().get(i);
-                }
-                colConstraints.setPercentWidth((i == 0 || i == columns - 1) ? borderColWidthSizePercentage
-                        : middleColWidthSizePercentage); //Ternaerer Operator: wenn linkeste oder rechteste Reihe dann
-                // eine schmale Zelle in Bezug auf die Breite sonst fuer die mittleren dicke Zellen
-            }
-        } else if(widthGrowLoss < 0){ //GirdPane soll kleiner bezueglich Breite werden (Spalten)
-
-            int existingCols = gridPane.getColumnCount();
-            for(int i = existingCols - 1; i >= 0; i--) { //von den bestehenden bis zur neuen Breite
-                if(i >= columns){ //wenn die zu loeschenden Spalten erreicht wurden
-                    gridPane.getColumnConstraints().remove(i); //bestehende Constraints aus den Constraints loeschen
-                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
-                    ColumnConstraints colConstraints;
-                    colConstraints = gridPane.getColumnConstraints().get(i);
-                    colConstraints.setPercentWidth((i == 0 || i == columns - 1) ? borderColWidthSizePercentage
-                            : middleColWidthSizePercentage); //Ternaerer Operator: wenn linkeste oder rechteste Reihe dann
-                    // eine schmale Zelle in Bezug auf die Breite sonst fuer die mittleren dicke Zellen
-                }
-            }
-        }
-
-        if(heigthGrowLoss > 0){ //GirdPane soll groeßer bezueglich Hoehe werden (mehr Zeilen)
-
-            int existingRows = this.gridPane.getRowCount();
-            for (int i = 0; i < rows; i++) {
-                RowConstraints rowConstraints;
-                if(i >= existingRows) { //wenn das Reihenobjekt noch nicht existiert
-                    rowConstraints = new RowConstraints();
-                    rowConstraints.setVgrow(Priority.ALWAYS);
-                    gridPane.getRowConstraints().add(i, rowConstraints); //neue Constraints den Constraints
-                    // hinzufuegen
-                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
-                    rowConstraints = gridPane.getRowConstraints().get(i);
-                }
-                rowConstraints.setPercentHeight((i == 0 || i == rows - 1) ? borderRowWidthSizePercentage
-                        : middleRowWidthSizePercentage);//Ternaerer Operator: wenn oberste oder unterste Reihe dann eine
-                // schmale Zelle in Bezug auf die Hoehe sonst fuer die mittleren dicke Zellen
-            }
-        } else if(heigthGrowLoss < 0){ //GirdPane soll kleiner bezueglich Hoehe werden (weniger Zeilen)
-
-            int existingRows = gridPane.getRowCount();
-            for(int i = existingRows - 1; i >= 0; i--) { //von den bestehenden bis zur neuen Hoehe
-                if(i >= rows){ //wenn die zu loeschenden Reihen erreicht wurden
-                    gridPane.getRowConstraints().remove(i); //bestehende Constraints aus den Constraints loeschen
-                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
-                    RowConstraints rowConstraints;
-                    rowConstraints = gridPane.getRowConstraints().get(i);
-                    rowConstraints.setPercentHeight((i == 0 || i == rows - 1) ? borderRowWidthSizePercentage
-                            : middleRowWidthSizePercentage);//Ternaerer Operator: wenn oberste oder unterste Reihe dann eine
-                    // schmale Zelle in Bezug auf die Hoehe sonst fuer die mittleren dicke Zellen
-                }
-            }
-        }
-        adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
         this.loadHolesStackPanes();
-    }
-
-
-    /**
-     * Methode welche die mittlere Spielflaeche sowie die Bilder in den Zellen dieser an die Groeße anpasst
-     * @param gridPane Spielflaeche
-     * @param width Breite des mittleren Flaeche auf welcher die GridPane liegt
-     * @param height Hoehe des mittleren Flaeche auf welcher die GridPane liegt
-     */
-    private void adjustGridPaneSize(GridPane gridPane, double width, double height) {
-        final int middleCols = gridPane.getColumnCount() - 2; //-2 da 2 Columns Rand sind
-        final int middleRows = gridPane.getRowCount() - 2; //-2 da 2 Rows Rand sind
-        //die aeußeren beiden Spalten/Reihen zaehlen zusammen nur als halbe Spalte/Reihe
-        final double colCount = middleCols + 0.5d; //0,5 da eine Randspalte 0,25 einer normalen ist und 0,5 da zwei
-        final double rowCount = middleRows + 0.5d; //0,5 da eine Randreihe 0,25 einer normalen ist und 0,5 da zwei
-
-        double cellSize = Math.min(width / colCount, height / rowCount); //die Zellengroeße
-        gridPane.setPrefSize(cellSize * colCount, cellSize * rowCount); //setzt diese Zellengroeße fuer GridPane
-
-        //aktualisierung der Bildgroeßen und Abstaende
-        for(Node node : gridPane.getChildren()) { //durchlaeuft jede Zelle und node ist die unterste Ebene des Inhalts
-            // also das StackPane
-            if(node instanceof StackPane tilePane) { //StackPane, da die unterste Ebene eine StackPane ist
-                tilePane.setPrefSize(cellSize, cellSize); //Setzt die Groeße der StackPane
-                for(Node child : tilePane.getChildren()) { //durchlaeuft jede naechste Ebene der StackPane da dort
-                    // das ImageView kommt
-                    if(child instanceof ImageView imageView) {
-                        //Groeße updaten
-                        imageView.setFitWidth(cellSize);
-                        imageView.setFitHeight(cellSize);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -194,11 +70,23 @@ public class JavaFXGUI implements GUIConnector {
         // NNNN und HHHH nicht geladen werden da sie kein Bild haben
         String imagePath;
         for(int i = 0; i < imageViews.length; i++){ //-2 weil HHHH und NNNN nicht als Bild vorhanden sind
-                imagePath = "/tiles/" + TileNames.values()[i] + ".png"; //der relative Pfad zu dem Bild
-                Image image =
-                        new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))); //laedt das Bild
-                ImageView currIndexImage = new ImageView(image); //ImageView da es Attribute wie z.B. Groeße speichert
-                imageViews[i] = currIndexImage;
+            imagePath = "/tiles/" + TileNames.values()[i] + ".png"; //der relative Pfad zu dem Bild
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))); //laedt das Bild
+            ImageView currIndexImage = new ImageView(image); //ImageView da es Attribute wie z.B. Groeße speichert
+
+            currIndexImage.setOnDragDetected(event -> {
+                //if (!slotStackPane.getChildren().isEmpty()) { //nicht leer also Bild TODO muss EditorMode pruefen
+                    Dragboard db = currIndexImage.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    int tileEnumIndex = this.getTileIndex(currIndexImage);
+                    String contentPayload = (currIndexImage instanceof ImageView ? ID_PIECE : ID_HOLE) + tileEnumIndex;
+                    content.putString(contentPayload);
+                    db.setContent(content);
+                //}
+                event.consume();
+            });
+
+            imageViews[i] = currIndexImage;
         }
         this.imageViews = imageViews;
     }
@@ -215,8 +103,20 @@ public class JavaFXGUI implements GUIConnector {
         if(holesAmount > 0){ //wenn es Loecher gibt
             for(int i = 0; i < holesAmount; i++){ //soviele Loecher wie noetig
                 StackPane holeStackPane = new StackPane();
-                holeStackPane.setStyle("-fx-background-color: gray; -fx-border-color: " +
-                        "black; -fx-border-width: 2;");
+                holeStackPane.setStyle("-fx-background-color: gray;");
+
+                holeStackPane.setOnDragDetected(event -> {
+                    //if (!slotStackPane.getChildren().isEmpty()) { //nicht leer also Bild TODO muss EditorMode pruefen
+                    Dragboard db = holeStackPane.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    int tileEnumIndex = this.getTileIndex(holeStackPane);
+                    String contentPayload = (holeStackPane instanceof StackPane ? ID_HOLE : ID_PIECE) + tileEnumIndex;
+                    content.putString(contentPayload);
+                    db.setContent(content);
+                    //}
+                    event.consume();
+                });
+
                 holeStackPanes[i] = holeStackPane; //diese Loecher dem Array der benoetigten Loecher hinuzfuegen
             }
         }
@@ -244,10 +144,11 @@ public class JavaFXGUI implements GUIConnector {
                 StackPane slotStackPane = this.getGridPaneCell(x, y, this.gridPane);
 
                 //slotStackPane.setPrefSize(90, 90);
-                slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+                //slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
                 if (currTile.getTile().equals(TileNames.NNNN)) { //ein leeres Feld
-                    slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+                    //Rand setzen
+                    slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
                 } else if (currTile.getTile().equals(TileNames.HHHH)) { //ein Loch
                     //die aktuelle holeStackPane
                     for (StackPane currStackPane : this.holeStackPanes) { //durchlaeuft jede holeStackPane
@@ -261,7 +162,7 @@ public class JavaFXGUI implements GUIConnector {
                     tileImageView = this.imageViews[tileEnumIndex]; //das Bild als ImageView
                     tileImageView.setFitHeight(90);
                     tileImageView.setFitWidth(90);
-                    slotStackPane.getChildren().add(tileImageView);
+                    slotStackPane.getChildren().add(tileImageView); //Bild dem Hintergrund hinzufuegen
                 }
             }
         }
@@ -430,7 +331,7 @@ public class JavaFXGUI implements GUIConnector {
                 this.gridPane.add(slotStackPane, x, y);
             }
         }
-        adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
+        //adjustGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
     }
 
 
@@ -440,7 +341,7 @@ public class JavaFXGUI implements GUIConnector {
      * @param tiles die verfuegbaren Spielsteine
      */
     public void displayNotUsedTiles(Game game, Tiles tiles) {
-        this.rightGridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
+        this.removeAllPiecesButLeaveSlots(this.rightGridPane);//entfernt alle bestehenden Objekte auf den Slots
 
         //Abstand zwischen den Spalten und Reihen
         this.rightGridPane.setHgap(10);
@@ -454,14 +355,6 @@ public class JavaFXGUI implements GUIConnector {
             if(!(!currTile.getIsLaid() &&
                     (currTile.getTile() == TileNames.NNNN || currTile.getTile() == TileNames.HHHH))) {
 
-                //Hintergrund als StackPane da man diese faerben kann
-                //die StackPane bleibt durchgehend an derselben Stelle der GridPane, somit muss nur einmalig ein
-                // Event Listener gesetzt werden und die Bilder werden dann einfach immer von der einen StackPane auf
-                // die andere StackPane beim verschieben gesetzt
-                StackPane slotStackPane = new StackPane();
-                slotStackPane.setPrefSize(80, 80);
-                slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 0;");
-
                 if (!currTile.getIsLaid()) {
                     String tileName = currTile.getTileString();
                     if (currTile.isNormalGameTile()) { //wenn nicht NNNN und HHHH da diese kein Bild haben
@@ -469,89 +362,15 @@ public class JavaFXGUI implements GUIConnector {
                         ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Spielsteins
                         imageView.setFitWidth(80);
                         imageView.setFitHeight(80);
-                        slotStackPane.getChildren().add(imageView); //ImageView der Stackpane hinzufuegen
+                        //slotStackPane.getChildren().add(imageView); //ImageView der Stackpane hinzufuegen
+                        //Bild dem Slot der GridPane hinzufuegen
+                        if(imageView.getParent() != null){
+                            StackPane slotStackPane = (StackPane) imageView.getParent();
+                            slotStackPane.getChildren().remove(imageView);
+                        }
+                        this.getGridPaneCell(col, row, this.rightGridPane).getChildren().add(imageView);
                     }
                 }
-
-                //Drag Entered Event: wenn ein Bild ueber die Spielstein Auswahl gezogen wird, wird diese hervorgehoben
-                rightGridPane.setOnDragEntered(event -> {
-                    if (((StackPane) event.getGestureSource()).getParent() !=
-                            this.rightGridPane && event.getDragboard().hasString()) { //ist String
-                        rightGridPane.setStyle("-fx-background-color: pink;"); //setzt Hintergrundfarbe der StackPane
-                    }
-                });
-
-                //drag Exited Event wenn das Bild wieder aus der Spielstein Auswahl herausgezogen wird,
-                // wird diese hervorhebung zurueckgesetzt
-                rightGridPane.setOnDragExited(event -> {
-                    rightGridPane.setStyle(""); //entfernt die Hintergrundfarbe
-                });
-
-                //Drag Detected Event fuer die Spielstein Auswahl: wenn dieses StackPane ImageView Konstrukt wieder aus
-                // der Auswahl per Drag bewegt wird
-                slotStackPane.setOnDragDetected((MouseEvent event) -> {
-                    if (!slotStackPane.getChildren().isEmpty()) { //nicht leer also Bild
-                        Dragboard db = slotStackPane.startDragAndDrop(TransferMode.MOVE);
-                        ClipboardContent content = new ClipboardContent();
-                        ImageView currImageView = (ImageView) slotStackPane.getChildren().getFirst();
-                        int tileEnumIndex = this.getTileIndex(currImageView);
-                        content.putString(ID_PIECE + tileEnumIndex);
-                        db.setContent(content);
-                    }
-                    event.consume(); //markiert das Event als verarbeitet
-                });
-
-                //Drag Over Event: registiert, dass ein StackPane ImageView Konstrukt ueber dieses Slot gezogen wurde
-                slotStackPane.setOnDragOver(event -> {
-                    if (((StackPane) event.getGestureSource()).getParent() !=
-                            this.rightGridPane && event.getDragboard().hasString()) { //enthaelt einen String
-                        event.acceptTransferModes(TransferMode.MOVE); //wird bewegt und nicht z.B. kopiert
-                    }
-                    event.consume(); //markiert das Event als verarbeitet
-                });
-
-                //Drop Event fuer das die Spielstein Auswahl: wenn das Bild in der rigthGridPane abgelegt wird
-                this.rightGridPane.setOnDragDropped(event -> {
-                    Dragboard db = event.getDragboard();
-                    if (db.hasString()) {
-                        int imageViewIndex = Integer.parseInt(db.getString());
-                        ImageView droppedImageView = this.imageViews[imageViewIndex];
-
-                        //Ursprung des zu Verschiebenden Bildes (Tile) aus dem Spielfeld
-                        Integer startX = GridPane.getColumnIndex(droppedImageView.getParent());
-                        Integer startY = GridPane.getRowIndex(droppedImageView.getParent());
-
-                        //durch eine Game Klasse Methode wird die Bewegung vom Spielfeld in die Spielstein
-                        // Auswahl in das Spielfeld der Game Instanz des Logik Package uebernommen
-                        boolean returned = game.moveTileFromGamefieldToNotLaidTileSelection(startX, startY,
-                                true);
-                        if (returned) {
-                            int xIndex = imageViewIndex % 3; //die Spalte wo der Spielstein in der
-                            // Spielstein Auswahl urspruenglich mal war
-                            int yIndex = imageViewIndex / 3; //die Reihe wo der Spielstein in der
-                            // Spielstein Auswahl urspruenglich mal war
-
-                            StackPane targetCellStackPane = this.getGridPaneCell(xIndex, yIndex, this.rightGridPane);
-                            //der vorherige Slot (StackPane) auf welcher das Bild vorher lag
-                            StackPane sourceSlotStackPane = (StackPane) droppedImageView.getParent();
-
-                            //das Bild vom alten Slot losbinden
-                            sourceSlotStackPane.getChildren().remove(droppedImageView);
-                            droppedImageView.setFitWidth(80);
-                            droppedImageView.setFitHeight(80);
-                            droppedImageView.setRotate(0); //Rotation Graphisch zuruecksetzen
-                            targetCellStackPane.getChildren().add(droppedImageView); //das Bild an den Slot binden
-
-                            event.setDropCompleted(true);
-                        } else {
-                            event.setDropCompleted(false);
-                        }
-                    }
-
-                    event.consume(); //markiert das Event als verarbeitet
-                });
-
-                this.rightGridPane.add(slotStackPane, col, row); //Zelle dem GridPane hinzufuegen
                 //Verwaltung fuer Reihen und Spalten
                 col++; //nach jedem durchlauf in die naechste Zeile
                 if (col == 3) { // Nach 3 Spalten neue Zeile beginnen
@@ -595,13 +414,15 @@ public class JavaFXGUI implements GUIConnector {
      * @param xIndex der Breitenindex
      * @param yIndex der Hoehenindex
      * @param gridPane die GridPane in welcher gesucht wird
-     * @return die Instanz des Inhalts an der bestimmten Stelle
+     * @return die Instanz des StackPaneInhalts an der bestimmten Stelle
      */
     private StackPane getGridPaneCell(int xIndex, int yIndex, GridPane gridPane){
         StackPane resultCell = null;
         for(Node currCellNode: gridPane.getChildren()){
-            int xCoordinate = GridPane.getColumnIndex(currCellNode);
-            int yCoordinate = GridPane.getRowIndex(currCellNode);
+            //da 0 als null zurueckgegeben wird, muss man es zu 0 aendern
+            int xCoordinate = GridPane.getColumnIndex(currCellNode) != null ? GridPane.getColumnIndex(currCellNode) : 0;
+            //da 0 als null zurueckgegeben wird, muss man es zu 0 aendern
+            int yCoordinate = GridPane.getRowIndex(currCellNode) != null ? GridPane.getRowIndex(currCellNode) : 0;
             if(xCoordinate == xIndex && yCoordinate == yIndex){
                 resultCell = (StackPane) currCellNode;
             }
@@ -626,20 +447,21 @@ public class JavaFXGUI implements GUIConnector {
                     //switch Statement welches je nach Randstein den Rand faerbt
                     String initialCellStyle = switch (gameField.getTile(x, y).getTile()) {
                         case TileNames.GGGG ->
-                                "-fx-border-color: black; -fx-border-width: 2; -fx-background-color: " +
-                                        COLOR_HEX_CODE_GREEN + ";"; //Gruen
+                                "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
+                                        "; -fx-background-color: " + COLOR_HEX_CODE_GREEN + ";"; //Gruen
                         case TileNames.YYYY ->
-                                "-fx-border-color: black; -fx-border-width: 2; -fx-background-color: " +
-                                        COLOR_HEX_CODE_YELLOW + ";"; //Gelb
+                                "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
+                                        "; -fx-background-color: " + COLOR_HEX_CODE_YELLOW + ";"; //Gelb
                         case TileNames.RRRR ->
-                                "-fx-border-color: black; -fx-border-width: 2; -fx-background-color: " +
-                                        COLOR_HEX_CODE_RED + ";"; //rot
-                        default -> "-fx-border-color: black; -fx-border-width: 2;"; //leere Zelle mit Rand
+                                "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
+                                        "; -fx-background-color: " + COLOR_HEX_CODE_RED + ";"; //rot
+                        //leere Zelle am Rand
+                        default -> "-fx-border-color: black; -fx-border-width: " + + JavaFXGUI.BORDER_SIZE + ";";
                     };
                     slotStackPane.setStyle(initialCellStyle);
                     slotStackPane.setUserData(initialCellStyle);
 
-
+                    /*
                     //Drag Over Event: den Drag des Randsteins ueber den Rand registrieren
                     slotStackPane.setOnDragOver(event -> {
                         Dragboard db = event.getDragboard(); //der Inhalt der verschoben wird
@@ -707,6 +529,8 @@ public class JavaFXGUI implements GUIConnector {
 
                     this.gridPane.add(slotStackPane, x, y); //den Hintergrund (wird gefaerbt) des Randes
                     // in das mittlere Spielfeld hinzufuegen
+
+                     */
                 }
             }
         }
@@ -727,6 +551,26 @@ public class JavaFXGUI implements GUIConnector {
         });
     }
 
+    /**
+     * Methode welche alle Objekte die auf einem Slot Liegen entfernen
+     * @param gridPane die GridPane welche gelehrt werden soll
+     */
+    public void removeAllPiecesButLeaveSlots(GridPane gridPane){
+        for (int y = 0; y < gridPane.getRowCount(); y++) { //Start bei 1 und Ende bei Groeße - 1
+            // da der Rand nicht beachtet wird
+            for (int x = 0; x < gridPane.getColumnCount(); x++) { //Start bei 1 und Ende bei Groeße - 1
+
+                StackPane slotStackPane = this.getGridPaneCell(x, y, gridPane);
+                ArrayList<Node> stackPaneChildren = new ArrayList<>(slotStackPane.getChildren()); //kopieren, weil man
+                // ueber dieselbe Liste itterirt und objekte aus dieser loescht
+                for(Node child: stackPaneChildren){
+                    slotStackPane.getChildren().remove(child);
+                }
+
+            }
+        }
+    }
+
 
     /**
      * Methode welche die Editor Elemente in der rechten GridPane Auswahl anzeigt
@@ -734,41 +578,44 @@ public class JavaFXGUI implements GUIConnector {
      * @param withHoles ob in das Spielfeld auch Loecher sollen (wenn nicht wird der Loch Spielstein nicht angezeigt)
      */
     public void fillRightGridPaneWithEditorPieces(Game game, boolean withHoles){
-        this.rightGridPane.getChildren().clear(); //entfernt alle bestehenden Bilder
+        this.removeAllPiecesButLeaveSlots(rightGridPane); //entfernt alle bestehenden Objekte auf den Slots
 
         //Abstand zwischen den Spalten und Reihen
         this.rightGridPane.setHgap(10);
         this.rightGridPane.setVgap(10);
 
         //rot, gruen und gelbe Auswahl fuer den Rand
-        Label randLabel = new Label("Randsteine:"); //Schriftzug
-        this.rightGridPane.add(randLabel, 0, 4, 3, 1); // ueber drei Spalten, eine Zeile
+        //Label randLabel = new Label("Randsteine:"); //Schriftzug
+        //this.rightGridPane.add(randLabel, 0, 4, 3, 1); // ueber drei Spalten, eine Zeile TODO
 
         StackPane cell = new StackPane();
         cell.setPrefSize(80, 80);
         cell.setStyle("-fx-background-color: " + COLOR_HEX_CODE_GREEN + ";"); //Gruen
         this.applyDragEventsForBorder(cell, ID_BORDER + TileNames.valueOf(TileNames.GGGG.toString()).ordinal());
-        this.rightGridPane.add(cell, 0, 5); //Zelle der GridPane hinzufuegen
+        //this.rightGridPane.add(cell, 0, 5); //Zelle der GridPane hinzufuegen
+        this.getGridPaneCell(0, 0, rightGridPane).getChildren().add(cell);
         cell = new StackPane();
         cell.setPrefSize(80, 80);
         cell.setStyle("-fx-background-color: " + COLOR_HEX_CODE_YELLOW + ";"); //Gelb
         this.applyDragEventsForBorder(cell, ID_BORDER + TileNames.valueOf(TileNames.YYYY.toString()).ordinal());
-        this.rightGridPane.add(cell, 1, 5); //Zelle der GridPane hinzufuegen
+        //this.rightGridPane.add(cell, 1, 5); //Zelle der GridPane hinzufuegen
+        this.getGridPaneCell(1, 0, rightGridPane).getChildren().add(cell);
         cell = new StackPane();
         cell.setPrefSize(80, 80);
         cell.setStyle("-fx-background-color: " + COLOR_HEX_CODE_RED + ";"); //rot
         this.applyDragEventsForBorder(cell, ID_BORDER + TileNames.valueOf(TileNames.RRRR.toString()).ordinal());
-        this.rightGridPane.add(cell, 2, 5); //Zelle der GridPane hinzufuegen
+        //this.rightGridPane.add(cell, 2, 5); //Zelle der GridPane hinzufuegen
+        this.getGridPaneCell(2, 0, rightGridPane).getChildren().add(cell);
 
         //Loch Spielstein fuer den Editor
         if(this.holeStackPanes.length > 0) {
-            Label lochSteinLabel = new Label("Lochstein:"); //Schriftzug
-            this.rightGridPane.add(lochSteinLabel, 0, 14, 3, 1); // ueber drei Spalten, eine Zeile
-            int row = 15, col = 0;
+            //Label lochSteinLabel = new Label("Lochstein:"); //Schriftzug
+            //this.rightGridPane.add(lochSteinLabel, 0, 14, 3, 1); // ueber drei Spalten, eine Zeile TODO
+            int row = 2, col = 0;
             for (StackPane holeStackPane : this.holeStackPanes) { //jedes Loch hinzufuegen
                 StackPane slotStackPane = new StackPane();
                 slotStackPane.setPrefSize(80, 80);
-                slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+                //slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
                 if (holeStackPane.getParent() == null || //noch nie gelegt
                         (holeStackPane.getParent() != null && //gelegt und nicht mehr auf dem Spielfeld
@@ -781,7 +628,8 @@ public class JavaFXGUI implements GUIConnector {
                 }
 
                 this.applyDragDropEventsForHoleSelection(slotStackPane, game); //Drag and Drop hinzufuegen
-                this.rightGridPane.add(slotStackPane, col, row); //Zelle der GridPane hinzufuegen
+                //this.rightGridPane.add(slotStackPane, col, row); //Zelle der GridPane hinzufuegen
+                this.getGridPaneCell(col, row, rightGridPane).getChildren().add(cell);
 
                 //Verwaltung fuer Reihen und Spalten
                 col++; //nach jedem durchlauf in die naechste Zeile
@@ -815,14 +663,16 @@ public class JavaFXGUI implements GUIConnector {
             if (((StackPane) event.getGestureSource()).getParent() !=
                     this.rightGridPane && event.getDragboard().hasString()) { //enthaelt einen String und kommt nicht
                 // aus der rechten GridPane
-                rightGridPane.setStyle("-fx-background-color: pink; -fx-border-width: 2;");
+                //die rechte GridPane pink faerben
+                rightGridPane.setStyle("-fx-background-color: pink; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
             }
             event.consume();
         });
 
         //DragExited Event: wenn der potentielle Lochstein wieder sein Ziel verlaesst
         this.rightGridPane.setOnDragExited(event -> {
-            this.rightGridPane.setStyle("-fx-border-width: 2;"); // Urspruenglichen Stil wiederherstellen
+            //Urspruenglichen Stil wiederherstellen
+            this.rightGridPane.setStyle("-fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
             event.consume();
         });
 

@@ -29,8 +29,8 @@ public class Game {
         this.holeTiles = new Tiles(Math.max(holesAmount, 0));
 
         //this.gui.updateGridPaneFormat(this.gameField);
-        this.gui.updateGridPaneFormat(heigth + 2, width + 2);
-        this.gui.addListenerToMiddleGamefField(this, this.gameField);
+        //this.gui.updateGridPaneFormat(heigth + 2, width + 2);
+        //this.gui.addListenerToMiddleGamefField(this, this.gameField);
         this.gui.displayGameFieldTiles(this, this.gameField);
         this.gui.displayNotUsedTiles(this, this.tiles);
         this.gui.displayBorder(this, this.gameField);
@@ -59,8 +59,8 @@ public class Game {
         this.holeTiles = new Tiles(Math.max(holesAmount, 0));
         this.gameField = new GameField(inputGameField, this.tiles, this.holeTiles);
 
-        this.gui.updateGridPaneFormat(inputGameField.length, inputGameField[0].length);
-        this.gui.addListenerToMiddleGamefField(this, this.gameField);
+        //this.gui.updateGridPaneFormat(inputGameField.length, inputGameField[0].length); //TODO
+        //this.gui.addListenerToMiddleGamefField(this, this.gameField); //TODO an die neue Methode anpassen
         this.gui.displayGameFieldTiles(this, this.gameField);
         this.gui.displayNotUsedTiles(this, this.tiles);
         this.gui.displayBorder(this, this.gameField);
