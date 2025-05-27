@@ -201,14 +201,27 @@ public class GameField {
     }
 
     /**
+     * Statische Methode welche prueft ob es sich bei dem Feld um ein Randstueck handelt bei der Spielfeldgroeße
+     * @param xIndex die Breitenkoordinate
+     * @param yIndex die Hoehenkoordinate
+     * @param xSize die Laenge des Spielfelds
+     * @param ySize die Breite des Spielfelds
+     * @return ob es sich um ein Randstueck handelt
+     */
+    public static boolean isFieldBorder(int xIndex, int yIndex, int xSize, int ySize){
+        return(xIndex == 0 || xIndex == xSize - 1
+                || yIndex == 0 || yIndex == ySize - 1);
+    }
+
+    /**
      * Methode welche prueft ob es sich bei dem Feld um ein Randstueck handelt
+     * Nutzt hierfuer die Statische isFieldBorder Methode
      * @param xIndex die Breitenkoordinate
      * @param yIndex die Hoehenkoordinate
      * @return ob es sich um ein Randstueck handelt
      */
     public boolean isFieldBorder(int xIndex, int yIndex){
-        return(xIndex == 0 || xIndex == this.gameField[0].length - 1
-                || yIndex == 0 || yIndex == this.gameField.length - 1);
+        return(GameField.isFieldBorder(xIndex, yIndex, this.gameField[0].length, this.gameField.length));
     }
 
     /**
@@ -217,12 +230,22 @@ public class GameField {
      * @param yIndex die Hoehenkoordinate
      * @return ob es sich um ein Eckstueck handelt
      */
-    public boolean isFieldEdge(int xIndex, int yIndex){
+    public static boolean isFieldEdge(int xIndex, int yIndex, int xSize, int ySize){
         return(((xIndex == 0 && yIndex == 0) //linke obere Ecke
-                || (xIndex == 0 && yIndex == this.gameField.length - 1) //linke untere Ecke
-                || (xIndex == this.gameField[0].length - 1 && yIndex == 0) //rechte obere Ecke
-                || (xIndex == this.gameField[0].length - 1 && yIndex == this.gameField.length - 1))); //rechte untere
-                                                                                                      // Ecke
+                || (xIndex == 0 && yIndex == ySize - 1) //linke untere Ecke
+                || (xIndex == xSize - 1 && yIndex == 0) //rechte obere Ecke
+                || (xIndex == xSize - 1 && yIndex == ySize - 1))); //rechte untere Ecke
+    }
+
+    /**
+     * Methdoe welche prueft ob es sich bei dem Feld um ein Eckstueck handelt
+     * Nutzt hierfuer die Statische isFieldEdge Methode
+     * @param xIndex die Breitenkoordinate
+     * @param yIndex die Hoehenkoordinate
+     * @return ob es sich um ein Eckstueck handelt
+     */
+    public boolean isFieldEdge(int xIndex, int yIndex){
+        return(GameField.isFieldEdge(xIndex, yIndex, this.gameField[0].length, this.gameField.length));
     }
 
     /**

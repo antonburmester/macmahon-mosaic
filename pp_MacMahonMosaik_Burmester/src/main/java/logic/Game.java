@@ -31,9 +31,12 @@ public class Game {
         //this.gui.updateGridPaneFormat(this.gameField);
         //this.gui.updateGridPaneFormat(heigth + 2, width + 2);
         //this.gui.addListenerToMiddleGamefField(this, this.gameField);
+        /*
         this.gui.displayGameFieldTiles(this, this.gameField);
         this.gui.displayNotUsedTiles(this, this.tiles);
         this.gui.displayBorder(this, this.gameField);
+
+         */
     }
 
     /**
@@ -92,6 +95,21 @@ public class Game {
         return(new Game(clonedGameField, clonedTiles, clonedHoleTiles));
     }
 
+    /**
+     * Methode welche die Spielstein Instanz zurueckgibt
+     * @return die Instanz der Klasse aller Spielsteine
+     */
+    public Tiles getTiles(){
+        return(this.tiles);
+    }
+
+    /**
+     * Methdode welche die Spielfeld Instanz zurueckgibt
+     * @return die Instanz der Klasse des Spielfelds
+     */
+    public GameField getGameField(){
+        return(this.gameField);
+    }
 
     /**
      * Methode welche umschaltet ob der Editor Mode aktiv ist oder nicht
@@ -100,11 +118,11 @@ public class Game {
     public void setEditorMode(boolean isEditorMode){
         if(!isEditorMode){ //kein EditorMode
             //this.gui.displayGameFieldTiles(this, this.gameField);
-            this.gui.displayNotUsedTiles(this, this.tiles);
-            this.gui.displayBorder(this, this.gameField);
+            //this.gui.displayNotUsedTiles(this, this.tiles);
+            //this.gui.displayBorder(this, this.gameField);
             this.editorMode = false;
         } else { //Editor Mode
-            this.gui.fillRightGridPaneWithEditorPieces(this, true);
+            //this.gui.fillRightGridPaneWithEditorPieces(this, true);
             //this.gui.fillRightGridPaneWithEditorPieces(this.gameField.getGameField().length - 2
             //        * this.gameField.getGameField()[0].length - 2 > 24);
             this.editorMode = true;
@@ -121,6 +139,16 @@ public class Game {
     }
 
     /**
+     * Methode welche zurueckgibt ob das Feld der angegebenen Koordinaten zum mittleren Spielfeld gehoert
+     * @param x Breitenkoordinate
+     * @param y Hoehenkoordinate
+     * @return ob das Feld zum mittleren Spielfeld gehoert (sonst Rand)
+     */
+    public boolean isFieldMiddleField(int x, int y){
+        return(this.gameField.isFieldMiddleGamefield(x, y));
+    }
+
+    /**
      * Methode welche einen Spielstein von der Auswahl der Spielsteine auf das Spielfeld legt
      * der gelegte Spielstein wird dann aus der Auswahl geloescht
      * @param tileIndex Index des zu legenden Spielsteins (orientiert sich an der TileNames Reihenfolge)
@@ -133,7 +161,8 @@ public class Game {
         //wenn isGameTile dann wird der in den Spielsteinen gesucht und wenn nicht dann in den Lochsteinen
         Tile tile = isGameTile ? this.tiles.getTile(tileIndex) : this.holeTiles.getTile(tileIndex);
         boolean status = true;
-        if (this.gameField.isFieldFieldFree(x, y)) {
+        //Feld ist frei und es handelt sich um das mittlere Spielfeld
+        if (this.gameField.isFieldFieldFree(x, y) && this.gameField.isFieldMiddleGamefield(x, y)) {
             if (isGameTile) { //Spielstein aus den nicht gelegten Spielsteinen loeschen
                 this.tiles.setTileLaidStatus(tile, true); //TODO glaube ich irrelevant
             } else { //Loch aus den nicht gelegten Loechern loeschen
@@ -143,6 +172,7 @@ public class Game {
         } else {
             status = false;
         }
+        System.out.println(this.gameField.toString());
         return(status);
     }
 
@@ -169,6 +199,7 @@ public class Game {
         } else {
             status = false;
         }
+        System.out.println(this.gameField.toString());
         return(status);
     }
 
@@ -197,6 +228,13 @@ public class Game {
         } else {
             status = false;
         }
+        System.out.println(this.gameField.toString());
+        return(status);
+    }
+
+    public boolean isValidMove(int xStart, int yStart, int xTarget, int yTarget){
+        boolean status = false;
+
         return(status);
     }
 
@@ -206,12 +244,32 @@ public class Game {
      * @param y die Reihe des Spielsteins
      * @return ob der Spielstein erfolgreich zurueckgelegt werden konnte
      */
-    public boolean colorBorder(int x, int y, Tile tile){
+    public boolean colorBorder(int x, int y, int tileIndex){
         boolean status = false;
-        if(tile != null){
+        Tile tile = new Tile(TileNames.values()[tileIndex]);
+        if(this.gameField.isFieldBorder(x, y)){
             if(this.gameField.layTile(x, y, tile)) {
                 status = true;
             }
+        }
+        System.out.println(this.gameField.toString());
+        return(status);
+    }
+
+    public boolean toggleBorderColor(int x, int y){
+        boolean status = false;
+        if(this.gameField.isFieldBorder(x, y)){
+            Tile currTile = this.gameField.getTile(x, y); //die aktuelle Farbe
+            Tile newBorderTile; //die naechste Farbe
+            //wenn es sich aktuell um NNNN handelt (noch nichts gelegt) oder die letzte Randfarbe liegt muss Gruen sein
+            if(currTile.getTile().equals(TileNames.NNNN) || currTile.getTile().equals(TileNames.YYYY)) {
+                newBorderTile = new Tile(TileNames.RRRR);
+            } else { //bei allen anderen Randfarben
+                newBorderTile = new Tile(TileNames.values()[currTile.getTile().ordinal() + 1]); //die naechste Randfarbe
+            }
+            this.gameField.layTile(x, y, newBorderTile);
+            System.out.println(this.gameField.toString());
+            status = true;
         }
         return(status);
     }

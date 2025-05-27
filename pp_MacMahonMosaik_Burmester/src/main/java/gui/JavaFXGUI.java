@@ -1,7 +1,6 @@
 package gui;
 
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -37,6 +36,7 @@ public class JavaFXGUI implements GUIConnector {
     public static final String ID_BORDER = "2";
 
     public static final int BORDER_SIZE = 2;
+    public static final double NOT_LAID_TILE_SIZE = 80;
 
     //die HEX Farbkennungen des Randes damit die Randfarben den Spielsteinen gleichen
     public static final String COLOR_HEX_CODE_GREEN = "#007F0E;";
@@ -147,8 +147,7 @@ public class JavaFXGUI implements GUIConnector {
                 //slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
 
                 if (currTile.getTile().equals(TileNames.NNNN)) { //ein leeres Feld
-                    //Rand setzen
-                    slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
+                    //nichts da leeres Feld
                 } else if (currTile.getTile().equals(TileNames.HHHH)) { //ein Loch
                     //die aktuelle holeStackPane
                     for (StackPane currStackPane : this.holeStackPanes) { //durchlaeuft jede holeStackPane
@@ -160,8 +159,8 @@ public class JavaFXGUI implements GUIConnector {
                     int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal();//der Index des Bilds
                     ImageView tileImageView;
                     tileImageView = this.imageViews[tileEnumIndex]; //das Bild als ImageView
-                    tileImageView.setFitHeight(90);
-                    tileImageView.setFitWidth(90);
+                    //tileImageView.setFitHeight(90);
+                    //tileImageView.setFitWidth(90);
                     slotStackPane.getChildren().add(tileImageView); //Bild dem Hintergrund hinzufuegen
                 }
             }
@@ -360,8 +359,8 @@ public class JavaFXGUI implements GUIConnector {
                     if (currTile.isNormalGameTile()) { //wenn nicht NNNN und HHHH da diese kein Bild haben
                         int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
                         ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Spielsteins
-                        imageView.setFitWidth(80);
-                        imageView.setFitHeight(80);
+                        imageView.setFitWidth(JavaFXGUI.NOT_LAID_TILE_SIZE);
+                        imageView.setFitHeight(JavaFXGUI.NOT_LAID_TILE_SIZE);
                         //slotStackPane.getChildren().add(imageView); //ImageView der Stackpane hinzufuegen
                         //Bild dem Slot der GridPane hinzufuegen
                         if(imageView.getParent() != null){
@@ -389,7 +388,7 @@ public class JavaFXGUI implements GUIConnector {
      * @param input das uebergebene Objekt zu welchem der Index gesucht wird
      * @return der Index des uebergebenen Objekts
      */
-    private int getTileIndex(Node input){
+    int getTileIndex(Node input){
         int result = -1;
         if(input instanceof ImageView) { //wenn es sich beim uebergebenen Objekt um ein Bild handelt
             for (int i = 0; i < this.imageViews.length; i++) { //durchlaeuft jedes ImageView
@@ -733,6 +732,7 @@ public class JavaFXGUI implements GUIConnector {
     private void applyDragEventsForBorder(Node node, String nodeString) {
         //Drag starten, wenn man auf das Objekt klickt
         node.setOnDragDetected(event -> {
+            System.out.println("Drag Triggered");
             Dragboard db = node.startDragAndDrop(TransferMode.COPY);
             ClipboardContent content = new ClipboardContent();
             content.putString(nodeString); //die Kennung des Randstuecks

@@ -19,17 +19,6 @@ public class FakeGUI implements GUIConnector{
     }
 
     /**
-     * Methode welche dieForm der GridPane anzeigt
-     *
-     * @param columns die neue Breite des Spielfelds
-     * @param rows    die neue hoehe des Spielfelds
-     */
-    @Override
-    public void updateGridPaneFormat(int columns, int rows) {
-
-    }
-
-    /**
      * Methode welche die GridPane fuellt
      *
      * @param game      die Instanz des Spiels damit Aenderungen am Spielfeld auch in der Logik angepasst werden

@@ -21,6 +21,8 @@ public interface GUIConnector {
      */
     //void updateGridPaneFormat(int columns, int rows);
 
+    //void updateGridPaneFormat(int columns, int rows);
+
     /**
      * Methode welche die GridPane fuellt
      * @param game die Instanz des Spiels damit Aenderungen am Spielfeld auch in der Logik angepasst werden
