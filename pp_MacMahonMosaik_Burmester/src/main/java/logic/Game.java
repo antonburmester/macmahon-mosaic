@@ -21,22 +21,12 @@ public class Game {
      */
     public Game(GUIConnector gui, int heigth, int width){
         this.gui = gui;
-        this.editorMode = false;
+        this.editorMode = true;
 
         this.gameField = new GameField(heigth, width);
         this.tiles = new Tiles();
         int holesAmount = heigth * width - 24;
         this.holeTiles = new Tiles(Math.max(holesAmount, 0));
-
-        //this.gui.updateGridPaneFormat(this.gameField);
-        //this.gui.updateGridPaneFormat(heigth + 2, width + 2);
-        //this.gui.addListenerToMiddleGamefField(this, this.gameField);
-        /*
-        this.gui.displayGameFieldTiles(this, this.gameField);
-        this.gui.displayNotUsedTiles(this, this.tiles);
-        this.gui.displayBorder(this, this.gameField);
-
-         */
     }
 
     /**
@@ -61,12 +51,6 @@ public class Game {
         int holesAmount = (inputGameField.length - 2) * (inputGameField[0].length - 2) - 24;
         this.holeTiles = new Tiles(Math.max(holesAmount, 0));
         this.gameField = new GameField(inputGameField, this.tiles, this.holeTiles);
-
-        //this.gui.updateGridPaneFormat(inputGameField.length, inputGameField[0].length); //TODO
-        //this.gui.addListenerToMiddleGamefField(this, this.gameField); //TODO an die neue Methode anpassen
-        this.gui.displayGameFieldTiles(this, this.gameField);
-        this.gui.displayNotUsedTiles(this, this.tiles);
-        this.gui.displayBorder(this, this.gameField);
     }
 
     /**
@@ -256,14 +240,21 @@ public class Game {
         return(status);
     }
 
+    /**
+     * Methode welche die Randfarbe aendert
+     * schaltet bei jedem Aufruf zur jeweils naechsten Farbe
+     * @param x die Spalte des Randes
+     * @param y die Reihe des Randes
+     * @return ob der gewuenschte Ort richtig gefaerbt werden konnte
+     */
     public boolean toggleBorderColor(int x, int y){
         boolean status = false;
         if(this.gameField.isFieldBorder(x, y)){
             Tile currTile = this.gameField.getTile(x, y); //die aktuelle Farbe
             Tile newBorderTile; //die naechste Farbe
-            //wenn es sich aktuell um NNNN handelt (noch nichts gelegt) oder die letzte Randfarbe liegt muss Gruen sein
-            if(currTile.getTile().equals(TileNames.NNNN) || currTile.getTile().equals(TileNames.YYYY)) {
-                newBorderTile = new Tile(TileNames.RRRR);
+            //wenn es sich aktuell um nicht um ein Randstueck handelt (noch nichts gelegt) oder die letzte Randfarbe liegt
+            if(!currTile.isTileBorderLayable() || currTile.getTile().equals(TileNames.YYYY)) {
+                newBorderTile = new Tile(TileNames.RRRR); //wieder auf Rot schalten (erste Farbe)
             } else { //bei allen anderen Randfarben
                 newBorderTile = new Tile(TileNames.values()[currTile.getTile().ordinal() + 1]); //die naechste Randfarbe
             }
