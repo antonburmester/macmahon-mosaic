@@ -23,13 +23,4 @@ public class FakeGUI implements GUIConnector{
     public void displayNotUsedTiles(Tiles tiles) {
 
     }
-
-    /**
-     * Methode welche alle benoetigten Loecher Objekte in Form einer gefaerbten StackPane initialisiert und sie der
-     * holeStackPanes Menge hinzufuegt
-     */
-    @Override
-    public void loadHolesStackPanes() {
-
-    }
 }

@@ -426,7 +426,7 @@ public class ZwischenstandsTests {
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Game game = new Game(new FakeGUI(), gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
         // wieviele Lochsteine es gibt, in diesem Fall sollte es 0 geben aber es ist trotzdem einer drin.
-        // Es wird somit versucht einen Lochstein zu platzieren welcher gar nicht existent ist
+        // Es wird somit versucht einen Lochstein zu platzieren welcher gar nicht existent ist TODO fragen ob so gewollt
         boolean status = game.isGameFieldSolvable();
         assertTrue(status);
     }

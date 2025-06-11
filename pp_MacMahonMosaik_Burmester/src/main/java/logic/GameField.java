@@ -28,7 +28,7 @@ public class GameField {
     public GameField(String[][] stringGameField, Tiles gameTiles, Tiles holeTiles){
         int height = stringGameField.length;
         int width = stringGameField[0].length;
-        String[][] inputCompatible = this.translateSpielstandsdatei(stringGameField); //der Input aber Logik Kompatibel
+        String[][] inputCompatible = this.translateFromSpielstandsdatei(stringGameField); //der Input aber Logik Kompatibel
         this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
         this.placeGameFieldEmpty(); //Spielfeld mit leeren feldern fuellen
 
@@ -74,12 +74,12 @@ public class GameField {
      * @param input das uebergebene String Array der Spielstandsdatei
      * @return das uebergebene String Array aber mit meiner Logik Kompatibel bezugelich Rand
      */
-    private String[][] translateSpielstandsdatei(String[][] input){
+    private String[][] translateFromSpielstandsdatei(String[][] input){
         int height = input.length;
         int width = input[0].length;
         String[][] inputCopy = new String[input.length][input[0].length];
 
-        //Deepcopy der Inpput Stringdatei
+        //Deepcopy der Input Stringdatei
         for (int i = 0; i < height; i++) {
             System.arraycopy(input[i], 0, inputCopy[i], 0, width);
         }
@@ -99,6 +99,41 @@ public class GameField {
             }
         }
         return(inputCopy);
+    }
+
+    /**
+     * Methode welche das aktuelle Spielfeld als String Array mit den vorgegebenen Randbezeichnungen zurueckgibt
+     * In meiner gebe ich dem Rand vollstaendige Farben: rrrr, gggg, yyyy
+     * Laut Aufgabenstellung soll es aber so sein: der Farbhinweis am Rand liegt an der Stelle welche an das
+     * mittlere Spielfeld grenzt
+     * @return das Spielfeld als String Array nach Aufgabenstellungsform
+     */
+    public String[][] translateToSpielstandsdatei(){
+        String[][] gameFieldSpielstandsdatei = new String[this.getGameField()[0].length][this.getGameField().length];
+
+        for(int y = 0; y < this.getGameField().length; y++){
+            for(int x = 0; x < this.getGameField()[y].length; x++){
+                String currentTile = this.getTile(x, y).getTileNameWithRotation();
+                if(!this.isFieldBorder(x, y) || this.isFieldEdge(x, y)) {
+                    gameFieldSpielstandsdatei[x][y] = currentTile;
+                } else { //Spielstein liegt am Rand
+                    char color = currentTile.charAt(0); //da in meiner Implementierung ein Randstueck immer
+                    // voll alle Farben hat, kann man repraesentativ das erste nehmen um die Farbe zu bekommen
+                    if(x == 0){ //linker Rand
+                        currentTile = "N" + color + "NN";
+                    } else if(y == 0){ //oberer Rand
+                        currentTile = "NN" + color + "N";
+                    } else if(x == this.getGameField()[y].length - 1){ //rechter Rand
+                        currentTile = "NNN" + color;
+                    } else { //unterer Rand
+                        currentTile = color + "NNN";
+                    }
+                    gameFieldSpielstandsdatei[x][y] = currentTile;
+                }
+            }
+        }
+
+        return(gameFieldSpielstandsdatei);
     }
 
     /**

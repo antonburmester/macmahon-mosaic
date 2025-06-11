@@ -49,77 +49,17 @@ public class JavaFXGUI implements GUIConnector {
      * @param centerPane der hintergrund der GridPane in der Mitte
      * @param gridPane die FXML Instanz
      * @param rightGridPane die rechte GridPane in welcher die noch nicht gelegten Spielsteine sind
+     * @param imageViews die Bilder mit Listenern initialisiert in der UserInterfaceController Klasse
+     * @param holeStackPanes die Loecher Stackpanes mit Listenern initialisiert in der UserInterfaceController Klasse
      */
-    public JavaFXGUI(BorderPane borderPane, Pane centerPane, GridPane gridPane, GridPane rightGridPane){
+    public JavaFXGUI(BorderPane borderPane, Pane centerPane, GridPane gridPane, GridPane rightGridPane,
+                     ImageView[] imageViews, StackPane[] holeStackPanes){
         this.borderPane = borderPane;
         this.centerPane = centerPane;
         this.gridPane = gridPane;
         this.rightGridPane = rightGridPane;
 
-        this.loadImages();
-        this.loadHolesStackPanes();
-    }
-
-    /**
-     * Methode welche alle Bilder am Anfang des Spiels laedt ohne diese anzuzeigen
-     * Die Bilder werden in dieser Klasse in einem Eindimensionalem Array
-     * in der Reihenfolge des TileNames Enums gespeichert
-     */
-    private void loadImages(){
-        ImageView[] imageViews = new ImageView[TileNames.values().length - 2]; //Laenge -2 da die TileNames
-        // NNNN und HHHH nicht geladen werden da sie kein Bild haben
-        String imagePath;
-        for(int i = 0; i < imageViews.length; i++){ //-2 weil HHHH und NNNN nicht als Bild vorhanden sind
-            imagePath = "/tiles/" + TileNames.values()[i] + ".png"; //der relative Pfad zu dem Bild
-            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))); //laedt das Bild
-            ImageView currIndexImage = new ImageView(image); //ImageView da es Attribute wie z.B. Groeße speichert
-
-            currIndexImage.setOnDragDetected(event -> {
-                //if (!this.game.isEditorMode()) { //kein EditorMode TODO muss EditorMode pruefen
-                    Dragboard db = currIndexImage.startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
-                    int tileEnumIndex = this.getTileIndex(currIndexImage);
-                    String contentPayload = (currIndexImage instanceof ImageView ? ID_PIECE : ID_HOLE) + tileEnumIndex;
-                    content.putString(contentPayload);
-                    db.setContent(content);
-                //}
-                event.consume();
-            });
-
-            imageViews[i] = currIndexImage;
-        }
         this.imageViews = imageViews;
-    }
-
-    /**
-     * Methode welche alle benoetigten Loecher Objekte in Form einer gefaerbten StackPane initialisiert und sie dem
-     * holeStackPanes Array hinzufuegt
-     */
-    public void loadHolesStackPanes(){
-        //Anzahl der benoetigten Loecher da fuer jede Zelle die es im Spielfeld mehr gibt als Bilder ein Loch sein muss
-        // -2 da Rand nicht beachtet
-        int holesAmount = (this.gridPane.getColumnCount() - 2) * (this.gridPane.getRowCount() - 2) - 24;
-        StackPane[] holeStackPanes = new StackPane[Math.max(holesAmount, 0)];
-        if(holesAmount > 0){ //wenn es Loecher gibt
-            for(int i = 0; i < holesAmount; i++){ //soviele Loecher wie noetig
-                StackPane holeStackPane = new StackPane();
-                holeStackPane.setStyle("-fx-background-color: gray;");
-
-                holeStackPane.setOnDragDetected(event -> {
-                    //if (this.game.isEditorMode()) { //kein EditorMode TODO muss EditorMode pruefen
-                    Dragboard db = holeStackPane.startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
-                    int tileEnumIndex = this.getTileIndex(holeStackPane);
-                    String contentPayload = (holeStackPane instanceof StackPane ? ID_HOLE : ID_PIECE) + tileEnumIndex;
-                    content.putString(contentPayload);
-                    db.setContent(content);
-                    //}
-                    event.consume();
-                });
-
-                holeStackPanes[i] = holeStackPane; //diese Loecher dem Array der benoetigten Loecher hinuzfuegen
-            }
-        }
         this.holeStackPanes = holeStackPanes;
     }
 
@@ -143,6 +83,7 @@ public class JavaFXGUI implements GUIConnector {
                     } else if(!currTile.getTile().equals(TileNames.NNNN)) { //ein Bild da es kein Loch und kein NNNN ist
                         int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal();//der Index des Bilds
                         ImageView tileImageView = this.imageViews[tileEnumIndex]; //das Bild als ImageView
+                        tileImageView.setRotate(currTile.getRotation()); //Bild rotieren falls rotiert
                         slotStackPane.getChildren().add(tileImageView); //Bild dem Hintergrund hinzufuegen
                     }
                 } else { //Rand
@@ -193,6 +134,7 @@ public class JavaFXGUI implements GUIConnector {
                         ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Spielsteins
                         imageView.setFitWidth(JavaFXGUI.NOT_LAID_TILE_SIZE);
                         imageView.setFitHeight(JavaFXGUI.NOT_LAID_TILE_SIZE);
+                        imageView.setRotate(currTile.getRotation());
                         //slotStackPane.getChildren().add(imageView); //ImageView der Stackpane hinzufuegen
                         //Bild dem Slot der GridPane hinzufuegen
                         if(imageView.getParent() != null){

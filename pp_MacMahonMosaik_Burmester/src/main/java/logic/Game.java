@@ -96,6 +96,14 @@ public class Game {
     }
 
     /**
+     * Methode welche einen String vom Spielfeld in der Aufgabenstellungsform zurueckgibt
+     * @return das Spielfeld als String in Aufgabenstellungsform
+     */
+    public String[][] getGameFieldString(){
+        return(this.gameField.translateToSpielstandsdatei());
+    }
+
+    /**
      * Methode welche umschaltet ob der Editor Mode aktiv ist oder nicht
      * //TODO richtig implementieren
      */
@@ -204,7 +212,6 @@ public class Game {
             if(isGameTile) { //wenn es sich um einen Spielstein handelt
                 //Spielstein wieder der Spielsteinauswahl hinzufuegen
                 this.tiles.setTileLaidStatus(tile, false);
-                tile.resetTileRotation(); //Rotation in der Logik zuruecksetzen
             } else { //wenn es sich um einen Lochstein handelt
                 //Spielstein wieder der Lochsteinauswahl hinzufuegen
                 this.holeTiles.setTileLaidStatus(tile, false);

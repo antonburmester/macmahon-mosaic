@@ -4,14 +4,22 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import logic.CustomException;
 import logic.Game;
 import logic.GameField;
 import logic.TileNames;
+
+import java.io.File;
+import java.util.Objects;
 
 
 /**
@@ -53,7 +61,7 @@ public class UserInterfaceController {
         BorderPane.setMargin(rightGridPane, new Insets(0, 0, 0, 10));
         this.userHeightInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
         this.userWidthInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
-        this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane);
+        this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane, this.loadImages(), this.loadHolesStackPanes());
 
         // ChangeListener hinzufuegen, damit sich die GridPane durch die Pane an die
         // Groeßenveraenderung der BorderPane anpasst
@@ -77,14 +85,22 @@ public class UserInterfaceController {
      * Methode welche aus dem Menue aufgerufen wird um ein bestehendes Spiel zu laden
      */
     public void loadGame(){
-
+        File file = openFileChooser(true);
+        //TODO implement
     }
 
     /**
      * Methode welche aus dem Menue aufgerufen wird das aktuelle Spiel zu speichern
      */
     public void saveGame(){
-
+        try{
+            File file = openFileChooser(false);
+            if(file != null) {
+                logic.GameData.saveGame(this.game.getGameFieldString(), file);
+            }
+        } catch (CustomException e) {
+            ErrorHandler.showError(e);
+        }
     }
 
     /**
@@ -155,6 +171,44 @@ public class UserInterfaceController {
     }
 
     /**
+     * Graphisches Dateisystem des Betriebssystems zum erstellen einer neuen Datei oder selektieren von einer
+     * @param selectFile ob eine Datei gesucht werden soll oder erstellt werden soll
+     * @return die Datei samt Dateipfad
+     */
+    public File openFileChooser(boolean selectFile) {
+        FileChooser fileChooser = new FileChooser();
+
+        //Startverzeichnis je nach Betriebssystem setzen. Getestet auf Windows, deshalb koennte man bei den anderen
+        // Betriebssystemen im Standardverzeichniss landen und nicht im gewuenschten
+        File initialDirectory = null;
+        String betriebssystemName = System.getProperty("os.name").toLowerCase();
+        if (betriebssystemName.contains("win")) { //Windows
+            initialDirectory = new File("pp_MacMahonMosaik_Burmester/src/main/resources/savedGames/");
+        } else if(betriebssystemName.contains("mac")) { //Mac
+            initialDirectory = new File("src/main/resources/savedGames/");
+        }
+
+        if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
+            fileChooser.setInitialDirectory(initialDirectory);
+        }
+
+        //Filter für Dateityp .json
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
+
+        //Stage aus dem Event holen da hierrueber ein Fenster goeffnet wird:
+        Stage stage = (Stage) this.centerPane.getScene().getWindow();
+
+        //Dateiauswahl Fenster oeffnen
+        File selectedFile;
+        if (selectFile) {
+            selectedFile = fileChooser.showOpenDialog(stage); //vorhandene Datei waehlen
+        } else {
+            selectedFile = fileChooser.showSaveDialog(stage); //neue Datei erstellen
+        }
+        return(selectedFile);
+    }
+
+    /**
      * Methode welche die GridPanes mit Hintergrund Slots (StackPane) fuellt und ihnen ueber die dazugehoerigen Methdoen
      * Listener gibt
      * Die mittlere GridPane (Spielfeld): den mittleren Teil mit addDropListenerMiddleGridPane Listenern und den
@@ -168,8 +222,10 @@ public class UserInterfaceController {
         for(int y = 0; y < ySize; y++) { //Hoehe durchlaufen
             for (int x = 0; x < xSize; x++) { //Breite durchlaufen
                 //nur Felder welche noch keine Slots haben, sollen neue mit Listenern bekommen
-                if(this.gui.getGridPaneCell(x, y, middleGridPane ? this.gridPane : this.rightGridPane) == null) {
-                    StackPane slotStackPane = new StackPane(); //Slot welcher die Listener bekommt
+                StackPane slotStackPane =
+                        this.gui.getGridPaneCell(x, y, middleGridPane ? this.gridPane : this.rightGridPane);
+                if(slotStackPane == null) { //slot existiert noch nicht
+                    slotStackPane = new StackPane(); //neuer Slot welcher die Listener bekommt
                     if (middleGridPane) { //mittlere GridPane (Spielfeld)
                         if (!GameField.isFieldEdge(x, y, xSize, ySize)) { //kein Eckstueck
                             slotStackPane.setStyle("-fx-background-color: transparent; -fx-border-color: black;" +
@@ -177,17 +233,51 @@ public class UserInterfaceController {
                         }
                         if (!GameField.isFieldBorder(x, y, xSize, ySize)) { //Feld gehoert zum mittleren Spielfeld
                             this.addDropListenerMiddleGridPane(slotStackPane); //Listener dem Slot anfuegen
+                            slotStackPane.setUserData(JavaFXGUI.ID_PIECE); //damit man weiß was der Slot darstellt
                         } else { //Feld gehoert zum Rand
                             this.addSlotListenerBorderGridPane(slotStackPane); //Listener dem Slot anfuegen
+                            slotStackPane.setUserData(JavaFXGUI.ID_BORDER);
                         }
                         this.gridPane.add(slotStackPane, x, y); //der mittleren GridPane den Slot hinzuefuegen
                     } else { //rechte GridPane (Spielsteinauswahl)
                         this.addDropListenerRightGridPane(slotStackPane); //Listener dem Slot anfuegen
+                        slotStackPane.setUserData(JavaFXGUI.ID_PIECE);
                         this.rightGridPane.add(slotStackPane, x, y); //der rechten GridPane den Slot hinzuefuegen
                     }
+                } else { //Slot existiert schon
+                    if (middleGridPane) {
+                        if(slotStackPane.getUserData().equals(JavaFXGUI.ID_BORDER) &&
+                                !GameField.isFieldBorder(x, y, xSize, ySize)){ //slot existiert schon und ist Rand aber
+                            // nun nach den neuen massen (vergroesserung) kein Rand mehr sondern mittleres Spielfeld
+                            this.removeListener(slotStackPane); //auch wenn einfach Listener ueberschrieben werden diese
+                            // sauber null setzen (deaktivieren und loeschen)
+                            this.addDropListenerMiddleGridPane(slotStackPane); //Spielfeld Listener dem Slot anfuegen
+                            slotStackPane.setUserData(JavaFXGUI.ID_PIECE);
+                        } else if(slotStackPane.getUserData().equals(JavaFXGUI.ID_PIECE) &&
+                                GameField.isFieldBorder(x, y, xSize, ySize)){ //slot exisitiert schon und ist Spielfeld
+                            // aber nun nach den neuen massen (verkleinerung) kein Spielfeld mehr sondern Rand
+                            this.removeListener(slotStackPane); //auch wenn einfach Listener ueberschrieben werden diese
+                            // sauber null setzen (deaktivieren und loeschen)
+                            this.addSlotListenerBorderGridPane(slotStackPane); //Listener dem Slot anfuegen
+                            slotStackPane.setUserData(JavaFXGUI.ID_BORDER);
+                        }
+                    }
+
                 }
             }
         }
+    }
+
+    /**
+     * Methode welche alle in diesem Programm genutzen Listener auf null setzt also zuruecksetzt
+     * @param node das Objekt von welchem die Listener zurueckgesetzt werden
+     */
+    private void removeListener(Node node){
+        node.setOnDragOver(null);
+        node.setOnDragDropped(null);
+        node.setOnDragEntered(null);
+        node.setOnDragExited(null);
+        node.setOnMouseClicked(null);
     }
 
     /**
@@ -587,5 +677,83 @@ public class UserInterfaceController {
                 }
             }
         }
+    }
+
+    /**
+     * Methode welche alle Bilder am Anfang des Spiels laedt ohne diese anzuzeigen
+     * Die Bilder werden in dieser Klasse in einem Eindimensionalem Array
+     * in der Reihenfolge des TileNames Enums gespeichert
+     */
+    private ImageView[] loadImages(){
+        ImageView[] imageViews = new ImageView[TileNames.values().length - 2]; //Laenge -2 da die TileNames
+        // NNNN und HHHH nicht geladen werden da sie kein Bild haben
+        String imagePath;
+        for(int i = 0; i < imageViews.length; i++){ //-2 weil HHHH und NNNN nicht als Bild vorhanden sind
+            imagePath = "/tiles/" + TileNames.values()[i] + ".png"; //der relative Pfad zu dem Bild
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))); //laedt das Bild
+            ImageView currIndexImage = new ImageView(image); //ImageView da es Attribute wie z.B. Groeße speichert
+
+            final int imageIndex = i;
+
+            //Drag des Images
+            currIndexImage.setOnDragDetected(event -> {
+                if (!this.game.isEditorMode()) { //kein EditorMode
+                    Dragboard db = currIndexImage.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    String contentPayload = (currIndexImage instanceof ImageView ? JavaFXGUI.ID_PIECE :
+                            JavaFXGUI.ID_HOLE) + imageIndex;
+                    content.putString(contentPayload);
+                    db.setContent(content);
+                }
+                event.consume();
+            });
+
+            //Rotation des Images wenn Rechtsklick
+            currIndexImage.setOnMouseClicked(event -> {
+                if(!this.game.isEditorMode()) {
+                    if (event.getButton().equals(MouseButton.SECONDARY)) {
+                        currIndexImage.setRotate(currIndexImage.getRotate() + 90); //Bild graphisch rotieren
+                        game.rotateGameTile(imageIndex); //Rotation in der Logik
+                    }
+                }
+            });
+
+            imageViews[i] = currIndexImage;
+        }
+        return(imageViews);
+    }
+
+    /**
+     * Methode welche alle benoetigten Loecher Objekte in Form einer gefaerbten StackPane initialisiert und sie dem
+     * holeStackPanes Array hinzufuegt
+     */
+    public StackPane[] loadHolesStackPanes(){
+        //Anzahl der benoetigten Loecher da fuer jede Zelle die es im Spielfeld mehr gibt als Bilder ein Loch sein muss
+        // -2 da Rand nicht beachtet
+        int holesAmount = (this.gridPane.getColumnCount() - 2) * (this.gridPane.getRowCount() - 2) - 24;
+        StackPane[] holeStackPanes = new StackPane[Math.max(holesAmount, 0)];
+        if(holesAmount > 0){ //wenn es Loecher gibt
+            for(int i = 0; i < holesAmount; i++){ //soviele Loecher wie noetig
+                StackPane holeStackPane = new StackPane();
+                holeStackPane.setStyle("-fx-background-color: gray;");
+
+                final int imageIndex = i;
+
+                holeStackPane.setOnDragDetected(event -> {
+                    if (this.game.isEditorMode()) { //EditorMode
+                        Dragboard db = holeStackPane.startDragAndDrop(TransferMode.MOVE);
+                        ClipboardContent content = new ClipboardContent();
+                        String contentPayload = (holeStackPane instanceof StackPane ? JavaFXGUI.ID_HOLE :
+                                JavaFXGUI.ID_PIECE) + imageIndex;
+                        content.putString(contentPayload);
+                        db.setContent(content);
+                    }
+                    event.consume();
+                });
+
+                holeStackPanes[i] = holeStackPane; //diese Loecher dem Array der benoetigten Loecher hinuzfuegen
+            }
+        }
+        return(holeStackPanes);
     }
 }
