@@ -8,9 +8,19 @@ package logic;
 public class CustomException extends Exception {
     //die Fehler Codes
     public static final int ERROR_WINDOW_OPEN = 101;
-    public static final int ERROR_INVALID_FILE = 102;
-    public static final int ERROR_INVALID_GAME_SIZE = 201;
-    public static final int NO_GAME_OPEN = 301;
+    public static final int ERROR_INVALID_FILE = 201;
+    public static final int ERROR_FILE_READ_FAILED = 202;
+    public static final int ERROR_INVALID_JSON_STRUCTURE = 301;
+    public static final int ERROR_INVALID_JSON_NO_FIELD = 302;
+    public static final int ERROR_INVALID_JSON_WRONG_FIELD_TYPE = 303;
+    public static final int ERROR_INVALID_JSON_GAME_SIZE = 304;
+    public static final int ERROR_INVALID_TILENAMES = 401;
+    public static final int ERROR_INVALID_TILENAMES_BORDER = 402;
+    public static final int ERROR_INVALID_TILENAMES_EDGE = 403;
+    public static final int ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN = 404;
+    public static final int ERROR_MIDDLEGAMEFIELD_HOLE = 405;
+    public static final int ERROR_INVALID_GAME_SIZE = 501;
+    public static final int NO_GAME_OPEN = 502;
 
 
     private final int errorCode;

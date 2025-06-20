@@ -23,6 +23,30 @@ public class ErrorHandler {
                     "Fehler " + exception.getErrorCode() + " : Fenster konnte nicht geladen/ geoeffnet werden!";
             case CustomException.ERROR_INVALID_FILE ->
                     "Fehler " + exception.getErrorCode() + " : Keine gueltige Datei ausgewaehlt!";
+            case CustomException.ERROR_FILE_READ_FAILED ->
+                    "Fehler " + exception.getErrorCode() + " : Datei konnte nicht gelesen werden!";
+            case CustomException.ERROR_INVALID_JSON_STRUCTURE ->
+                    "Fehler " + exception.getErrorCode() + " : Der Inhalt der Datei entspricht nicht der notwendigen " +
+                            "Json Struktur!";
+            case CustomException.ERROR_INVALID_TILENAMES ->
+                    "Fehler " + exception.getErrorCode() + " : Mindestens ein Feld der Datei entspricht nicht den " +
+                            "Spielstein Namen!";
+            case CustomException.ERROR_INVALID_TILENAMES_BORDER ->
+                    "Fehler " + exception.getErrorCode() + " : Mindestens ein Stein auf dem Rand der kein Randstein " +
+                            "ist!";
+            case CustomException.ERROR_INVALID_TILENAMES_EDGE ->
+                    "Fehler " + exception.getErrorCode() + " : Mindestens eine Ecke heisst nicht NNNN!";
+            case CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN ->
+                    "Fehler " + exception.getErrorCode() + " : Mindestens ein mittlerer Spielstein liegt doppelt!";
+            case CustomException.ERROR_MIDDLEGAMEFIELD_HOLE ->
+                    "Fehler " + exception.getErrorCode() + " : Falsche Anzahl an Loechern im Spielfeld!";
+            case CustomException.ERROR_INVALID_JSON_GAME_SIZE ->
+                    "Fehler " + exception.getErrorCode() + " : Falsche JSON Spielfeldgroeße! 4x4 - 8x8 " +
+                            "(inklusive Raendern)";
+            case CustomException.ERROR_INVALID_JSON_WRONG_FIELD_TYPE ->
+                    "Fehler " + exception.getErrorCode() + " : JSON field Attribut vorhanden aber nicht vom Typ Array!";
+            case CustomException.ERROR_INVALID_JSON_NO_FIELD ->
+                    "Fehler " + exception.getErrorCode() + " : JSON field Attribut nicht vorhanden!";
             case CustomException.ERROR_INVALID_GAME_SIZE ->
                     "Fehler " + exception.getErrorCode() + " : Falsche Spielfeldgroeße! 2x2 - 6x6";
             case CustomException.NO_GAME_OPEN ->

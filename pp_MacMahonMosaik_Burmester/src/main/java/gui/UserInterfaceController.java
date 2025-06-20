@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -65,13 +66,15 @@ public class UserInterfaceController {
 
         // ChangeListener hinzufuegen, damit sich die GridPane durch die Pane an die
         // Groeßenveraenderung der BorderPane anpasst
-        centerPane.widthProperty().addListener((obs, oldVal, newVal) ->
-                adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
-        centerPane.heightProperty().addListener((obs, oldVal, newVal) ->
-                adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
+        this.centerPane.widthProperty().addListener((obs, oldVal, newVal) ->
+                this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
+        this.centerPane.heightProperty().addListener((obs, oldVal, newVal) ->
+                this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
         this.game = new Game(this.gui); //erstaufruf welcher das beispielspiel initialisiert
-        this.setupGUI(this.game.getGameField().getGameField()[0].length - 2,
+        Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
+            this.setupGUI(this.game.getGameField().getGameField()[0].length - 2,
                 this.game.getGameField().getGameField().length - 2);
+        });
     }
 
     /**
@@ -85,8 +88,17 @@ public class UserInterfaceController {
      * Methode welche aus dem Menue aufgerufen wird um ein bestehendes Spiel zu laden
      */
     public void loadGame(){
-        File file = openFileChooser(true);
-        //TODO implement
+        try {
+            File file = openFileChooser(true);
+            if (file != null) {
+                String[][] field = logic.GameData.loadGame(file);
+                this.game = new Game(this.gui, field);
+                this.setupGUI(this.game.getGameField().getGameField()[0].length - 2,
+                        this.game.getGameField().getGameField().length - 2);
+            }
+        } catch (CustomException e){
+            ErrorHandler.showError(e);
+        }
     }
 
     /**
@@ -118,7 +130,8 @@ public class UserInterfaceController {
         editorControls.setVisible(isEditorMode); //macht die Spielfeldeingaben (Breite,Hoehe,Button) sichtbar/unsichtbar
         editorControls.setManaged(isEditorMode); // Entfernt den Platz, wenn unsichtbar und nimmt ihn ein wenn sichtbar
         if(this.game != null)
-            this.game.setEditorMode(isEditorMode);
+            //this.game.setEditorMode(isEditorMode);
+            this.game.toggleEditorMode();
     }
 
     /**
@@ -145,10 +158,10 @@ public class UserInterfaceController {
         this.updateGridPaneFormat(height + 2, width + 2);
         this.addAllSlotsWithDropListenerGridPane(true, width + 2, height + 2); //mittlere GP
         this.middleGridPaneHandleEdges();
-
-        //bestehende Bilder, Loecher und Faerbungen zuruecksetzen
-        this.gui.removeAllPiecesAndColouringsButLeaveSlots(this.gridPane);
-        this.gui.removeAllPiecesAndColouringsButLeaveSlots(this.rightGridPane);
+        centerPane.applyCss(); //centerPane css setzen bevor die Methode weiterlaeuft
+        centerPane.layout(); //centerPane Layout setzen bevor die Methode weiterlaeuft
+        this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
+        this.gridPane.layout(); //centerPane Layout setzen bevor die Methode weiterlaeuft
         //Bilder, Loecher und Faerbungen anzeigen
         this.gui.displayGameFieldTiles(this.game.getGameField());
         this.gui.displayNotUsedTiles(this.game.getTiles());
@@ -662,7 +675,7 @@ public class UserInterfaceController {
 
         //aktualisierung der Bildgroeßen und Abstaende
         for(Node node : gridPane.getChildren()) { //durchlaeuft jede Zelle und node ist die unterste Ebene des Inhalts
-            // also das StackPane
+            // also die StackPane
 
             if(node instanceof StackPane tilePane) { //StackPane, da die unterste Ebene eine StackPane ist
                 tilePane.setPrefSize(cellSize, cellSize); //Setzt die Groeße der StackPane
@@ -730,29 +743,28 @@ public class UserInterfaceController {
     public StackPane[] loadHolesStackPanes(){
         //Anzahl der benoetigten Loecher da fuer jede Zelle die es im Spielfeld mehr gibt als Bilder ein Loch sein muss
         // -2 da Rand nicht beachtet
-        int holesAmount = (this.gridPane.getColumnCount() - 2) * (this.gridPane.getRowCount() - 2) - 24;
-        StackPane[] holeStackPanes = new StackPane[Math.max(holesAmount, 0)];
-        if(holesAmount > 0){ //wenn es Loecher gibt
-            for(int i = 0; i < holesAmount; i++){ //soviele Loecher wie noetig
-                StackPane holeStackPane = new StackPane();
-                holeStackPane.setStyle("-fx-background-color: gray;");
+        //int holesAmount = (this.gridPane.getColumnCount() - 2) * (this.gridPane.getRowCount() - 2) - 24;
+        //StackPane[] holeStackPanes = new StackPane[Math.max(holesAmount, 0)];
+        StackPane[] holeStackPanes = new StackPane[JavaFXGUI.MAX_HOLES_AMOUNT];
+        for(int i = 0; i < holeStackPanes.length; i++){ //soviele Loecher wie noetig
+            StackPane holeStackPane = new StackPane();
+            holeStackPane.setStyle("-fx-background-color: gray;");
 
-                final int imageIndex = i;
+            final int imageIndex = i;
 
-                holeStackPane.setOnDragDetected(event -> {
-                    if (this.game.isEditorMode()) { //EditorMode
-                        Dragboard db = holeStackPane.startDragAndDrop(TransferMode.MOVE);
-                        ClipboardContent content = new ClipboardContent();
-                        String contentPayload = (holeStackPane instanceof StackPane ? JavaFXGUI.ID_HOLE :
-                                JavaFXGUI.ID_PIECE) + imageIndex;
-                        content.putString(contentPayload);
-                        db.setContent(content);
-                    }
-                    event.consume();
-                });
+            holeStackPane.setOnDragDetected(event -> {
+                if (this.game.isEditorMode()) { //EditorMode
+                    Dragboard db = holeStackPane.startDragAndDrop(TransferMode.MOVE);
+                    ClipboardContent content = new ClipboardContent();
+                    String contentPayload = (holeStackPane instanceof StackPane ? JavaFXGUI.ID_HOLE :
+                            JavaFXGUI.ID_PIECE) + imageIndex;
+                    content.putString(contentPayload);
+                    db.setContent(content);
+                }
+                event.consume();
+            });
 
-                holeStackPanes[i] = holeStackPane; //diese Loecher dem Array der benoetigten Loecher hinuzfuegen
-            }
+            holeStackPanes[i] = holeStackPane; //diese Loecher dem Array der benoetigten Loecher hinuzfuegen
         }
         return(holeStackPanes);
     }

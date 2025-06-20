@@ -1,5 +1,7 @@
 package logic;
 
+import java.util.Objects;
+
 /**
  * Klasse welche einen Spielstein darstellt inklusive der Rotation und ob der Spielstein valide liegt (Farben richtig)
  *
@@ -176,11 +178,28 @@ public class Tile {
     }
 
     /**
-     * prueft ob des sich bei dem Spielstein ein Rand kompatiblen Spielstein handelt
+     * prueft ob es sich bei dem Spielstein um einen Rand kompatiblen Spielstein handelt
      * @return ob RRRR, GGGG oder YYYY
      */
     public boolean isTileBorderLayable(){
         return(this.tile.equals(TileNames.RRRR) || this.tile.equals(TileNames.GGGG) || this.tile.equals(TileNames.YYYY));
+    }
+
+    /**
+     * prueft ob es sich bei dem Spielstein String um einen Rand kompatiblen Spielstein handelt
+     * @return ob RRRR, GGGG, YYYY oder NNNN (leer)
+     */
+    public static boolean isTileStringBorderLayable(String input){
+        return(input.equals(TileNames.RRRR.name()) || input.equals(TileNames.GGGG.name()) ||
+                input.equals(TileNames.YYYY.name()) || input.equals(TileNames.NNNN.name()));
+    }
+
+    /**
+     * prueft ob es sich bei dem Spielstein String um einen Ecken kompatiblen Spielstein handelt
+     * @return ob NNNN (leer)
+     */
+    public static boolean isTileStringEdgeLayable(String input){
+        return(input.equals(TileNames.NNNN.name()));
     }
 
     /**
@@ -227,6 +246,43 @@ public class Tile {
      */
     public void resetTileRotation(){
         this.rotation = 0;
+    }
+
+    /**
+     * Methode welche zurueckgibt, ob ein String einem TileNames gleicht.
+     * Beim Rand gibt es die Besonderheit, das das Randstueck in meinem Code 4Buchstaben lang die Farbe hat aber in der
+     * Aufgabenstellung die Randstuecke nur 1 Stelle im String mit einer Farbe (G oder R oder Y) und 3 Stellen mit N
+     * @param tileString der String von welchem geprueft werden soll, ob es sich um einen Tile Spielstein handelt
+     * @param isBorder ob es sich bei dem geprueften String welcher ein Spielstein sein soll als Randstueck liegts
+     */
+    public void isStringTileValid(String tileString, boolean isBorder){
+        boolean isValid = false;
+        for(TileNames currTile : TileNames.values()){
+            if(currTile.toString().equals(tileString) ||
+                    (isBorder && (tileString.contains("G") || tileString.contains("Y") || tileString.contains("R")))){ //TODO pruefen das die Position stimmts
+                isValid = true;
+            }
+        }
+    }
+
+    /**
+     * Methode welche aus einem String den dazugehoerigen TileNames zurueckgibt
+     * Hierfuer werden alle TileNames namen durchlaufen und jeder Name in jeder Rotation getestet.
+     * @param tileName der Name des Spielsteins (kann auch rotiert sein)
+     * @return der unrotierte standard Name des Spielsteins
+     */
+    public static String getTileNamesString(String tileName){
+        for(int i = 0; i < TileNames.values().length; i++){
+            TileNames currTileName = TileNames.values()[i];
+
+            for(int r = 0; r < 360; r+=90){
+                if(getTileNameWithRotation(currTileName.name(), r).equals(tileName)){
+                    System.out.println("EQUALS: " + currTileName.name());
+                    return(currTileName.name());
+                }
+            }
+        }
+        return(null);
     }
 
     /**

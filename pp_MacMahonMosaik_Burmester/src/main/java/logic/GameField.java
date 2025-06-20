@@ -1,5 +1,7 @@
 package logic;
 
+import gui.ErrorHandler;
+
 /**
  * Klasse welche das Spielfeld als Zweidimensionales Array enthaelt
  *
@@ -17,6 +19,7 @@ public class GameField {
     public GameField(int height, int width){
         this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
         this.placeGameFieldEmpty();
+        this.placeGameFieldHoles();
     }
 
     /**
@@ -31,28 +34,88 @@ public class GameField {
         String[][] inputCompatible = this.translateFromSpielstandsdatei(stringGameField); //der Input aber Logik Kompatibel
         this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
         this.placeGameFieldEmpty(); //Spielfeld mit leeren feldern fuellen
+        if(this.isInputStringGameFieldValid(stringGameField)) {
 
-        for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchlaeuft jede Hoehe des Felds
-            for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchlaeuft jede Breite des Felds
+            for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchlaeuft jede Hoehe des Felds
+                for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchlaeuft jede Breite des Felds
 
-                String laidTileName = inputCompatible[heigthIndex][widthIndex];
-                Tile targetTile;
-                if (laidTileName.equals(TileNames.HHHH.name())) { //ein Loch gelegt
-                    targetTile = holeTiles.getTileByNameWithRotation(laidTileName);
-                } else if (laidTileName.equals(TileNames.NNNN.name())) { //nichts gelegt
-                    targetTile = new Tile(TileNames.NNNN);
-                } else { //ein Spielstein gelegt
-                    if(!this.isFieldBorder(widthIndex, heigthIndex)) { //wenn es sich um ein Spielfeldstueck handelt
-                        targetTile = gameTiles.getTileByNameWithRotation(laidTileName);
-                    } else { //wenn es sich um ein Randstueck handelt
-                        targetTile = new Tile(laidTileName);
+                    String laidTileName = inputCompatible[heigthIndex][widthIndex];
+                    Tile targetTile;
+                    if (laidTileName.equals(TileNames.HHHH.name())) { //ein Loch gelegt
+                        targetTile = holeTiles.getTileByNameWithRotation(laidTileName);
+                    } else if (laidTileName.equals(TileNames.NNNN.name())) { //nichts gelegt
+                        targetTile = new Tile(TileNames.NNNN);
+                    } else { //ein Spielstein gelegt
+                        if (!this.isFieldBorder(widthIndex, heigthIndex)) { //wenn es sich um ein Spielfeldstueck handelt
+                            targetTile = gameTiles.getTileByNameWithRotation(laidTileName);
+                        } else { //wenn es sich um ein Randstueck handelt
+                            targetTile = new Tile(laidTileName);
+                        }
+                    }
+                    this.layTile(widthIndex, heigthIndex, targetTile);
+                    //this.gameField[heigthIndex][widthIndex] = targetTile;
+                    targetTile.setIsLaid(true);
+                }
+            }
+        } else {
+            this.placeGameFieldHoles();
+        }
+    }
+
+    /**
+     * Methode welche prueft, das das uebergebene Spielfeld vom Typ String valide ist:
+     * Rand ist nur mit Randsteinen oder NNNN gefuellt
+     * Mittleres Spielfeld ist nur mit Spielfeldsteinen gefuellt die Maximal 1x vorkommen
+     * Mittleres Spielfeld weist die richtige Anzahl an Lochsteinen auf
+     * @param stringGameField das Spielfeld
+     * @return ob das Spielfeld valide ist
+     */
+    private boolean isInputStringGameFieldValid(String[][] stringGameField){
+        String[][] inputCompatible = this.translateFromSpielstandsdatei(stringGameField); //der Input Logik Kompatibel
+        int[] tileCountArray = new int[TileNames.values().length];
+        System.out.println();
+        int height = inputCompatible.length;
+        int width = inputCompatible[0].length;
+        for(int y = 0; y < height; y++){
+            for(int x = 0; x < width; x++){
+                System.out.println(inputCompatible[y][x]);
+                System.out.println("Not Compatible: " + stringGameField[y][x]);
+                String tileName = Tile.getTileNamesString(inputCompatible[y][x]);
+                if(tileName == null){ //Spielstein konnte nicht gefunden werden (falsch)
+                    ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES));
+                    return(false);
+                } else {
+                    if(GameField.isFieldBorder(x, y, width, height)){ //Rand Position
+                        if(!Tile.isTileStringBorderLayable(tileName)) { //kein Randkompatibler Stein
+                            ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES_BORDER));
+                            return(false);
+                        }
+                    } else if(GameField.isFieldEdge(x, y, width, height)){ //Ecken
+                        if(!Tile.isTileStringEdgeLayable(tileName)) { //kein Randkompatibler Stein
+                            ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES_EDGE));
+                            return(false);
+                        }
+                    } else {
+                        tileCountArray[TileNames.valueOf(tileName).ordinal()]++; // Element an der Stelle +1 zaehlen
                     }
                 }
-                this.layTile(widthIndex, heigthIndex, targetTile);
-                //this.gameField[heigthIndex][widthIndex] = targetTile;
-                targetTile.setIsLaid(true);
             }
         }
+        //die gezaehlte Anzahl ueberpruefen
+        for(int i = 0; i < tileCountArray.length; i++){
+            if(i < TileNames.values().length - 2){ //Spielsteine ohne Loecher und Nichts gelegt auf Anzahl pruefen 0-1
+                if(tileCountArray[i] > 1){ //mindestens ein mittlerer Spielfeld Stein liegt mehr als einmal
+                    ErrorHandler.showError(new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN));
+                    return(false);
+                }
+            } else if(i == TileNames.values().length - 2){ //Loecher auf Anzahl pruefen
+                if(tileCountArray[i] != GameField.calcNeededHoles(width, height)){ //falsche Anzahl an Loechern
+                    ErrorHandler.showError(new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_HOLE));
+                    return(false);
+                }
+            } //Leer muss nicht geprueft werden
+        }
+        return(true);
     }
 
     /**
@@ -64,6 +127,36 @@ public class GameField {
                 this.gameField[y][x] = new Tile(TileNames.NNNN);
             }
         }
+    }
+
+    /**
+     * Methode welche das Spielfeld mit nicht platzierten Feldern (NNNN) fuellt
+     */
+    private void placeGameFieldHoles(){
+        int holesCounter = 0;
+        for(int y = 0; y < this.gameField.length; y++){
+            for(int x = 0; x < this.gameField[y].length; x++){
+                if(!this.isFieldBorder(x, y)) { //mittleres Spielfeld
+                    if (holesCounter < GameField.calcNeededHoles(this.gameField[y].length, this.gameField.length)) {
+                        this.gameField[y][x] = new Tile(TileNames.HHHH);
+                        holesCounter++;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Methode welche die benoetigte Anzahl an Loechern berechnet
+     * ((Spielfelder ohne Rand) - (Anzahl Spielsteine ohne Loch und ohne Leer)
+     * @param xSize die Spielfeldbreite
+     * @param ySize die Spielfeldhoehe
+     * @return die Anzahl der benoetigten Felder (min 0)
+     */
+    public static int calcNeededHoles(int xSize, int ySize){
+        int neededHoles = (xSize - 2) * (ySize - 2) - (TileNames.values().length - 2); //-2 da der Rand nicht mitzaehlt
+        // und -2 bei TileNames da NNNN und HHHH nicht mitzaehlen
+        return(Math.max(neededHoles, 0));
     }
 
     /**
@@ -109,13 +202,13 @@ public class GameField {
      * @return das Spielfeld als String Array nach Aufgabenstellungsform
      */
     public String[][] translateToSpielstandsdatei(){
-        String[][] gameFieldSpielstandsdatei = new String[this.getGameField()[0].length][this.getGameField().length];
+        String[][] gameFieldSpielstandsdatei = new String[this.getGameField().length][this.getGameField()[0].length];
 
         for(int y = 0; y < this.getGameField().length; y++){
             for(int x = 0; x < this.getGameField()[y].length; x++){
                 String currentTile = this.getTile(x, y).getTileNameWithRotation();
                 if(!this.isFieldBorder(x, y) || this.isFieldEdge(x, y)) {
-                    gameFieldSpielstandsdatei[x][y] = currentTile;
+                    gameFieldSpielstandsdatei[y][x] = currentTile;
                 } else { //Spielstein liegt am Rand
                     char color = currentTile.charAt(0); //da in meiner Implementierung ein Randstueck immer
                     // voll alle Farben hat, kann man repraesentativ das erste nehmen um die Farbe zu bekommen
@@ -128,7 +221,7 @@ public class GameField {
                     } else { //unterer Rand
                         currentTile = color + "NNN";
                     }
-                    gameFieldSpielstandsdatei[x][y] = currentTile;
+                    gameFieldSpielstandsdatei[y][x] = currentTile;
                 }
             }
         }

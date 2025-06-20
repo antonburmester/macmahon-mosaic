@@ -107,18 +107,8 @@ public class Game {
      * Methode welche umschaltet ob der Editor Mode aktiv ist oder nicht
      * //TODO richtig implementieren
      */
-    public void setEditorMode(boolean isEditorMode){
-        if(!isEditorMode){ //kein EditorMode
-            //this.gui.displayGameFieldTiles(this, this.gameField);
-            //this.gui.displayNotUsedTiles(this, this.tiles);
-            //this.gui.displayBorder(this, this.gameField);
-            this.editorMode = false;
-        } else { //Editor Mode
-            //this.gui.fillRightGridPaneWithEditorPieces(this, true);
-            //this.gui.fillRightGridPaneWithEditorPieces(this.gameField.getGameField().length - 2
-            //        * this.gameField.getGameField()[0].length - 2 > 24);
-            this.editorMode = true;
-        }
+    public void toggleEditorMode(){
+        this.editorMode = (!this.editorMode);
     }
 
     /**
@@ -226,24 +216,6 @@ public class Game {
     public boolean isValidMove(int xStart, int yStart, int xTarget, int yTarget){
         boolean status = false;
 
-        return(status);
-    }
-
-    /**
-     * Methode welche den Rand des Spielfelds einfarbt
-     * @param x die Spalte des Spielsteins
-     * @param y die Reihe des Spielsteins
-     * @return ob der Spielstein erfolgreich zurueckgelegt werden konnte
-     */
-    public boolean colorBorder(int x, int y, int tileIndex){
-        boolean status = false;
-        Tile tile = new Tile(TileNames.values()[tileIndex]);
-        if(this.gameField.isFieldBorder(x, y)){
-            if(this.gameField.layTile(x, y, tile)) {
-                status = true;
-            }
-        }
-        System.out.println(this.gameField.toString());
         return(status);
     }
 

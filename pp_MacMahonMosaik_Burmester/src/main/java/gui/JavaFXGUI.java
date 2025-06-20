@@ -1,6 +1,7 @@
 package gui;
 
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -38,6 +39,11 @@ public class JavaFXGUI implements GUIConnector {
     public static final int BORDER_SIZE = 2;
     public static final double NOT_LAID_TILE_SIZE = 80;
 
+    public static final int MAX_HOLES_AMOUNT = 12;
+
+    public static final int MIN_GAMEFIELD_SIZE = 4;
+    public static final int MAX_GAMEFIELD_SIZE = 8;
+
     //die HEX Farbkennungen des Randes damit die Randfarben den Spielsteinen gleichen
     public static final String COLOR_HEX_CODE_GREEN = "#007F0E;";
     public static final String COLOR_HEX_CODE_YELLOW = "#FFD800;";
@@ -68,23 +74,44 @@ public class JavaFXGUI implements GUIConnector {
      * @param gameField das Spielfeld
      */
     public void displayGameFieldTiles(GameField gameField) {
+        this.removeAllPiecesAndColouringsButLeaveSlots(this.gridPane); //die Slots der GridPane von
+        System.out.println();
+        // ImageViews (Spielsteine) und StackPanes (Loecher) bereinigen
         for (int y = 0; y < gameField.getGameField().length; y++) { //jedes Feld bezueglich Hoehe
             for (int x = 0; x < gameField.getGameField()[y].length; x++) { //jedes Feld bezueglich Breite
                 Tile currTile = gameField.getTile(x, y);
                 StackPane slotStackPane = this.getGridPaneCell(x, y, this.gridPane); //der Slot des jeweiligen Feldes
 
+                //Groeße die die StackPane (Loch) oder des ImageView Element (Bild) bekommen soll
+                double slotWidth = slotStackPane.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
+                // und rechts
+                double slotHeight = slotStackPane.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
+                // und unten
+
                 if(gameField.isFieldMiddleGamefield(x, y)) { //mittleres Spielfeld ohne Rand
                     if (currTile.getTile().equals(TileNames.HHHH)) { //ein Loch
+                        // Zuerst explizit alle holeStackPanes vom Parent trennen
+                        for (StackPane hole : this.holeStackPanes) {
+                            System.out.println("Hole Parent is NULLL: " + (hole.getParent() == null));
+                        }
                         for (StackPane currStackPane : this.holeStackPanes) { //durchlaeuft jede holeStackPane
                             if (currStackPane.getParent() == null) { //wenn holeStackPane nirgendwo gelegt wurde
+                                currStackPane.setPrefSize(slotWidth, slotHeight); //StackPane an Feld groesse anpassen
                                 slotStackPane.getChildren().add(currStackPane); //die holeStackPane dem slot hinzufuegen
+                                break; //schleife beenden, da Spielstein gefunden wurde
                             }
                         }
                     } else if(!currTile.getTile().equals(TileNames.NNNN)) { //ein Bild da es kein Loch und kein NNNN ist
                         int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal();//der Index des Bilds
-                        ImageView tileImageView = this.imageViews[tileEnumIndex]; //das Bild als ImageView
-                        tileImageView.setRotate(currTile.getRotation()); //Bild rotieren falls rotiert
-                        slotStackPane.getChildren().add(tileImageView); //Bild dem Hintergrund hinzufuegen
+                        ImageView imageView = this.imageViews[tileEnumIndex]; //das Bild als ImageView
+                        //Bild von seinem vorherigen Ort (Parent) loesen falls es gebunden ist
+                        StackPane parent = (StackPane) imageView.getParent();
+                        if(parent != null) parent.getChildren().remove(imageView);
+                        imageView.setRotate(currTile.getRotation()); //Bild rotieren falls rotiert
+                        //groesse des Bildes anpassen
+                        imageView.setFitWidth(slotWidth);
+                        imageView.setFitHeight(slotHeight);
+                        slotStackPane.getChildren().add(imageView); //Bild dem Hintergrund hinzufuegen
                     }
                 } else { //Rand
                     //initiales Setzen des Randes (falls ein bestehendes Spiel geladen wurde)
@@ -115,6 +142,8 @@ public class JavaFXGUI implements GUIConnector {
      * @param tiles die verfuegbaren Spielsteine
      */
     public void displayNotUsedTiles(Tiles tiles) {
+        this.removeAllPiecesAndColouringsButLeaveSlots(this.rightGridPane); //Slots der rechten GridPane von ImageViews
+        // (Spielsteine) bereinigen
         //Abstand zwischen den Spalten und Reihen
         this.rightGridPane.setHgap(10);
         this.rightGridPane.setVgap(10);
@@ -135,13 +164,13 @@ public class JavaFXGUI implements GUIConnector {
                         imageView.setFitWidth(JavaFXGUI.NOT_LAID_TILE_SIZE);
                         imageView.setFitHeight(JavaFXGUI.NOT_LAID_TILE_SIZE);
                         imageView.setRotate(currTile.getRotation());
-                        //slotStackPane.getChildren().add(imageView); //ImageView der Stackpane hinzufuegen
-                        //Bild dem Slot der GridPane hinzufuegen
+                        //Bild vom bisherigen Slot loesen falls es schonmal lag
                         if(imageView.getParent() != null){
                             StackPane slotStackPane = (StackPane) imageView.getParent();
                             slotStackPane.getChildren().remove(imageView);
                         }
-                        this.getGridPaneCell(col, row, this.rightGridPane).getChildren().add(imageView);
+                        StackPane slotStackPane = this.getGridPaneCell(col, row, this.rightGridPane); //Slot des Feldes
+                        slotStackPane.getChildren().add(imageView);
                     }
                 }
                 //Verwaltung fuer Reihen und Spalten
@@ -207,7 +236,17 @@ public class JavaFXGUI implements GUIConnector {
      * Methode welche alle Objekte die auf einem Slot Liegen entfernen
      * @param gridPane die GridPane welche gelehrt werden soll
      */
-    void removeAllPiecesAndColouringsButLeaveSlots(GridPane gridPane){
+    private void removeAllPiecesAndColouringsButLeaveSlots(GridPane gridPane) {
+        if (gridPane == this.gridPane) { //nur bei der mittleren GridPane die loecher loesen
+            // Zuerst explizit alle holeStackPanes vom Parent trennen
+            for (StackPane hole : this.holeStackPanes) { //alle Loecher durchlaufen
+                Parent parent = hole.getParent(); //die Eltern also der Ort wo das Loch dran gebunden ist
+                if (parent instanceof StackPane stackPane) { //falls Loch lag
+                    stackPane.getChildren().remove(hole); //Loch entfernen vom vorherigen Ort
+                }
+            }
+        }
+
         int width = gridPane.getColumnCount();
         int height = gridPane.getRowCount();
         for (int y = 0; y < height; y++) { //Start bei 1 und Ende bei Groeße - 1
@@ -215,17 +254,13 @@ public class JavaFXGUI implements GUIConnector {
             for (int x = 0; x < width; x++) { //Start bei 1 und Ende bei Groeße - 1
 
                 StackPane slotStackPane = this.getGridPaneCell(x, y, gridPane);
-                if(!GameField.isFieldEdge(x, y, width, height)) {
+                if (!GameField.isFieldEdge(x, y, width, height)) {
                     slotStackPane.setStyle("-fx-background-color: transparent; -fx-border-color: black;" +
                             "-fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";"); //den Stil zuruecksetzen
                 }
-                ArrayList<Node> stackPaneChildren = new ArrayList<>(slotStackPane.getChildren()); //kopieren, weil man
-                // ueber dieselbe Liste itterirt und objekte aus dieser loescht
-                for(Node child: stackPaneChildren){
-                    slotStackPane.getChildren().remove(child);
-                }
-
+                slotStackPane.getChildren().clear(); //alles entfernen (Loecher und Bilder)
             }
         }
     }
+
 }
