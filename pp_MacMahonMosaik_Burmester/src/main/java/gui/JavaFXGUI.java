@@ -2,14 +2,9 @@ package gui;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import logic.*;
-
-import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Klasse durch welche die Logik veraenderungen der GUI durchfuehren kann.
@@ -35,6 +30,7 @@ public class JavaFXGUI implements GUIConnector {
     public static final String ID_PIECE = "0";
     public static final String ID_HOLE = "1";
     public static final String ID_BORDER = "2";
+    public static final String ID_Overlay_RED = "3";
 
     public static final int BORDER_SIZE = 2;
     public static final double NOT_LAID_TILE_SIZE = 80;
@@ -70,6 +66,15 @@ public class JavaFXGUI implements GUIConnector {
     }
 
     /**
+     * Methode welche ein bestehendes Spiel spielbar macht oder nicht ueber die rechte Spielstein Auswahl
+     * @param status ob die rechte GridPane (Auswahl) zugreifbar sein soll
+     */
+    public void setDisableRightGridPane(boolean status){
+            this.rightGridPane.setDisable(status);
+            this.rightGridPane.setOpacity(!status ? 1 : 0.7);
+    }
+
+    /**
      * Methode welche das mittlere Spielfeld (GridPane) mit den Spielsteinen und Lochsteinen fuellt und den Rand faerbt
      * @param gameField das Spielfeld
      */
@@ -91,9 +96,6 @@ public class JavaFXGUI implements GUIConnector {
                 if(gameField.isFieldMiddleGamefield(x, y)) { //mittleres Spielfeld ohne Rand
                     if (currTile.getTile().equals(TileNames.HHHH)) { //ein Loch
                         // Zuerst explizit alle holeStackPanes vom Parent trennen
-                        for (StackPane hole : this.holeStackPanes) {
-                            System.out.println("Hole Parent is NULLL: " + (hole.getParent() == null));
-                        }
                         for (StackPane currStackPane : this.holeStackPanes) { //durchlaeuft jede holeStackPane
                             if (currStackPane.getParent() == null) { //wenn holeStackPane nirgendwo gelegt wurde
                                 currStackPane.setPrefSize(slotWidth, slotHeight); //StackPane an Feld groesse anpassen
@@ -260,6 +262,35 @@ public class JavaFXGUI implements GUIConnector {
                 }
                 slotStackPane.getChildren().clear(); //alles entfernen (Loecher und Bilder)
             }
+        }
+    }
+
+    /**
+     * Methode welche Spielsteine falls sie falsch gelegt wurden rot umrandet und dies wieder rueckgaengig machen kann
+     * @param xIndex Breitenindex
+     * @param yIndex Hoehenindex
+     * @param mark ob sie markiert werden sollen
+     * @param middleGridPane ob es sich um die mittlere GridPane handelt oder die rechte
+     */
+    public void highlightTileNotMatching(int xIndex, int yIndex, boolean mark, boolean middleGridPane){
+        GridPane gridPane = middleGridPane ? this.gridPane : this.rightGridPane;
+        StackPane gridPaneCell = this.getGridPaneCell(xIndex, yIndex, gridPane);
+
+        if (mark) { //Spielfeld soll hervorgehoben werden
+            boolean isOverlayAlreadyThere = gridPaneCell.getChildren().stream()
+                    .anyMatch(n -> JavaFXGUI.ID_Overlay_RED.equals(n.getUserData())); //ob es schon ein Overlay gibt
+            if (!isOverlayAlreadyThere) { //es gibt noch kein Overlay
+                Pane overlay = new Pane();
+                overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);"); //Overlay Farbe: schwarz, Deckkraft: 50%
+                overlay.setUserData(JavaFXGUI.ID_Overlay_RED);
+                overlay.prefWidthProperty().bind(gridPaneCell.widthProperty());
+                overlay.prefHeightProperty().bind(gridPaneCell.heightProperty());
+                overlay.setMouseTransparent(true);
+                gridPaneCell.getChildren().add(overlay);
+            }
+        } else {
+            //das Overlay entfernen wenn das Feld keine Farbliche Grenzprobleme hat
+            gridPaneCell.getChildren().removeIf(n -> JavaFXGUI.ID_Overlay_RED.equals(n.getUserData()));
         }
     }
 

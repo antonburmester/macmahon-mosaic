@@ -1,7 +1,5 @@
 package logic;
 
-import java.util.Objects;
-
 /**
  * Klasse welche einen Spielstein darstellt inklusive der Rotation und ob der Spielstein valide liegt (Farben richtig)
  *
@@ -24,7 +22,7 @@ public class Tile {
     /**
      * Konstruktor welcher einen bestimmten Spielstein inklusive Rotation initialisiert
      * @param tile der bestimmte Spielstein
-     * @param rotation die Rotation des Spielsteins
+     * @param rotation die Rotation des Spielsteins (0 = 0°; 3 = 270°)
      */
     public Tile(TileNames tile, int rotation){
         this.tile = tile;
@@ -277,7 +275,6 @@ public class Tile {
 
             for(int r = 0; r < 360; r+=90){
                 if(getTileNameWithRotation(currTileName.name(), r).equals(tileName)){
-                    System.out.println("EQUALS: " + currTileName.name());
                     return(currTileName.name());
                 }
             }

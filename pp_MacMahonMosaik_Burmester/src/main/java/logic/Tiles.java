@@ -71,7 +71,7 @@ public class Tiles {
     /**
      * Methode welche den Index eines uebergebenen Spielsteins zurueckgibt
      * @param tile der uebergebene Spielstein
-     * @return der Index des Spielsteins
+     * @return der Index des Spielsteins; wenn nichts gefunden -1
      */
     public int getTileIndex(Tile tile){
         int index = -1;

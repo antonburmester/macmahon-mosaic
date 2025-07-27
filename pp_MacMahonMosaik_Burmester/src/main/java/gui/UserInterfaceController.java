@@ -74,6 +74,7 @@ public class UserInterfaceController {
         Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
             this.setupGUI(this.game.getGameField().getGameField()[0].length - 2,
                 this.game.getGameField().getGameField().length - 2);
+            this.game.setIsGameActive(true);
         });
     }
 
@@ -81,7 +82,13 @@ public class UserInterfaceController {
      * Methode welche aus dem Menue aufgerufen wird um ein neues Spiel zu starten
      */
     public void restartGame(){
-
+        if(!this.game.isEditorMode()) {
+            this.game.removeGameFieldTiles();
+            this.game.updateTiles();
+            this.game.setIsGameActive(true);
+        } else {
+            ErrorHandler.showError(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
+        }
     }
 
     /**
@@ -93,8 +100,12 @@ public class UserInterfaceController {
             if (file != null) {
                 String[][] field = logic.GameData.loadGame(file);
                 this.game = new Game(this.gui, field);
+                if(editorControls.isManaged()){ //alle Spielsteine aus dem Spielfeld entfernen wenn Editormode
+                    this.game.removeGameFieldTiles();
+                }
                 this.setupGUI(this.game.getGameField().getGameField()[0].length - 2,
                         this.game.getGameField().getGameField().length - 2);
+                this.game.setIsGameActive(true);
             }
         } catch (CustomException e){
             ErrorHandler.showError(e);
@@ -109,6 +120,7 @@ public class UserInterfaceController {
             File file = openFileChooser(false);
             if(file != null) {
                 logic.GameData.saveGame(this.game.getGameFieldString(), file);
+                this.game.setIsGameActive(false);
             }
         } catch (CustomException e) {
             ErrorHandler.showError(e);
@@ -119,7 +131,7 @@ public class UserInterfaceController {
      * Methode welche aus dem Menue aufgerufen wird um ein bestehendes Spiel zu beenden
      */
     public void endGame(){
-
+        this.game.setIsGameActive(false);
     }
 
     /**
@@ -129,9 +141,9 @@ public class UserInterfaceController {
         boolean isEditorMode = !editorControls.isManaged(); //wenn sichtbar dann unsichtbar und umgekehrt (toggle)
         editorControls.setVisible(isEditorMode); //macht die Spielfeldeingaben (Breite,Hoehe,Button) sichtbar/unsichtbar
         editorControls.setManaged(isEditorMode); // Entfernt den Platz, wenn unsichtbar und nimmt ihn ein wenn sichtbar
-        if(this.game != null)
-            //this.game.setEditorMode(isEditorMode);
-            this.game.toggleEditorMode();
+        if(this.game != null) {
+            this.game.setIsEditorMode(isEditorMode);
+        }
     }
 
     /**
@@ -162,9 +174,7 @@ public class UserInterfaceController {
         centerPane.layout(); //centerPane Layout setzen bevor die Methode weiterlaeuft
         this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
         this.gridPane.layout(); //centerPane Layout setzen bevor die Methode weiterlaeuft
-        //Bilder, Loecher und Faerbungen anzeigen
-        this.gui.displayGameFieldTiles(this.game.getGameField());
-        this.gui.displayNotUsedTiles(this.game.getTiles());
+        this.game.updateTiles();
     }
 
     /**
@@ -319,6 +329,8 @@ public class UserInterfaceController {
                             JavaFXGUI.BORDER_SIZE + ";";
                 }
                 inputStackPane.setStyle(styleResultString);
+                //ueberpruefen ob alle Spielsteine passen, sonst farblich markieren
+                this.game.highlightTileIfWrongPlaced();
             }
         });
     }
@@ -422,6 +434,8 @@ public class UserInterfaceController {
                         imageView.setFitHeight(slotHeight);
                     }
                     inputStackPane.getChildren().add(droppedObjectNode); //das Objekt an den neuen Platz binden
+                    //ueberpruefen ob alle Spielsteine passen, sonst farblich markieren
+                    this.game.highlightTileIfWrongPlaced();
 
                     event.setDropCompleted(true);
                 } else {
@@ -523,6 +537,9 @@ public class UserInterfaceController {
                     droppedImageView.setFitWidth(slotWidth);
                     droppedImageView.setFitHeight(slotHeight);
                     inputStackPane.getChildren().add(droppedImageView); //das Objekt an den neuen Platz binden
+
+                    //ueberpruefen ob alle Spielsteine passen, sonst farblich markieren
+                    this.game.highlightTileIfWrongPlaced();
 
                     event.setDropCompleted(true);
                 } else {
@@ -727,6 +744,8 @@ public class UserInterfaceController {
                     if (event.getButton().equals(MouseButton.SECONDARY)) {
                         currIndexImage.setRotate(currIndexImage.getRotate() + 90); //Bild graphisch rotieren
                         game.rotateGameTile(imageIndex); //Rotation in der Logik
+                        //ueberpruefen ob alle Spielsteine passen, sonst farblich markieren
+                        this.game.highlightTileIfWrongPlaced();
                     }
                 }
             });

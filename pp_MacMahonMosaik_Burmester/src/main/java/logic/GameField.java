@@ -78,8 +78,6 @@ public class GameField {
         int width = inputCompatible[0].length;
         for(int y = 0; y < height; y++){
             for(int x = 0; x < width; x++){
-                System.out.println(inputCompatible[y][x]);
-                System.out.println("Not Compatible: " + stringGameField[y][x]);
                 String tileName = Tile.getTileNamesString(inputCompatible[y][x]);
                 if(tileName == null){ //Spielstein konnte nicht gefunden werden (falsch)
                     ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES));
@@ -116,6 +114,22 @@ public class GameField {
             } //Leer muss nicht geprueft werden
         }
         return(true);
+    }
+
+    /**
+     * Methode welche die Breite des Spielfelds zurueckgibt
+     * @return die Breite des Spielfelds
+     */
+    public int getGameFieldWidth(){
+        return(this.gameField[0].length);
+    }
+
+    /**
+     * Methode welche die Hoehe des Spielfelds zurueckgibt
+     * @return die Breite des Spielfelds
+     */
+    public int getGameFieldHeight(){
+        return(this.gameField.length);
     }
 
     /**
@@ -291,7 +305,7 @@ public class GameField {
     }
 
     /**
-     * Methode welche ein Spielfeld zuruecksetzt
+     * Methode welche ein Spielfeld Feld zuruecksetzt
      * @param xIndex der Spaltenindex des Feldes
      * @param yIndex der Zeilenindex des Feldes
      * @return ob das Spielfeld korrekt zurueckgesetzt werden konnte
@@ -384,9 +398,9 @@ public class GameField {
         boolean status = true;
         for (int y = 0; y < this.gameField.length; y++) { //Zeilen des Spielfelds durchlaufen
             for (int x = 0; x < this.gameField[y].length; x++) { //Spalten des Spielfelds durchlaufen
-                if (this.isFieldBorder(x, y)) { //ob das Feld ein Rand Feld ist
-                    if (!this.getTile(x, y).isTileBorderLayable()) { //wenn es sich beim Spielstein der auf dem Rand Feld
-                        // liegt nicht um ein Randstueck handelt
+                if (this.isFieldBorder(x, y) && !this.isFieldEdge(x, y)) { //ob das Feld ein Rand Feld ist
+                    if (!this.getTile(x, y).isTileBorderLayable()) { //wenn es sich beim Spielstein der auf dem Rand
+                        // Feld liegt nicht um ein Randstueck handelt (also ein NNNN)
                         status = false;
                     }
                 }

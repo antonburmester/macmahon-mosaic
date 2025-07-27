@@ -49,8 +49,12 @@ public class ErrorHandler {
                     "Fehler " + exception.getErrorCode() + " : JSON field Attribut nicht vorhanden!";
             case CustomException.ERROR_INVALID_GAME_SIZE ->
                     "Fehler " + exception.getErrorCode() + " : Falsche Spielfeldgroeße! 2x2 - 6x6";
-            case CustomException.NO_GAME_OPEN ->
+            case CustomException.ERROR_NO_GAME_OPEN ->
                     "Fehler " + exception.getErrorCode() + " : Kein Spiel aktiv! Erstelle oder Lade ein Spiel.";
+            case CustomException.ERROR_BORDER_NOT_SETTED ->
+                    "Fehler " + exception.getErrorCode() + " : Mindestens ein Rand Feld ist nicht gefaerbt.";
+            case CustomException.ERROR_EDITOR_MODE_ON ->
+                    "Fehler " + exception.getErrorCode() + " : Editor muss ausgeblendet werden.";
             default -> "Unbekannter Fehler: " + exception.getErrorCode();
         };
         //Mit dem Text ein Fehler Fenster aufrufen

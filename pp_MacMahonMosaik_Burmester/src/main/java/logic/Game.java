@@ -1,5 +1,7 @@
 package logic;
 
+import gui.ErrorHandler;
+
 /**
  * Klasse welche das Spiel koodiniert
  * Diese Klasse ist die Schnittstelle zwischen GUI und Logik seitens des UserInterfaceController und der JavaFXGUI
@@ -45,7 +47,6 @@ public class Game {
      */
     public Game(GUIConnector gui, String[][] inputGameField){
         this.gui = gui;
-        this.editorMode = false;
 
         this.tiles = new Tiles();
         int holesAmount = (inputGameField.length - 2) * (inputGameField[0].length - 2) - 24;
@@ -80,6 +81,21 @@ public class Game {
     }
 
     /**
+     * Methode welche den Wahrheitswert ob ein Spiel aktiv ist setzt
+     * @param isActive ob das Spiel aktiv ist
+     */
+    public void setIsGameActive(boolean isActive){
+        if(isActive && this.gameField.isGameFieldBorderSetted()) { //Spiel soll aktiv werden und Rand ist gesetzt
+            this.gui.setDisableRightGridPane(false);
+        } else if (isActive){ //Spiel soll aktiv werden  aber Rand ist nicht komplett gesetzt
+            this.gui.setDisableRightGridPane(true);
+            ErrorHandler.showError(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
+        } else { //Spiel soll nicht aktiv werden
+            this.gui.setDisableRightGridPane(true);
+        }
+    }
+
+    /**
      * Methode welche die Spielstein Instanz zurueckgibt
      * @return die Instanz der Klasse aller Spielsteine
      */
@@ -104,11 +120,26 @@ public class Game {
     }
 
     /**
-     * Methode welche umschaltet ob der Editor Mode aktiv ist oder nicht
-     * //TODO richtig implementieren
+     * Methode welche setzt ob der Editor Mode aktiv ist oder nicht und wenn ja die Spielstein Auswahl deaktiviert
+     * @param status ob der eingeschaltet werden soll oder aus
      */
-    public void toggleEditorMode(){
-        this.editorMode = (!this.editorMode);
+    public void setIsEditorMode(boolean status){
+        this.editorMode = status;
+        if(status){
+            this.removeGameFieldTiles();
+            this.updateTiles();
+            this.gui.setDisableRightGridPane(true);
+        }
+    }
+
+    /**
+     * Methode welche die Spielsteine sichtbar macht und positioniert im Feld und der Auswahl.
+     * positioniert die Spielsteine zwischen Spielfeld und Auswahl, setzt die Loecher im Spielfeld und faerbt den Rand
+     */
+    public void updateTiles(){
+        //Bilder, Loecher und Faerbungen anzeigen
+        this.gui.displayGameFieldTiles(this.getGameField());
+        this.gui.displayNotUsedTiles(this.getTiles());
     }
 
     /**
@@ -262,6 +293,26 @@ public class Game {
     }
 
     /**
+     * Methode welche ein bestehendes Spiel neustartet.
+     * (entfernt alle Spielsteine aus dem Spielfeld, laesst aber den Rand und die Lochsteine)
+     */
+    public void removeGameFieldTiles(){
+        this.gameField.getGameField();
+        for(int y = 0; y < this.gameField.getGameFieldHeight(); y++){
+            for(int x = 0; x < this.gameField.getGameFieldWidth(); x++){
+                if(!this.gameField.isFieldBorder(x, y)){ //kein Randstueck
+                    Tile currTile = this.gameField.getTile(x,y);
+                    if(currTile.isNormalGameTile()){ //kein Loch und nicht leer
+                        this.gameField.resetTile(x, y);
+                        this.tiles.setTileLaidStatus(currTile, false);
+                    }
+                }
+            }
+        }
+        System.out.println(this.gameField.toString());
+    }
+
+    /**
      * Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
      * @return ob das Spielfeld loesbar ist
      * TODO implement
@@ -316,5 +367,18 @@ public class Game {
 
         //return(this.isGameFieldSolvableRecoursive(clonedGameField, clonedTiles));
         return true;
+    }
+
+    /**
+     * Methode welche alle Spielfeld Felder durchlaeuft und prueft, ob es welche gibt, die nicht Farblich passen.
+     * Alle die nicht farblich passen, werden hervorgehoben
+     */
+    public void highlightTileIfWrongPlaced(){
+        for(int y = 0; y < this.gameField.getGameFieldHeight(); y++){
+            for(int x = 0; x < this.gameField.getGameFieldWidth(); x++){
+                boolean isTileMatching = this.gameField.isGameFieldTileMatching(x, y, true);
+                this.gui.highlightTileNotMatching(x, y, !isTileMatching, true);
+            }
+        }
     }
 }

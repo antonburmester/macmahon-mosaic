@@ -20,7 +20,9 @@ public class CustomException extends Exception {
     public static final int ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN = 404;
     public static final int ERROR_MIDDLEGAMEFIELD_HOLE = 405;
     public static final int ERROR_INVALID_GAME_SIZE = 501;
-    public static final int NO_GAME_OPEN = 502;
+    public static final int ERROR_NO_GAME_OPEN = 502;
+    public static final int ERROR_BORDER_NOT_SETTED = 503;
+    public static final int ERROR_EDITOR_MODE_ON = 504;
 
 
     private final int errorCode;
