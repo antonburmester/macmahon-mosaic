@@ -17,7 +17,7 @@ public class GameTest {
      * False
      */
     @Test
-    public void testGameFieldSolvable5x5False(){
+    public void testGameFieldSolvable5x5TrueOnlyYellow(){
         String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
                                       {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
                                       {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
@@ -26,7 +26,7 @@ public class GameTest {
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
         System.out.println(game.getGameField().toString());
-        assertFalse(game.isGameFieldSolvable());
+        assertTrue(game.isGameFieldSolvable());
     }
 
     /**
@@ -99,6 +99,27 @@ public class GameTest {
                 {"GGGG", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "NNNN", "GGGG"},
                 {"RRRR", "NNNN", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "RRRR"},
                 {"GGGG", "HHHH", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "RRRR", "NNNN"}
+        };
+
+        Game game = new Game(new FakeGUI(), gameFieldInput);
+        System.out.println(game.getGameField().toString());
+        assertTrue(game.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     */
+    @Test
+    public void testGameFieldSolvable8x8SomeAlreadySolvedTrue() {
+        String[][] gameFieldInput = {
+                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"},
+                {"GGGG", "HHHH", "GRGR", "RRRR", "HHHH", "NNNN", "HHHH", "RRRR"},
+                {"RRRR", "HHHH", "NNNN", "HHHH", "HHHH", "GGYR", "HHHH", "RRRR"},
+                {"RRRR", "GGGR", "NNNN", "YYYY", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"GGGG", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "GGGY", "GGGG"},
+                {"RRRR", "NNNN", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "RRRR"},
+                {"GGGG", "HHHH", "NNNN", "NNNN", "YRGY", "NNNN", "RGRY", "GGGG"},
                 {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "RRRR", "NNNN"}
         };
 
