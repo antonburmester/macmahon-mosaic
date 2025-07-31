@@ -305,7 +305,8 @@ public class GameField {
     }
 
     /**
-     * Methode welche ein Spielfeld Feld zuruecksetzt
+     * Methode welche ein Spielfeld Feld zuruecksetzt und den Status des Spielsteins des zurueckgesetzten Feldes auf
+     * not Laid gesetzt wird
      * @param xIndex der Spaltenindex des Feldes
      * @param yIndex der Zeilenindex des Feldes
      * @return ob das Spielfeld korrekt zurueckgesetzt werden konnte
@@ -313,6 +314,7 @@ public class GameField {
     public boolean resetTile(int xIndex, int yIndex){
         boolean status = false;
         if(this.isFieldGamefield(xIndex, yIndex)){
+            this.gameField[yIndex][xIndex].setIsLaid(false);
             this.gameField[yIndex][xIndex] = new Tile(TileNames.NNNN);
             status = true;
         }
@@ -503,7 +505,8 @@ public class GameField {
                                     Tiles copyGameFieldTiles, Tiles copyHoleTiles){
         int width = this.gameField[0].length;
         int heigth = this.gameField.length;
-        GameField copy = new GameField(heigth, width); //neue Instanz eines neuen Spielfelds
+        GameField copy = new GameField(heigth - 2, width - 2); //neue Instanz eines neuen Spielfelds
+        // -2 da beim Spielfeld die groesse ohne Rand angegeben wird
 
         Tile currNotCopyTile;
         Tile copyTile;
@@ -513,13 +516,16 @@ public class GameField {
                 // soll
                 if(currNotCopyTile.isNormalGameTile()){ //normaler Spielstein
                     //die kopie von dem aktuell im Spielfeld liegenden Spielstein
-                    copyTile = copyGameFieldTiles.getTile(existingGameFieldTiles.getTileIndex(currNotCopyTile));
+                    copyTile = copyGameFieldTiles.getTileByNameWithRotation(currNotCopyTile.getTileNameWithRotation());
                 } else if(currNotCopyTile.isHoleTile()){ //Loch
-                    copyTile = copyHoleTiles.getTile(existingHoleTiles.getTileIndex(currNotCopyTile));
+                    copyTile = copyHoleTiles.getTile(existingHoleTiles.getTileIndex(currNotCopyTile));//Index reicht,
+                    // da Rotation keine Auswirkungen hat
                 } else { //nichts gelegt
                     copyTile = new Tile(TileNames.NNNN);
                 }
-                copy.layTile(x, y, copyTile); //den Stein in das neue Spielfeld legen
+                if(copyTile != null) {
+                    copy.layTile(x, y, copyTile); //den Stein in das neue Spielfeld legen
+                }
             }
         }
         return (copy);

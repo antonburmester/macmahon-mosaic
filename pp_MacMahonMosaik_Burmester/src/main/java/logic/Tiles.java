@@ -76,7 +76,7 @@ public class Tiles {
     public int getTileIndex(Tile tile){
         int index = -1;
         for(int i = 0; i < this.tiles.length; i++){
-            if(this.getTile(i).equals(tile)){
+            if(this.getTile(i).getTile().equals(tile.getTile())){
                 index = i;
             }
         }
@@ -116,13 +116,14 @@ public class Tiles {
         Tile resultTile = null;
         for(int i = 0; i < this.tiles.length; i++){ //jeden Spielstein durchlaufen
             Tile currTile = this.getTile(i); //der aktuelle Spielstein
-            if(!currTile.getIsLaid()){ //Spielstein noch nicht gelegt
+            //if(!currTile.getIsLaid()){ //Spielstein noch nicht gelegt TODO pruefen ob okay
                 //koennte auch ersetzt werden durch isGameFieldTile
                 int rotations = currTile.isHoleTile() || currTile.isPlaceHolderTile() ? 90 : 360;
                 for(int rotation = 0; rotation < rotations; rotation += 90){ //jede Rotation durchlaufen
                     if(currTile.getTileNameWithRotation().equals(tileName)){ //wenn der Spielstein mit Rotation
                         // dem uebergebenen Namen gleicht
                         resultTile = currTile;
+                        return(resultTile);
                     } else { //wenn der Spielstein nicht dem Namen gleicht
                         currTile.rotateTile(); //den Spielstein rotieren
                     }
@@ -130,9 +131,20 @@ public class Tiles {
                 if(resultTile == null) { //wenn der aktuelle Spielstein in allen Rotationen nicht passt
                     currTile.resetTileRotation(); //die Rotation zuruecksetzen
                 }
-            }
+            //}
         }
         return(resultTile);
+    }
+
+    /**
+     * Methode welche die Rotation aller nicht gelegten Spielsteine zuruecksetzt
+     */
+    public void resetAllNotLaidTileRotation(){
+        for(Tile currTile: tiles){
+            if(!currTile.getIsLaid()){
+                currTile.resetTileRotation();
+            }
+        }
     }
 
     /**
