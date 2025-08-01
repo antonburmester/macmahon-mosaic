@@ -6,6 +6,12 @@ package logic;
  * @author Anton Burmester
  */
 public class CustomException extends Exception {
+    //Message Codes
+    public static final int MESSAGE_WIN = 0;
+    public static final int MESSAGE_GAMEFIELD_SOLVABLE = 10;
+    public static final int MESSAGE_GAMEFIELD_NOT_SOLVABLE = 11;
+    public static final int MESSAGE_NO_HINT_GAMEFIELD_NOT_SOLVABLE = 21;
+
     //die Fehler Codes
     public static final int ERROR_WINDOW_OPEN = 101;
     public static final int ERROR_INVALID_FILE = 201;
@@ -25,23 +31,23 @@ public class CustomException extends Exception {
     public static final int ERROR_EDITOR_MODE_ON = 504;
 
 
-    private final int errorCode;
+    private final int errorOrMessageCode;
 
     /**
-     * Konstruktor welcher die Instanz initialisiert mit dem errorCode
+     * Konstruktor welcher die Instanz initialisiert mit dem errorOrMessageCode
      *
-     * @param errorCode Code des Fehlers
+     * @param code Code des Fehlers
      */
-    public CustomException(int errorCode) {
-        this.errorCode = errorCode;
+    public CustomException(int code) {
+        this.errorOrMessageCode = code;
     }
 
     /**
-     * getter welcher den Error Code zurueckgibt
+     * getter welcher den errorOrMessageCode zurueckgibt
      *
-     * @return der Error Code
+     * @return der errorOrMessageCode
      */
-    public int getErrorCode() {
-        return (this.errorCode);
+    public int getErrorOrMessageCode() {
+        return (this.errorOrMessageCode);
     }
 }

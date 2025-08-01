@@ -1,6 +1,6 @@
 package logic;
 
-import gui.ErrorHandler;
+import gui.ErrorMessageHandler;
 
 /**
  * Klasse welche das Spielfeld als Zweidimensionales Array enthaelt
@@ -80,17 +80,17 @@ public class GameField {
             for(int x = 0; x < width; x++){
                 String tileName = Tile.getTileNamesString(inputCompatible[y][x]);
                 if(tileName == null){ //Spielstein konnte nicht gefunden werden (falsch)
-                    ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES));
+                    ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES));
                     return(false);
                 } else {
                     if(GameField.isFieldBorder(x, y, width, height)){ //Rand Position
                         if(!Tile.isTileStringBorderLayable(tileName)) { //kein Randkompatibler Stein
-                            ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES_BORDER));
+                            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES_BORDER));
                             return(false);
                         }
                     } else if(GameField.isFieldEdge(x, y, width, height)){ //Ecken
                         if(!Tile.isTileStringEdgeLayable(tileName)) { //kein Randkompatibler Stein
-                            ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES_EDGE));
+                            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES_EDGE));
                             return(false);
                         }
                     } else {
@@ -103,12 +103,12 @@ public class GameField {
         for(int i = 0; i < tileCountArray.length; i++){
             if(i < TileNames.values().length - 2){ //Spielsteine ohne Loecher und Nichts gelegt auf Anzahl pruefen 0-1
                 if(tileCountArray[i] > 1){ //mindestens ein mittlerer Spielfeld Stein liegt mehr als einmal
-                    ErrorHandler.showError(new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN));
+                    ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN));
                     return(false);
                 }
             } else if(i == TileNames.values().length - 2){ //Loecher auf Anzahl pruefen
                 if(tileCountArray[i] != GameField.calcNeededHoles(width, height)){ //falsche Anzahl an Loechern
-                    ErrorHandler.showError(new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_HOLE));
+                    ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_HOLE));
                     return(false);
                 }
             } //Leer muss nicht geprueft werden

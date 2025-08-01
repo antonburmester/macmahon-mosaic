@@ -87,7 +87,7 @@ public class UserInterfaceController {
             this.game.updateTiles();
             this.game.setIsGameActive(true);
         } else {
-            ErrorHandler.showError(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
+            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
         }
     }
 
@@ -108,7 +108,7 @@ public class UserInterfaceController {
                 this.game.setIsGameActive(true);
             }
         } catch (CustomException e){
-            ErrorHandler.showError(e);
+            ErrorMessageHandler.showError(e);
         }
     }
 
@@ -123,7 +123,7 @@ public class UserInterfaceController {
                 this.game.setIsGameActive(false);
             }
         } catch (CustomException e) {
-            ErrorHandler.showError(e);
+            ErrorMessageHandler.showError(e);
         }
     }
 
@@ -156,7 +156,7 @@ public class UserInterfaceController {
             this.game = new Game(this.gui, height, width);
             this.setupGUI(width, height);
         } else {
-            ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
+            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
         }
     }
 
@@ -182,7 +182,12 @@ public class UserInterfaceController {
      * werden kann
      */
     public void checkSolvability(){
-
+        boolean isGameFieldSolvable = this.game.isGameFieldSolvable();
+        if(isGameFieldSolvable){
+            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_GAMEFIELD_SOLVABLE));
+        } else {
+            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_GAMEFIELD_NOT_SOLVABLE));
+        }
     }
 
     /**
@@ -190,7 +195,9 @@ public class UserInterfaceController {
      * zu legen
      */
     public void layHint(){
-
+        boolean laidHint = this.game.layHintTile();
+        if(!laidHint) ErrorMessageHandler.showError(new CustomException(CustomException.
+                MESSAGE_NO_HINT_GAMEFIELD_NOT_SOLVABLE));
     }
 
     /**

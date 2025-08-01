@@ -1,7 +1,7 @@
 package logic;
 
 import com.google.gson.*;
-import gui.ErrorHandler;
+import gui.ErrorMessageHandler;
 import gui.JavaFXGUI;
 
 import java.io.*;
@@ -86,23 +86,23 @@ public class GameData {
                 //Hoehe des Spielfelds pruefen (Anzahl Zeilen)
                 if(field.size() < JavaFXGUI.MIN_GAMEFIELD_SIZE || field.size() > JavaFXGUI.MAX_GAMEFIELD_SIZE){
                     status = false;
-                    ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE));
+                    ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE));
                 }
                 for(JsonElement currRowElement : field){ // jede Zeile durchlaufen
                     JsonArray currRow = currRowElement.getAsJsonArray();
                     //Breite des Spielfelds jeder Reihe pruefen (Anzahl Spalten)
                     if(currRow.size() < JavaFXGUI.MIN_GAMEFIELD_SIZE || currRow.size() > JavaFXGUI.MAX_GAMEFIELD_SIZE){
                         status = false;
-                        ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE));
+                        ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE));
                     }
                 }
             } else { //kein JsonArray
                 status = false;
-                ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_WRONG_FIELD_TYPE));
+                ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_WRONG_FIELD_TYPE));
             }
         } else { //kein Feld namens field
             status = false;
-            ErrorHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_NO_FIELD));
+            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_NO_FIELD));
         }
         return (status);
     }

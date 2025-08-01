@@ -1,6 +1,6 @@
 package logic;
 
-import gui.ErrorHandler;
+import gui.ErrorMessageHandler;
 
 /**
  * Klasse welche das Spiel koodiniert
@@ -89,7 +89,7 @@ public class Game {
             this.gui.setDisableRightGridPane(false);
         } else if (isActive){ //Spiel soll aktiv werden  aber Rand ist nicht komplett gesetzt
             this.gui.setDisableRightGridPane(true);
-            ErrorHandler.showError(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
+            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
         } else { //Spiel soll nicht aktiv werden
             this.gui.setDisableRightGridPane(true);
         }
@@ -182,6 +182,7 @@ public class Game {
                 this.holeTiles.setTileLaidStatus(tile, true); //TODO glaube ich irrelevant
             }
             this.gameField.layTile(x, y, tile); //Spielstein auf das Spielfeld legen
+            this.checkAndHandleWin(); //pruefen und handhaben ob das Spiel durch einen Sieg beendet wurde
         } else {
             status = false;
         }
@@ -244,10 +245,16 @@ public class Game {
         return(status);
     }
 
-    public boolean isValidMove(int xStart, int yStart, int xTarget, int yTarget){
-        boolean status = false;
-
-        return(status);
+    /**
+     * Methode welche prueft ob das Spiel geloest wurde und falls ja das Spiel beendet und dem Spieler die Meldung
+     * ausgibt, dass das Spiel erfolgreich geloest wurde
+     */
+    public void checkAndHandleWin(){
+        boolean win = this.gameField.checkIfGameFieldSolved(false);
+        if (win) {
+            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_WIN));
+            this.setIsGameActive(false);
+        }
     }
 
     /**
@@ -290,6 +297,7 @@ public class Game {
      */
     public void rotateGameTile(int tileIndex){
         this.tiles.getTile(tileIndex).rotateTile();
+        this.checkAndHandleWin(); //pruefen und handhaben ob das Spiel durch einen Sieg beendet wurde
     }
 
     /**
@@ -314,50 +322,53 @@ public class Game {
 
     /**
      * Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
-     * @return ob das Spielfeld loesbar ist
-     * TODO implement
+     * Diese Methode greift auf die solveGameFieldAsCopy Methode zurueck
+     * @return ob eine passende Kombination gefunden wurde und somit das Spielfeld geloest wurde
      */
     public boolean isGameFieldSolvable(){
-        /*
-        Tiles clonedTiles = this.tiles.cloneGameTiles();
-        Tiles clonedHoleTiles = this.holeTiles.cloneGameTiles();
-        GameField clonedGameField = this.gameField.cloneGameField(
-                this.tiles, this.holeTiles, clonedTiles, clonedHoleTiles);
-        return(this.isGameFieldSolvableRecoursive(clonedGameField, clonedTiles));
-         */
-        /*
-         * Lösungsansatz:
-         * Ein Array welches das Spielfeld groß ist
-         * auf jedes noch nicht gelegtes Feld alle moeglichen Spielsteine legen
-         * nun alles durchlaufen und pruefen (alle Kombinationen) bis eine gefunden wurde
-         * oder Rekoursiv mit Backtracking
-         */
-        return(this.isGameFieldSolvable(this.gameField, this.tiles, this.holeTiles));
+        GameField solvedGameFieldCopy = this.solveGameFieldAsCopy();
+        return(solvedGameFieldCopy != null && this.solveGameFieldAsCopy().checkIfGameFieldSolved(false));
     }
 
     /**
-     * Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
-     * Hierfuer wird gesucht bis ein neuer Stein gefunden wurde der auf ein leeres Feld passt
+     * Methode welche einen weiteren Spielstein legt.
+     * @return ob das Spielfeld loesbar ist und somit ein naechster Spielstein gelegt werden konnte
+     */
+    public boolean layHintTile(){
+        GameField solvedGameFieldCopy = this.solveGameFieldAsCopy(); //das geloeste Spielfeld oder null falls nicht
+        if(solvedGameFieldCopy != null) { //Spielfeld wurde geloest
+            Position pos = new Position(0, 0);
+            this.goToNextFreeMiddleField(this.gameField, pos); //das naechste freie Feld finden im Original Spielfeld
+            Tile hintTileCopy = solvedGameFieldCopy.getTile(pos.getX(), pos.getY()); //den Kopie Spielsteinim geloesten
+            // Spielfeld an der Stelle wo im Original Spielfeld das erste Feld noch nicht geloest wurde
+            Tile hintTileOriginal = this.tiles.getTileByNameWithRotation(hintTileCopy.getTileNameWithRotation()); //der
+            // Kopie Spielstein als Original Spielstein
+            this.moveTileFromNotLaidTilesToGameField(pos.getX(), pos.getY(),
+                    TileNames.valueOf(hintTileOriginal.getTileString()).ordinal(), true); //Spielstein legen
+            return(true);
+        } else { //Spielfeld wurde nicht geloest
+            //Error that gamefield is not solvable
+            return(false);
+        }
+    }
+
+    /**
+     * Methode welche versucht das Spielfeld zu loesen.
+     * Hierfuer wird gesucht bis ein neuer Stein gefunden wurde, der auf ein leeres Feld passt.
      * Wenn an einen Punkt gekommen wird wo es keine weiteren Steine mehr gibt wird durch Backtracking zurueckgegangen
      * und eine andere Kombination versucht
      * Das geht solange bis das Spielfeld loesbar ist oder jede Kombination versucht wurde
-     * @param gameField das Spielfeld
-     * @param tiles die Spielsteine
-     * @param holeTiles die Lochsteine
-     * @return ob eine passende Kombination gefunden wurde
-     * TODO IMPLEMENT
+     * @return null falls das Spielfeld nicht geloest wurde, sonst die Kopie des Spielfelds welche geloest ist
      */
-    private boolean isGameFieldSolvable(GameField gameField, Tiles tiles, Tiles holeTiles){
-        if(gameField.checkIfGameFieldSolved(false)) return(true);
+    GameField solveGameFieldAsCopy(){
+        GameField gameField = this.gameField;
 
-        Tiles clonedTiles = tiles.cloneGameTiles();
-        Tiles clonedHoleTiles = holeTiles.cloneGameTiles();
+        Tiles clonedTiles = this.tiles.cloneGameTiles();
+        Tiles clonedHoleTiles = this.holeTiles.cloneGameTiles();
         GameField clonedGameField = gameField.cloneGameField(
-                tiles, holeTiles, clonedTiles, clonedHoleTiles);
+                this.tiles, this.holeTiles, clonedTiles, clonedHoleTiles);
 
-        System.out.println("GameField Cloned: " + clonedGameField.toString());
-
-        GameField newGameField = new GameField(gameField.getGameFieldHeight(), gameField.getGameFieldWidth());
+        if(gameField.checkIfGameFieldSolved(false)) return(clonedGameField);
 
         Position pos = new Position(0, 0); //die aktuelle Position in einer Klasse, damit diese als Refferenz
         // uebergeben werden kann
@@ -369,18 +380,12 @@ public class Game {
         Tile lastTileBeforeGoingBack = null; //speichert immer wenn einen Schritt zurueckgegangen wurde den Spielstein
         // damit beim naechsten Durchlauf dieser nicht nochmal versucht wird (Backtracking)
 
-        long iteration = 0;
-
         boolean searchActive = true;
         while(searchActive){ //solange die Suche noch anläuft und kein Spielstein gefunden wurde
-            iteration++;
-            if(iteration % 100000 == 0) System.out.println("Iterations: " + iteration);
             boolean nextFieldThere;
             if(lastTileBeforeGoingBack == null) { //es gab keine Schritt zurueck (Backtracking)
                 nextFieldThere = this.goToNextFreeMiddleField(gameField, pos); //das naechste freie Feld suchen
-                //System.out.println("Naechstes Feld (kein Backtracking): " + pos.toString());
             } else { //es gab einen Schritt zurueck Backtracking
-                //System.out.println("Letzter Schritt war Backtracking zu der Position: " + pos.toString());
                 nextFieldThere = false;
             }
 
@@ -390,32 +395,24 @@ public class Game {
                 if(nextMatchingTile != null){ //es gibt einen passenden Spielstein
                     clonedGameField.resetTile(pos.getX(), pos.getY());
                     clonedGameField.layTile(pos.getX(), pos.getY(), nextMatchingTile); //Spielstein legen
-                    //nextMatchingTile.setIsLaid(true);
                     lastTileBeforeGoingBack = null; //da naechster Spielstein gefunden wurde
-                    //System.out.println("Es gibt einen passenden Spielstein fuer position: " + pos + " Spielstein: " + nextMatchingTile.getTileNameWithRotation());
                 } else { //es gibt keinen passenden Spielstein
-                    boolean previousFieldThere = this.goToPreviousFreeMiddleField(gameField, pos); //das vorherige freie Feld suchen
+                    boolean previousFieldThere = this.goToPreviousFreeMiddleField(gameField, pos); //das vorherige
+                    // freie Feld suchen
                     if(previousFieldThere) { //es gibt ein vorheriges freies Feld, deshalb dieses zurueckgehen
                         lastTileBeforeGoingBack = clonedGameField.getTile(pos.getX(), pos.getY()); //fuer Backtracking
                         clonedGameField.resetTile(pos.getX(), pos.getY()); //Spielfeld zuruecksetzen
-                        //lastTileBeforeGoingBack.setIsLaid(false);
-                        //System.out.println("Backtracking: Es gibt einen vorherigen Spielstein Position: " + pos);
                     } else { //es gibt kein weiteres vorheriges Spielfeld
                         searchActive = false; //Spielfeld nicht loesbar
-                        System.out.println("Backtracking: Es gibt keinen vorherigen Spielstein Position: " + pos + " Schleife beendet!");
                     }
                 }
             } else { //kein weiteres Feld gefunden
                 searchActive = false; //Spielfeld sollte geloest sein
-                System.out.println("Es gibt kein naechstes Spielfeld! Schleife beendet");
             }
         }
 
-        System.out.println("Ist solved: " + clonedGameField.checkIfGameFieldSolved(false));
-        System.out.println(clonedGameField.toString()); //TODO remove
-
-        return(clonedGameField.checkIfGameFieldSolved(false)); //ob das Spielfeld nach allen Kombinationen
-        // geloest wurde
+        return(clonedGameField.checkIfGameFieldSolved(false) ? clonedGameField : null); //wenn das Spielfeld
+        // geloest wurde das geloeste Spielfeld, sonst null
     }
 
     /**
@@ -496,9 +493,8 @@ public class Game {
      *  muss; null falls es kein Aufruf nach Backtracking war sondern ein ganz normaler
      * @return der gefundene Spielstein oder null falls keiner gefunden wurde
      */
-    private Tile findNextMatchingTile(GameField inputGameField, Tiles inputTiles, Position pos, Tile lastTileBeforeGoingBack){
-        //Tile tile = inputGameField.getTile(pos.getX(), pos.getY()); //null ist initialer Zustand und kodiert, das kein passender Spielstein gefunden wurde
-        //System.out.println("Tile: " + tile.toString() + "X Pos: " + pos.getX() + "Y Pos: " + pos.getY());
+    private Tile findNextMatchingTile(GameField inputGameField, Tiles inputTiles, Position pos,
+                                      Tile lastTileBeforeGoingBack){
         Tile tile = lastTileBeforeGoingBack;
         int startIndex = tile != null  && !tile.getTile().equals(TileNames.NNNN) ?
                 inputTiles.getTileIndex(tile) : 0; //der Index zum Start
@@ -508,23 +504,18 @@ public class Game {
         // Spielsteins zum Start oder 0 falls es ein Aufruf fuer ein leeres Feld ist
         // +90, da dies die einmalige Drehung eines Spielsteins ist und somit kein Spielstein mehrmals getestet wird
 
-        //if(inputTiles.getTiles().length - 1 == startIndex && startRotation == 270) return(null); //es wurden schon
-        // alle Spielsteine und Rotationen geprueft
-
         for(int tileIndex = startIndex; tileIndex < inputTiles.getTiles().length; tileIndex++){ //jeden moeglichen
             // Spielstein vom startIndex bis zum ende
-            //System.out.println("Tile Index: " + tileIndex);
             tile = inputTiles.getTile(tileIndex);
             if(!tile.getIsLaid()) { //nur nicht gelegte Spielsteine nutzen‚
 
                 for (int rotation = startRotation; rotation < 360; rotation += 90) { //jede Rotation von der start Rotation an
-                    //System.out.println("Tile rotieren: " + rotation);
                     tile.rotateTile(); //den Spielstein rotieren
                     inputGameField.layTile(pos.getX(), pos.getY(), tile);
 
-                    if (inputGameField.isGameFieldTileMatching(pos.getX(), pos.getY(), true)) { //pruefen ob der neue Spielstein passt
+                    if (inputGameField.isGameFieldTileMatching(pos.getX(), pos.getY(), true)) { //pruefen ob
+                        // der neue Spielstein passt
                         inputGameField.resetTile(pos.getX(), pos.getY());
-                        //System.out.println("Match Found: " + tile.getTileNameWithRotation());
                         return (tile);
                     }
                     inputGameField.resetTile(pos.getX(), pos.getY());
