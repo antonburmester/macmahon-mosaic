@@ -128,9 +128,8 @@ public class Tiles {
                         currTile.rotateTile(); //den Spielstein rotieren
                     }
                 }
-                if(resultTile == null) { //wenn der aktuelle Spielstein in allen Rotationen nicht passt
-                    currTile.resetTileRotation(); //die Rotation zuruecksetzen
-                }
+            //wenn der aktuelle Spielstein in allen Rotationen nicht passt
+            currTile.resetTileRotation(); //die Rotation zuruecksetzen
             //}
         }
         return(resultTile);

@@ -317,25 +317,8 @@ public class UserInterfaceController {
     private void addSlotListenerBorderGridPane(StackPane inputStackPane){
         inputStackPane.setOnMouseClicked(event -> {
             if(this.game.isEditorMode()) {
-                int targetX = GridPane.getColumnIndex(inputStackPane);
-                int targetY = GridPane.getRowIndex(inputStackPane);
-                this.game.toggleBorderColor(targetX, targetY);
-                String styleResultString;
-                switch(this.game.getGameField().getTile(targetX, targetY).getTile()){
-                    case TileNames.GGGG ->
-                            styleResultString = "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
-                                    "; -fx-background-color: " + JavaFXGUI.COLOR_HEX_CODE_GREEN + ";"; //Gruen
-                    case TileNames.YYYY ->
-                            styleResultString = "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
-                                    "; -fx-background-color: " + JavaFXGUI.COLOR_HEX_CODE_YELLOW + ";"; //Gelb
-                    case TileNames.RRRR ->
-                            styleResultString = "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
-                                    "; -fx-background-color: " + JavaFXGUI.COLOR_HEX_CODE_RED + ";"; //rot
-                    //leere Zelle am Rand
-                    default -> styleResultString = "-fx-border-color: black; -fx-border-width: " +
-                            JavaFXGUI.BORDER_SIZE + ";";
-                }
-                inputStackPane.setStyle(styleResultString);
+                this.game.toggleBorderColor(GridPane.getColumnIndex(inputStackPane),
+                        GridPane.getRowIndex(inputStackPane));
                 //ueberpruefen ob alle Spielsteine passen, sonst farblich markieren
                 this.game.highlightTileIfWrongPlaced();
             }
@@ -417,37 +400,19 @@ public class UserInterfaceController {
                 // sonst Loch
                 if(droppedObjectSourceGridPane == this.gridPane){ //Objekt kommt vom Spielfeld
                     if(droppedObjectTargetGridPane == this.gridPane){ //Objekt soll in das Spielfeld
-                        dropSuccess =
-                                this.game.moveTileFromGamefieldToGameField(sourceX, sourceY, targetX, targetY);
+                        if(this.game.moveTileFromGamefieldToGameField(sourceX, sourceY, targetX, targetY)){
+                            event.setDropCompleted(true);
+                        }
                     }
                 } else { //Objekt kommt aus der rechten Spielstein Auswahl
                     if(droppedObjectTargetGridPane == this.gridPane){ //Objekt soll in das Spielfeld
-                        dropSuccess = this.game.moveTileFromNotLaidTilesToGameField(
-                                targetX, targetY, this.gui.getTileIndex(droppedObjectNode), isGameTile);
+                        if(this.game.moveTileFromNotLaidTilesToGameField(
+                                targetX, targetY, this.gui.getTileIndex(droppedObjectNode), isGameTile)){
+                            event.setDropCompleted(true);
+                        }
                     }
                 }
-
-                if(dropSuccess) {
-                    droppedObjectParent.getChildren().remove(droppedObject); //das Objekt vom vorherigen slot loesen
-                    //Groeße des gedroppten StackPane oder ImageView Elements anpassen
-                    double slotWidth = inputStackPane.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
-                    // und rechts
-                    double slotHeight = inputStackPane.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
-                    // und unten
-                    if (droppedObjectNode instanceof StackPane stackPane) { //Loch StackPane
-                        stackPane.setPrefSize(slotWidth, slotHeight);
-                    } else if (droppedObjectNode instanceof ImageView imageView) { //Spielstein Bild
-                        imageView.setFitWidth(slotWidth);
-                        imageView.setFitHeight(slotHeight);
-                    }
-                    inputStackPane.getChildren().add(droppedObjectNode); //das Objekt an den neuen Platz binden
-                    //ueberpruefen ob alle Spielsteine passen, sonst farblich markieren
-                    this.game.highlightTileIfWrongPlaced();
-
-                    event.setDropCompleted(true);
-                } else {
-                    event.setDropCompleted(false);
-                }
+                event.setDropCompleted(false);
             } else {
                 event.setDropCompleted(false);
             }
@@ -516,42 +481,19 @@ public class UserInterfaceController {
                 GridPane droppedImageViewSourceGridPane = (GridPane) droppedImageViewParent.getParent(); //die
                 // GridPane aus welcher das Objekt kommt
                 GridPane droppedImageViewTargetGridPane = (GridPane) inputStackPane.getParent();
-                boolean dropSuccess = false;
                 //woher das gedroppte Objekt kommt (x und y)
                 //droppedImageViewParent, da das droppedObjet auf diesem liegt und
                 // getColumnIndex einen child der ersten Ebene braucht
                 int sourceX = GridPane.getColumnIndex(droppedImageViewParent);
                 int sourceY = GridPane.getRowIndex(droppedImageViewParent);
-                //wohin das Objekt soll (x und y)
-                int targetX = GridPane.getColumnIndex(inputStackPane);
-                int targetY = GridPane.getRowIndex(inputStackPane);
 
                 if(droppedImageViewSourceGridPane == this.gridPane){ //Objekt kommt vom Spielfeld
                     if(droppedImageViewTargetGridPane == this.rightGridPane) { //Objekt soll zurueck in die Auswahl
-                        dropSuccess =
-                                this.game.moveTileFromGamefieldToNotLaidTileSelection(
-                                        sourceX, sourceY, true);
+                        if(this.game.moveTileFromGamefieldToNotLaidTileSelection(sourceX, sourceY))
+                            event.setDropCompleted(true);
                     }
                 }
-
-                if(dropSuccess) {
-                    droppedImageViewParent.getChildren().remove(droppedObject); //Objekt vom vorherigen slot loesen
-                    //Groeße des gedroppten StackPane oder ImageView Elements anpassen
-                    double slotWidth = inputStackPane.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
-                    // und rechts
-                    double slotHeight = inputStackPane.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
-                    // und unten
-                    droppedImageView.setFitWidth(slotWidth);
-                    droppedImageView.setFitHeight(slotHeight);
-                    inputStackPane.getChildren().add(droppedImageView); //das Objekt an den neuen Platz binden
-
-                    //ueberpruefen ob alle Spielsteine passen, sonst farblich markieren
-                    this.game.highlightTileIfWrongPlaced();
-
-                    event.setDropCompleted(true);
-                } else {
-                    event.setDropCompleted(false);
-                }
+                event.setDropCompleted(false);
             } else {
                 event.setDropCompleted(false);
             }
@@ -737,8 +679,7 @@ public class UserInterfaceController {
                 if (!this.game.isEditorMode()) { //kein EditorMode
                     Dragboard db = currIndexImage.startDragAndDrop(TransferMode.MOVE);
                     ClipboardContent content = new ClipboardContent();
-                    String contentPayload = (currIndexImage instanceof ImageView ? JavaFXGUI.ID_PIECE :
-                            JavaFXGUI.ID_HOLE) + imageIndex;
+                    String contentPayload = JavaFXGUI.ID_PIECE + imageIndex;
                     content.putString(contentPayload);
                     db.setContent(content);
                 }
@@ -749,10 +690,7 @@ public class UserInterfaceController {
             currIndexImage.setOnMouseClicked(event -> {
                 if(!this.game.isEditorMode()) {
                     if (event.getButton().equals(MouseButton.SECONDARY)) {
-                        currIndexImage.setRotate(currIndexImage.getRotate() + 90); //Bild graphisch rotieren
-                        game.rotateGameTile(imageIndex); //Rotation in der Logik
-                        //ueberpruefen ob alle Spielsteine passen, sonst farblich markieren
-                        this.game.highlightTileIfWrongPlaced();
+                        game.rotateGameTile(imageIndex); //Rotation
                     }
                 }
             });
@@ -782,8 +720,7 @@ public class UserInterfaceController {
                 if (this.game.isEditorMode()) { //EditorMode
                     Dragboard db = holeStackPane.startDragAndDrop(TransferMode.MOVE);
                     ClipboardContent content = new ClipboardContent();
-                    String contentPayload = (holeStackPane instanceof StackPane ? JavaFXGUI.ID_HOLE :
-                            JavaFXGUI.ID_PIECE) + imageIndex;
+                    String contentPayload = JavaFXGUI.ID_HOLE + imageIndex;
                     content.putString(contentPayload);
                     db.setContent(content);
                 }

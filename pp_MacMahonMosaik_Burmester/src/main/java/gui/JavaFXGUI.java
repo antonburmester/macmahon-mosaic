@@ -6,6 +6,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import logic.*;
 
+import java.util.Stack;
+
 /**
  * Klasse durch welche die Logik veraenderungen der GUI durchfuehren kann.
  * Die JavaFXGUI wird vom UserInterfaceController erzeugt und als Parameter an die Logik uebergeben.
@@ -292,6 +294,147 @@ public class JavaFXGUI implements GUIConnector {
             //das Overlay entfernen wenn das Feld keine Farbliche Grenzprobleme hat
             gridPaneCell.getChildren().removeIf(n -> JavaFXGUI.ID_Overlay_RED.equals(n.getUserData()));
         }
+    }
+
+    /**
+     * Methode welche einen Spielstein aus der rechten Spielsteinauswahl auf das Spielfeld legt
+     * @param targetX die Breitenkoordinate
+     * @param targetY die Hoehenkoordinate
+     * @param tileIndex der Index des zu bewegenden Spielsteins
+     */
+    public void moveTileSelectionToGameField(int targetX, int targetY, int tileIndex){
+        ImageView movedTile = this.imageViews[tileIndex]; //der zu verschiebende Spielstein
+
+        //den Spielstein aus der Spielsteinauswahl loeschen
+        StackPane movedTileSource = (StackPane) movedTile.getParent();
+        movedTileSource.getChildren().remove(movedTile);
+
+        //den Spielstein in das Spielfeld an der gewuenschten Position einfuegen
+        StackPane movedTileTarget = this.getGridPaneCell(targetX, targetY, this.gridPane);
+
+        //Groeße des gedroppten StackPane oder ImageView Elements anpassen
+        double slotWidth = movedTileTarget.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
+        // und rechts
+        double slotHeight = movedTileTarget.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
+        // und unten
+        movedTile.setFitWidth(slotWidth);
+        movedTile.setFitHeight(slotHeight);
+
+        movedTileTarget.getChildren().add(movedTile);
+    }
+
+    /**
+     * Methode welche einen Spielstein vom Spielfeld in die rechte Spielsteinauswahl bewegt
+     * @param targetX die Breitenkoordinate
+     * @param targetY die Hoehenkoordinate
+     * @param tileIndex der Index des zu bewegenden Spielsteins
+     * @param isHoleTile ob der zu bewegenden Spielstein ein normaler Spielstein ist oder einen Lochstein
+     */
+    public void moveTileGameFieldToGameField(int targetX, int targetY, int tileIndex, boolean isHoleTile){
+        Node movedTile = isHoleTile ? this.holeStackPanes[tileIndex] : this.imageViews[tileIndex]; //der zu
+        // verschiebende Spielstein
+
+        //den Spielstein aus der Spielsteinauswahl loeschen
+        StackPane movedTileSource = (StackPane) movedTile.getParent();
+        movedTileSource.getChildren().remove(movedTile);
+
+        //den Spielstein in das Spielfeld an der gewuenschten Position einfuegen
+        StackPane movedTileTarget = this.getGridPaneCell(targetX, targetY, this.gridPane);
+
+        //Groeße des gedroppten StackPane oder ImageView Elements anpassen
+        double slotWidth = movedTileTarget.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
+        // und rechts
+        double slotHeight = movedTileTarget.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
+        // und unten
+        if (movedTile instanceof StackPane stackPane) { //Loch StackPane
+            stackPane.setPrefSize(slotWidth, slotHeight);
+        } else {
+            ImageView imageView = (ImageView) movedTile;//Spielstein Bild
+            imageView.setFitWidth(slotWidth);
+            imageView.setFitHeight(slotHeight);
+        }
+
+        movedTileTarget.getChildren().add(movedTile);
+    }
+
+    /**
+     * Methode welche einen Spielstein vom Spielfeld in die rechte Spielsteinauswahl bewegt
+     * @param tileIndex der Index des zu bewegenden Spielsteins
+     */
+    public void moveTileGameFieldToSelection(int tileIndex){
+        ImageView movedTile = this.imageViews[tileIndex]; //der zu verschiebende Spielstein
+
+        //den Spielstein aus der Spielsteinauswahl loeschen
+        StackPane movedTileSource = (StackPane) movedTile.getParent();
+        movedTileSource.getChildren().remove(movedTile);
+
+        //den Spielstein in das Spielfeld an der gewuenschten Position einfuegen
+        StackPane movedTileTarget = this.getGridPaneNextAvailabeField(this.rightGridPane);
+
+        //Groeße des gedroppten StackPane oder ImageView Elements anpassen
+        if(movedTileTarget != null) {
+            double slotWidth = movedTileTarget.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
+            // und rechts
+            double slotHeight = movedTileTarget.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
+            // und unten
+            movedTile.setFitWidth(slotWidth);
+            movedTile.setFitHeight(slotHeight);
+
+            movedTileTarget.getChildren().add(movedTile);
+        }
+    }
+
+    /**
+     * Methode welche einen Spielstein rotiert
+     * @param tileIndex der Index des zu rotierenden Spielsteins
+     * @param rotation die Rotation
+     */
+    public void rotateTile(int tileIndex, int rotation){
+        ImageView movedTile = this.imageViews[tileIndex]; //der zu verschiebende Spielstein
+        movedTile.setRotate(rotation);
+    }
+
+    /**
+     * Methode welche die Randfarbe setzt
+     * @param targetX die Breitenkoordinate
+     * @param targetY die Hoehenkoordinate
+     * @param color die Farbe
+     */
+    public void setBorderColor(int targetX, int targetY, TileNames color){
+        Pane targetPane = this.getGridPaneCell(targetX, targetY, this.gridPane);
+
+        String styleResultString;
+        switch(color){
+            case TileNames.GGGG ->
+                    styleResultString = "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
+                            "; -fx-background-color: " + JavaFXGUI.COLOR_HEX_CODE_GREEN + ";"; //Gruen
+            case TileNames.YYYY ->
+                    styleResultString = "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
+                            "; -fx-background-color: " + JavaFXGUI.COLOR_HEX_CODE_YELLOW + ";"; //Gelb
+            case TileNames.RRRR ->
+                    styleResultString = "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
+                            "; -fx-background-color: " + JavaFXGUI.COLOR_HEX_CODE_RED + ";"; //rot
+            //leere Zelle am Rand
+            default -> styleResultString = "-fx-border-color: black; -fx-border-width: " +
+                    JavaFXGUI.BORDER_SIZE + ";";
+        }
+        targetPane.setStyle(styleResultString);
+    }
+
+    /**
+     * Methode welche das naechste freie Feld einer GridPane ausgibt.
+     * Im Aufbau hier bedeutet frei, das die StackPane (Hintergrund) eines Feldes keine children hat
+     * @param gridPane die GridPane in welcher gesucht werden soll
+     * @return das Feld oder null falls es keins mehr gibt
+     */
+    private StackPane getGridPaneNextAvailabeField(GridPane gridPane){
+        for(int y = 0; y < gridPane.getRowCount(); y++){ //jede Hoehenkoordinate durchlaufen
+            for(int x = 0; x < gridPane.getColumnCount(); x++){ //jede Breitenkoordinate durchlaufen
+                StackPane currFieldSlot = this.getGridPaneCell(x, y, gridPane); //der aktuelle Slot (Background)
+                if(currFieldSlot.getChildren().isEmpty()) return(currFieldSlot); //wenn Slot leer diesen zurueckgeben
+            }
+        }
+        return(null);
     }
 
 }

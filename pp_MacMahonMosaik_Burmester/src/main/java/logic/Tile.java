@@ -8,7 +8,6 @@ package logic;
 public class Tile {
     private TileNames tile;
     private int rotation;
-    private boolean isValid;
     private boolean isLaid;
 
     /**
@@ -54,13 +53,11 @@ public class Tile {
      * Konstruktor welcher einen Spielstein mit allen Tile Werten initialisiert
      * @param tile der bestimmte Spielstein
      * @param rotation die Rotation des Spielsteins
-     * @param isValid ob der Spielstein an seiner Position valide ist
      * @param isLaid ob der Spielstein auf dem Spielfeld liegt
      */
-    public Tile(TileNames tile, int rotation, boolean isValid, boolean isLaid){
+    public Tile(TileNames tile, int rotation, boolean isLaid){
         this.tile = tile;
         this.rotation = rotation;
-        this.isValid = isValid;
         this.isLaid = isLaid;
     }
 
@@ -69,7 +66,7 @@ public class Tile {
      * @return die Instanz als neue unabhaengige Instanz
      */
     public Tile cloneTile() {
-        return(new Tile(this.tile, this.rotation, this.isValid, this.isLaid));
+        return(new Tile(this.tile, this.rotation, this.isLaid));
     }
 
     /**
@@ -94,14 +91,6 @@ public class Tile {
      */
     public int getRotation(){
         return(this.rotation);
-    }
-
-    /**
-     * Getter welcher zurueckgibt, ob das Mosaikstueck valide ist
-     * @return ob das Mosaikstueck an mindestens einer Seite an eine andere Farbe grenzt
-     */
-    public boolean isValid(){
-        return(this.isValid);
     }
 
     /**
@@ -133,14 +122,6 @@ public class Tile {
         }
 
         return(sb.toString());
-    }
-
-    /**
-     * Setter welcher die isValid Variable setzt
-     * @param input ob True oder False
-     */
-    public void setIsValid(boolean input){
-        this.isValid = input;
     }
 
     /**

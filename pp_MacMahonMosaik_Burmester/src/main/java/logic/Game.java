@@ -140,6 +140,7 @@ public class Game {
         //Bilder, Loecher und Faerbungen anzeigen
         this.gui.displayGameFieldTiles(this.getGameField());
         this.gui.displayNotUsedTiles(this.getTiles());
+        this.highlightTileIfWrongPlaced();
     }
 
     /**
@@ -172,16 +173,13 @@ public class Game {
      */
     public boolean moveTileFromNotLaidTilesToGameField(int x, int y, int tileIndex, boolean isGameTile){
         //wenn isGameTile dann wird der in den Spielsteinen gesucht und wenn nicht dann in den Lochsteinen
-        Tile tile = isGameTile ? this.tiles.getTile(tileIndex) : this.holeTiles.getTile(tileIndex);
+        Tile tile = this.tiles.getTile(tileIndex);
         boolean status = true;
         //Feld ist frei und es handelt sich um das mittlere Spielfeld
         if (this.gameField.isFieldFieldFree(x, y) && this.gameField.isFieldMiddleGamefield(x, y)) {
-            if (isGameTile) { //Spielstein aus den nicht gelegten Spielsteinen loeschen
-                this.tiles.setTileLaidStatus(tile, true); //TODO glaube ich irrelevant
-            } else { //Loch aus den nicht gelegten Loechern loeschen
-                this.holeTiles.setTileLaidStatus(tile, true); //TODO glaube ich irrelevant
-            }
             this.gameField.layTile(x, y, tile); //Spielstein auf das Spielfeld legen
+            this.gui.moveTileSelectionToGameField(x, y, tileIndex); //den Spiel
+            this.highlightTileIfWrongPlaced();
             this.checkAndHandleWin(); //pruefen und handhaben ob das Spiel durch einen Sieg beendet wurde
         } else {
             status = false;
@@ -203,10 +201,14 @@ public class Game {
         boolean status = true;
         //ob der Spielstein gefunden wurde und entweder ein normaler Stein ist oder der EditorMode aktiv und Loch Stein
         if(tile != null && (tile.isNormalGameTile() || (this.editorMode && tile.isHoleTile()))){
-            if(this.gameField.isFieldFieldFree(xTarget, yTarget)){
+            if(this.gameField.isFieldMiddleGamefield(xTarget, yTarget) &&
+                    this.gameField.isFieldFieldFree(xTarget, yTarget)){
                 this.gameField.layTile(xTarget, yTarget, tile); //Spielstein auf die neue Position des Spielfelds legen
                 this.gameField.resetTile(xStart, yStart); //Spielstein von der alten Position
                 // des Spielfelds loeschen
+                this.gui.moveTileGameFieldToGameField(xTarget, yTarget, tile.getTile().ordinal(), tile.isHoleTile()); //
+                // den Spielstein oder Lochstein Graphisch verschieben
+                this.highlightTileIfWrongPlaced();
             } else {
                 status = false;
             }
@@ -221,23 +223,17 @@ public class Game {
      * Methode welche  einen Spielstein vom Spielfeld wieder in die Auswahl hinzufuegt
      * @param x die Spalte des Spielsteins
      * @param y die Reihe des Spielsteins
-     * @param isGameTile ob es sich bei dem Stein um einen Spielstein oder ein Lochstein handelt
      * @return ob der Spielstein erfolgreich zurueckgelegt werden konnte
      */
-    public boolean moveTileFromGamefieldToNotLaidTileSelection(int x, int y, boolean isGameTile){
+    public boolean moveTileFromGamefieldToNotLaidTileSelection(int x, int y){
         Tile tile = this.gameField.getTile(x, y);
         boolean status = true;
         //ob der Spielstein gefunden wurde und entweder ein normaler Stein ist oder der EditorMode aktiv und Loch Stein
         if(tile != null && (tile.isNormalGameTile() || (this.editorMode && tile.isHoleTile()))){
             this.gameField.resetTile(x, y); //Spielstein von der alten Position
-            // des Spielfelds loeschen
-            if(isGameTile) { //wenn es sich um einen Spielstein handelt
-                //Spielstein wieder der Spielsteinauswahl hinzufuegen
-                this.tiles.setTileLaidStatus(tile, false);
-            } else { //wenn es sich um einen Lochstein handelt
-                //Spielstein wieder der Lochsteinauswahl hinzufuegen
-                this.holeTiles.setTileLaidStatus(tile, false);
-            }
+            this.gui.moveTileGameFieldToSelection(tile.getTile().ordinal()); //das Graphische Bewegen des Spielsteins
+            // in die Spielsteinauswahl
+            this.highlightTileIfWrongPlaced();
         } else {
             status = false;
         }
@@ -269,17 +265,34 @@ public class Game {
         if(this.gameField.isFieldBorder(x, y)){
             Tile currTile = this.gameField.getTile(x, y); //die aktuelle Farbe
             Tile newBorderTile; //die naechste Farbe
-            //wenn es sich aktuell um nicht um ein Randstueck handelt (noch nichts gelegt) oder die letzte Randfarbe liegt
+            //wenn es sich aktuell um nicht um ein Randstueck handelt (noch nichts gelegt) oder die letzte Randfarbe
+            // liegt
+
             if(!currTile.isTileBorderLayable() || currTile.getTile().equals(TileNames.YYYY)) {
                 newBorderTile = new Tile(TileNames.RRRR); //wieder auf Rot schalten (erste Farbe)
             } else { //bei allen anderen Randfarben
                 newBorderTile = new Tile(TileNames.values()[currTile.getTile().ordinal() + 1]); //die naechste Randfarbe
             }
+
             this.gameField.layTile(x, y, newBorderTile);
+            this.gui.setBorderColor(x, y, newBorderTile.getTile()); //die Farbaenderung visuell sichtbar machen
+
             System.out.println(this.gameField.toString());
             status = true;
         }
         return(status);
+    }
+
+    /**
+     * rotiert einen Spielstein
+     * @param tileIndex der Index des zu rotierenden Spielsteins
+     */
+    public void rotateGameTile(int tileIndex){
+        Tile tile = this.tiles.getTile(tileIndex);
+        tile.rotateTile();
+        this.gui.rotateTile(tileIndex, tile.getRotation()); //die Rotation graphisch anzeigen
+        this.highlightTileIfWrongPlaced();
+        this.checkAndHandleWin(); //pruefen und handhaben ob das Spiel durch einen Sieg beendet wurde
     }
 
     /**
@@ -288,16 +301,6 @@ public class Game {
      */
     public boolean isEditorMode(){
         return(this.editorMode);
-    }
-
-
-    /**
-     * rotiert einen Spielstein
-     * @param tileIndex der Index des zu rotierenden Spielsteins
-     */
-    public void rotateGameTile(int tileIndex){
-        this.tiles.getTile(tileIndex).rotateTile();
-        this.checkAndHandleWin(); //pruefen und handhaben ob das Spiel durch einen Sieg beendet wurde
     }
 
     /**
@@ -317,6 +320,7 @@ public class Game {
                 }
             }
         }
+        this.highlightTileIfWrongPlaced();
         System.out.println(this.gameField.toString());
     }
 
@@ -344,7 +348,10 @@ public class Game {
             Tile hintTileOriginal = this.tiles.getTileByNameWithRotation(hintTileCopy.getTileNameWithRotation()); //der
             // Kopie Spielstein als Original Spielstein
             this.moveTileFromNotLaidTilesToGameField(pos.getX(), pos.getY(),
-                    TileNames.valueOf(hintTileOriginal.getTileString()).ordinal(), true); //Spielstein legen
+                    hintTileOriginal.getTile().ordinal(), true); //Spielstein legen
+            //Graphisch den gefundenen Spielstein anzeigen
+            this.gui.moveTileSelectionToGameField(pos.getX(), pos.getY(), hintTileOriginal.getTile().ordinal());
+            this.gui.rotateTile(hintTileOriginal.getTile().ordinal(), hintTileOriginal.getRotation());
             return(true);
         } else { //Spielfeld wurde nicht geloest
             //Error that gamefield is not solvable

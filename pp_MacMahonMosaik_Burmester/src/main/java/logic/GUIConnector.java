@@ -1,5 +1,8 @@
 package logic;
 
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+
 /**
  * Interface, welches die Logik nutzt, um der Oberflaeche (GUI) etwas mitzuteilen.
  *
@@ -33,4 +36,42 @@ public interface GUIConnector {
      * @param middleGridPane ob es sich um die mittlere GridPane handelt oder die rechte
      */
     void highlightTileNotMatching(int xIndex, int yIndex, boolean mark, boolean middleGridPane);
+
+    /**
+     * Methode welche einen Spielstein aus der rechten Spielsteinauswahl auf das Spielfeld legt
+     * @param targetX die Breitenkoordinate
+     * @param targetY die Hoehenkoordinate
+     * @param tileIndex der Index des zu bewegenden Spielsteins
+     */
+    void moveTileSelectionToGameField(int targetX, int targetY, int tileIndex);
+
+    /**
+     * Methode welche einen Spielstein vom Spielfeld in die rechte Spielsteinauswahl bewegt
+     * @param targetX die Breitenkoordinate
+     * @param targetY die Hoehenkoordinate
+     * @param tileIndex der Index des zu bewegenden Spielsteins
+     * @param isHoleTile ob der zu bewegenden Spielstein ein normaler Spielstein ist oder einen Lochstein
+     */
+    void moveTileGameFieldToGameField(int targetX, int targetY, int tileIndex, boolean isHoleTile);
+
+    /**
+     * Methode welche einen Spielstein vom Spielfeld in die rechte Spielsteinauswahl bewegt
+     * @param tileIndex der Index des zu bewegenden Spielsteins
+     */
+    void moveTileGameFieldToSelection(int tileIndex);
+
+    /**
+     * Methode welche einen Spielstein rotiert
+     * @param tileIndex der Index des zu rotierenden Spielsteins
+     * @param rotation die Rotation
+     */
+    void rotateTile(int tileIndex, int rotation);
+
+    /**
+     * Methode welche die Randfarbe setzt
+     * @param targetX die Breitenkoordinate
+     * @param targetY die Hoehenkoordinate
+     * @param color die Farbe
+     */
+    void setBorderColor(int targetX, int targetY, TileNames color);
 }
