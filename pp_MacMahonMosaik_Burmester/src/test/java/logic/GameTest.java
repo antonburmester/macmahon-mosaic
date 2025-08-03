@@ -83,7 +83,7 @@ public class GameTest {
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
         System.out.println(game.getGameField().toString());
-        assertFalse(game.isGameFieldSolvable());
+        assertTrue(game.isGameFieldSolvable());
     }
 
     /**

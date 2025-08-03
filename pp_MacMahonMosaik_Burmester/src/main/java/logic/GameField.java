@@ -429,58 +429,64 @@ public class GameField {
         boolean status = true;
         String tileNameWithRotation = this.getTile(x, y).getTileNameWithRotation(); //der Stein der ueberprueft wird
         char sourceTileRelevantBorderLetter; //der jeweilige Buchstabe der Seite mit der Farbe des ueberprueften Stein
-        String comparedTileNameWithRotation; //der Stein rundherum
+        String comparedTileNameWithRotation; //der jeweilige Stein rundherum
         char comparedTileRelevantBorderLetter; //der jeweilige Buchstabe der Seite mit der Farbe des ueberprueften Stein
         if(this.isFieldGamefield(x, y) && this.isFieldMiddleGamefield(x, y)){
             //nach oben
             comparedTileNameWithRotation = this.getTile(x, y - 1).getTileNameWithRotation();
             comparedTileRelevantBorderLetter = comparedTileNameWithRotation.charAt(2);
             sourceTileRelevantBorderLetter = tileNameWithRotation.charAt(0);
-            if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
-                    !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
-                    sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
-                    !((comparedTileRelevantBorderLetter == 'N' ||
-                            sourceTileRelevantBorderLetter == 'N') && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
-                status = false; //und der pruefende Stein kein Loch
+            if(this.isTwoFieldsOfTileNotMatching(sourceTileRelevantBorderLetter, comparedTileRelevantBorderLetter,
+                    acceptN))
+                status = false; //beide Raender passen nicht
 
 
             //nach rechts
             comparedTileNameWithRotation = this.getTile(x + 1, y).getTileNameWithRotation();
             comparedTileRelevantBorderLetter = comparedTileNameWithRotation.charAt(3);
             sourceTileRelevantBorderLetter = tileNameWithRotation.charAt(1);
-            if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
-                    !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
-                            sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
-                    !((comparedTileRelevantBorderLetter == 'N' ||
-                            sourceTileRelevantBorderLetter == 'N') && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
-                status = false; //und der pruefende Stein kein Loch
+            if(this.isTwoFieldsOfTileNotMatching(sourceTileRelevantBorderLetter, comparedTileRelevantBorderLetter,
+                    acceptN))
+                status = false; //beide Raender passen nicht
 
 
             //nach unten
             comparedTileNameWithRotation = this.getTile(x, y + 1).getTileNameWithRotation();
             comparedTileRelevantBorderLetter = comparedTileNameWithRotation.charAt(0);
             sourceTileRelevantBorderLetter = tileNameWithRotation.charAt(2);
-            if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
-                    !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
-                            sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
-                    !((comparedTileRelevantBorderLetter == 'N' ||
-                            sourceTileRelevantBorderLetter == 'N') && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
-                status = false; //und der pruefende Stein kein Loch
+            if(this.isTwoFieldsOfTileNotMatching(sourceTileRelevantBorderLetter, comparedTileRelevantBorderLetter,
+                    acceptN)) //beide Raender passen nicht
+                status = false;
 
 
             //nach links
             comparedTileNameWithRotation = this.getTile(x - 1, y).getTileNameWithRotation();
             comparedTileRelevantBorderLetter = comparedTileNameWithRotation.charAt(1);
             sourceTileRelevantBorderLetter = tileNameWithRotation.charAt(3);
-            if(sourceTileRelevantBorderLetter != comparedTileRelevantBorderLetter && //wenn die Farben nicht gleich sind
-                    !(comparedTileRelevantBorderLetter == 'H' || //und der Nachbar kein Loch ist
-                            sourceTileRelevantBorderLetter == 'H') && //und der zu ueberpruefende Stein kein Loch ist
-                    !((comparedTileRelevantBorderLetter == 'N' ||
-                            sourceTileRelevantBorderLetter == 'N') && acceptN)) //wenn Nicht definiert(N) akzeptiert wird
-                status = false; //und der pruefende Stein kein Loch
+            if(this.isTwoFieldsOfTileNotMatching(sourceTileRelevantBorderLetter, comparedTileRelevantBorderLetter,
+                    acceptN)) //beide Raender passen nicht
+                status = false;
 
         }
         return(status);
+    }
+
+    /**
+     * ob zwei Raender aneinanderpassen
+     * @param sourceTileBorderLetter die Randfarbe des einen Spielsteins
+     * @param comparedTileBorderLetter die Randfarbe des anderen Spielsteins (Nachbar)
+     * @param acceptN ob falls N also nichts gelegt an diesen Spielstein grenzt, dies akzeptiert wird
+     * @return ob die beiden Felder passen
+     */
+    private boolean isTwoFieldsOfTileNotMatching(char sourceTileBorderLetter, char comparedTileBorderLetter,
+                                                 boolean acceptN){
+        boolean bothColorsSame = sourceTileBorderLetter == comparedTileBorderLetter; //ob die Farben gleich sind
+        boolean bothColorsN = sourceTileBorderLetter == 'N' && comparedTileBorderLetter == 'N'; //ob beide Farben N
+        boolean minOneN = sourceTileBorderLetter == 'N' || comparedTileBorderLetter == 'N'; //ob minimum eine Farbe N
+        boolean minOneHole = comparedTileBorderLetter == 'H' || sourceTileBorderLetter == 'H'; //ob minimun ein Loch
+
+
+        return ((!bothColorsSame || (bothColorsN && !acceptN)) && !minOneHole && (!minOneN || !acceptN));
     }
 
     /**
@@ -491,7 +497,7 @@ public class GameField {
      */
     public boolean checkIfGameFieldSolved(boolean acceptN){
         boolean status = true;
-        for(int y = 1; y < this.gameField.length -1; y++){
+        for(int y = 1; y < this.gameField.length - 1; y++){
             for(int x = 1; x < this.gameField[y].length - 1; x++){
                 if(!this.isGameFieldTileMatching(x, y, acceptN)){
                     status = false;

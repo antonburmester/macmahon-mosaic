@@ -406,7 +406,7 @@ public class UserInterfaceController {
                 } else { //Objekt kommt aus der rechten Spielstein Auswahl
                     if(droppedObjectTargetGridPane == this.gridPane){ //Objekt soll in das Spielfeld
                         if(this.game.moveTileFromNotLaidTilesToGameField(
-                                targetX, targetY, this.gui.getTileIndex(droppedObjectNode), true)){
+                                targetX, targetY, this.gui.getTileIndex(droppedObjectNode))){
                             event.setDropCompleted(true);
                         }
                     }

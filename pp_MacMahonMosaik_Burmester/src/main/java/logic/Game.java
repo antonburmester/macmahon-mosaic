@@ -26,7 +26,6 @@ public class Game {
     public Game(GUIConnector gui, int heigth, int width){
         this.gui = gui;
         this.editorMode = true;
-
         this.gameField = new GameField(heigth, width, true);
         this.tiles = new Tiles();
     }
@@ -68,7 +67,7 @@ public class Game {
             ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
         } else { //Spiel soll nicht aktiv werden
             this.gui.setDisableRightGridPane(true);
-            this.gui.setDisableMiddleGridPane(true);
+            //this.gui.setDisableMiddleGridPane(true);
         }
     }
 
@@ -146,10 +145,9 @@ public class Game {
      * @param tileIndex Index des zu legenden Spielsteins (orientiert sich an der TileNames Reihenfolge)
      * @param x in welcher Spalte des Spielfeldes der Spielstein gelegt werden soll
      * @param y in welcher Reihe des Spielfeldes der Spielstein gelegt werden soll
-     * @param isGameTile ob es sich bei dem Stein um einen Spielstein oder ein Lochstein handelt
      * @return ob der Spielstein von der Auswahl auf das Spielfeld gelegt werden konnte
      */
-    public boolean moveTileFromNotLaidTilesToGameField(int x, int y, int tileIndex, boolean isGameTile){
+    public boolean moveTileFromNotLaidTilesToGameField(int x, int y, int tileIndex){
         //wenn isGameTile dann wird der in den Spielsteinen gesucht und wenn nicht dann in den Lochsteinen
         Tile tile = this.tiles.getTile(tileIndex);
         boolean status = true;
@@ -318,23 +316,24 @@ public class Game {
      */
     public boolean layHintTile(){
         GameField solvedGameFieldCopy = this.solveGameFieldAsCopy(); //das geloeste Spielfeld oder null falls nicht
-        System.out.println("Solved: " +  solvedGameFieldCopy);
         if(solvedGameFieldCopy != null) { //Spielfeld wurde geloest
             Position pos = new Position(0, 0);
             this.goToNextFreeMiddleField(this.gameField, pos); //das naechste freie Feld finden im Original Spielfeld
             Tile hintTileCopy = solvedGameFieldCopy.getTile(pos.getX(), pos.getY()); //den Kopie Spielsteinim geloesten
             // Spielfeld an der Stelle wo im Original Spielfeld das erste Feld noch nicht geloest wurde
-            System.out.println(hintTileCopy);
+
             Tile hintTileOriginal = this.tiles.getTileByNameWithRotation(hintTileCopy.getTileNameWithRotation()); //der
             // Kopie Spielstein als Original Spielstein
+
             this.moveTileFromNotLaidTilesToGameField(pos.getX(), pos.getY(),
-                    hintTileOriginal.getTile().ordinal(), true); //Spielstein legen
+                    hintTileOriginal.getTile().ordinal()); //Spielstein legen
+
             //Graphisch den gefundenen Spielstein anzeigen
             this.gui.moveTileSelectionToGameField(pos.getX(), pos.getY(), hintTileOriginal.getTile().ordinal());
             this.gui.rotateTile(hintTileOriginal.getTile().ordinal(), hintTileOriginal.getRotation());
             return(true);
         } else { //Spielfeld wurde nicht geloest
-            //Error that gamefield is not solvable
+            //Fehler, das das Spielfeld nicht loesbar ist
             return(false);
         }
     }
