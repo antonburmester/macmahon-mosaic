@@ -396,7 +396,6 @@ public class UserInterfaceController {
                 //wohin das Objekt soll (x und y)
                 int targetX = GridPane.getColumnIndex(inputStackPane);
                 int targetY = GridPane.getRowIndex(inputStackPane);
-                boolean isGameTile = droppedObjectNode instanceof ImageView; //wenn ImageView dann Spielstein
                 // sonst Loch
                 if(droppedObjectSourceGridPane == this.gridPane){ //Objekt kommt vom Spielfeld
                     if(droppedObjectTargetGridPane == this.gridPane){ //Objekt soll in das Spielfeld
@@ -407,7 +406,7 @@ public class UserInterfaceController {
                 } else { //Objekt kommt aus der rechten Spielstein Auswahl
                     if(droppedObjectTargetGridPane == this.gridPane){ //Objekt soll in das Spielfeld
                         if(this.game.moveTileFromNotLaidTilesToGameField(
-                                targetX, targetY, this.gui.getTileIndex(droppedObjectNode), isGameTile)){
+                                targetX, targetY, this.gui.getTileIndex(droppedObjectNode), true)){
                             event.setDropCompleted(true);
                         }
                     }

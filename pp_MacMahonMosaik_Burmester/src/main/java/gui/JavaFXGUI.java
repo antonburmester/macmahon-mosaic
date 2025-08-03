@@ -77,6 +77,15 @@ public class JavaFXGUI implements GUIConnector {
     }
 
     /**
+     * Methode welche das mittlere Spielfeld deaktiviert oder aktiviert
+     * @param status ob das mittlere Spielfeld GridPane zugreifbar sein soll
+     */
+    public void setDisableMiddleGridPane(boolean status){
+        this.gridPane.setDisable(status);
+        this.gridPane.setOpacity(!status ? 1 : 0.7);
+    }
+
+    /**
      * Methode welche das mittlere Spielfeld (GridPane) mit den Spielsteinen und Lochsteinen fuellt und den Rand faerbt
      * @param gameField das Spielfeld
      */

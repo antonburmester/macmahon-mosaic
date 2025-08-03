@@ -25,7 +25,7 @@ public class Game {
         this.gui = gui;
         this.editorMode = true;
 
-        this.gameField = new GameField(heigth, width);
+        this.gameField = new GameField(heigth, width, true);
         this.tiles = new Tiles();
         int holesAmount = heigth * width - 24;
         this.holeTiles = new Tiles(Math.max(holesAmount, 0));
@@ -87,11 +87,14 @@ public class Game {
     public void setIsGameActive(boolean isActive){
         if(isActive && this.gameField.isGameFieldBorderSetted()) { //Spiel soll aktiv werden und Rand ist gesetzt
             this.gui.setDisableRightGridPane(false);
+            this.gui.setDisableMiddleGridPane(false);
         } else if (isActive){ //Spiel soll aktiv werden  aber Rand ist nicht komplett gesetzt
             this.gui.setDisableRightGridPane(true);
+            this.gui.setDisableMiddleGridPane(false);
             ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
         } else { //Spiel soll nicht aktiv werden
             this.gui.setDisableRightGridPane(true);
+            this.gui.setDisableMiddleGridPane(true);
         }
     }
 
@@ -340,11 +343,13 @@ public class Game {
      */
     public boolean layHintTile(){
         GameField solvedGameFieldCopy = this.solveGameFieldAsCopy(); //das geloeste Spielfeld oder null falls nicht
+        System.out.println("Solved: " +  solvedGameFieldCopy);
         if(solvedGameFieldCopy != null) { //Spielfeld wurde geloest
             Position pos = new Position(0, 0);
             this.goToNextFreeMiddleField(this.gameField, pos); //das naechste freie Feld finden im Original Spielfeld
             Tile hintTileCopy = solvedGameFieldCopy.getTile(pos.getX(), pos.getY()); //den Kopie Spielsteinim geloesten
             // Spielfeld an der Stelle wo im Original Spielfeld das erste Feld noch nicht geloest wurde
+            System.out.println(hintTileCopy);
             Tile hintTileOriginal = this.tiles.getTileByNameWithRotation(hintTileCopy.getTileNameWithRotation()); //der
             // Kopie Spielstein als Original Spielstein
             this.moveTileFromNotLaidTilesToGameField(pos.getX(), pos.getY(),
@@ -417,6 +422,8 @@ public class Game {
                 searchActive = false; //Spielfeld sollte geloest sein
             }
         }
+
+        System.out.println("Solved as far GameField: \n" + clonedGameField);
 
         return(clonedGameField.checkIfGameFieldSolved(false) ? clonedGameField : null); //wenn das Spielfeld
         // geloest wurde das geloeste Spielfeld, sonst null

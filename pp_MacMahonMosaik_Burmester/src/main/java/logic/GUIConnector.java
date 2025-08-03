@@ -17,6 +17,12 @@ public interface GUIConnector {
     void setDisableRightGridPane(boolean status);
 
     /**
+     * Methode welche das mittlere Spielfeld deaktiviert oder aktiviert
+     * @param status ob das mittlere Spielfeld GridPane zugreifbar sein soll
+     */
+    void setDisableMiddleGridPane(boolean status);
+
+    /**
      * Methode welche die GridPane fuellt
      * @param gameField das Spielfeld
      */

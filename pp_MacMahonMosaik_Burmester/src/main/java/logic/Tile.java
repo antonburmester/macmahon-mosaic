@@ -221,6 +221,14 @@ public class Tile {
     }
 
     /**
+     * Metdhode welche die Rotation eines Spielsteins setzt
+     * @param rotation die Rotation
+     */
+    public void setTileRotation(int rotation){
+        this.rotation = rotation;
+    }
+
+    /**
      * Methode welche die Rotation des Spielsteins zuruecksetzt
      */
     public void resetTileRotation(){

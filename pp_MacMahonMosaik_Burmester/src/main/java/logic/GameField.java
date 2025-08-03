@@ -15,11 +15,14 @@ public class GameField {
      * Konstruktor welcher ein Spielfeld ohne Steine initialisiert
      * @param height die Hoehe des neuen Spielfeldes
      * @param width die Breite des neuen Spielfeldes
+     * @param placeHoles ob die Loecher automatisch im Spielfeld gesetzt werden sollen (nur false bei copy, da hier in
+     *                   der Kopie schon die Standorte der Loecher vorhanden sind)
      */
-    public GameField(int height, int width){
+    public GameField(int height, int width, boolean placeHoles){
         this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
         this.placeGameFieldEmpty();
-        this.placeGameFieldHoles();
+        if(placeHoles)
+            this.placeGameFieldHoles();
     }
 
     /**
@@ -31,6 +34,7 @@ public class GameField {
     public GameField(String[][] stringGameField, Tiles gameTiles, Tiles holeTiles){
         int height = stringGameField.length;
         int width = stringGameField[0].length;
+
         String[][] inputCompatible = this.translateFromSpielstandsdatei(stringGameField); //der Input aber Logik Kompatibel
         this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
         this.placeGameFieldEmpty(); //Spielfeld mit leeren feldern fuellen
@@ -46,15 +50,14 @@ public class GameField {
                     } else if (laidTileName.equals(TileNames.NNNN.name())) { //nichts gelegt
                         targetTile = new Tile(TileNames.NNNN);
                     } else { //ein Spielstein gelegt
-                        if (!this.isFieldBorder(widthIndex, heigthIndex)) { //wenn es sich um ein Spielfeldstueck handelt
+                        if (!this.isFieldBorder(widthIndex, heigthIndex)) { //wenn es sich um ein
+                            // Spielfeldstueck handelt
                             targetTile = gameTiles.getTileByNameWithRotation(laidTileName);
                         } else { //wenn es sich um ein Randstueck handelt
                             targetTile = new Tile(laidTileName);
                         }
                     }
                     this.layTile(widthIndex, heigthIndex, targetTile);
-                    //this.gameField[heigthIndex][widthIndex] = targetTile;
-                    targetTile.setIsLaid(true);
                 }
             }
         } else {
@@ -144,14 +147,16 @@ public class GameField {
     }
 
     /**
-     * Methode welche das Spielfeld mit nicht platzierten Feldern (NNNN) fuellt
+     * Methode welche das Spielfeld mit der benoetigten Anzahl an Loechern automatisch fuellt.
+     * Angefangen oben links
      */
     private void placeGameFieldHoles(){
         int holesCounter = 0;
+        int neededHoles = GameField.calcNeededHoles(this.gameField[0].length, this.gameField.length);
         for(int y = 0; y < this.gameField.length; y++){
             for(int x = 0; x < this.gameField[y].length; x++){
                 if(!this.isFieldBorder(x, y)) { //mittleres Spielfeld
-                    if (holesCounter < GameField.calcNeededHoles(this.gameField[y].length, this.gameField.length)) {
+                    if (holesCounter < neededHoles) {
                         this.gameField[y][x] = new Tile(TileNames.HHHH);
                         holesCounter++;
                     }
@@ -505,7 +510,7 @@ public class GameField {
                                     Tiles copyGameFieldTiles, Tiles copyHoleTiles){
         int width = this.gameField[0].length;
         int heigth = this.gameField.length;
-        GameField copy = new GameField(heigth - 2, width - 2); //neue Instanz eines neuen Spielfelds
+        GameField copy = new GameField(heigth - 2, width - 2, false); //neue Instanz eines neuen Spielfelds
         // -2 da beim Spielfeld die groesse ohne Rand angegeben wird
 
         Tile currNotCopyTile;
@@ -514,20 +519,28 @@ public class GameField {
             for(int x = 0; x < width; x++){ //Breitenindex
                 currNotCopyTile = this.getTile(x, y); //der aktuelle Stein welcher in das neue Spielfeld kopiert werden
                 // soll
-                if(currNotCopyTile.isNormalGameTile()){ //normaler Spielstein
-                    //die kopie von dem aktuell im Spielfeld liegenden Spielstein
-                    copyTile = copyGameFieldTiles.getTileByNameWithRotation(currNotCopyTile.getTileNameWithRotation());
-                } else if(currNotCopyTile.isHoleTile()){ //Loch
-                    copyTile = copyHoleTiles.getTile(existingHoleTiles.getTileIndex(currNotCopyTile));//Index reicht,
-                    // da Rotation keine Auswirkungen hat
-                } else { //nichts gelegt
-                    copyTile = new Tile(TileNames.NNNN);
+                if(this.isFieldMiddleGamefield(x, y)) { //nicht Randstueck -> Tiles sind einmalig (Refferenz wichtig)
+                    if (currNotCopyTile.isNormalGameTile()) { //normaler Spielstein
+                        //die kopie von dem aktuell im Spielfeld liegenden Spielstein
+                        copyTile = copyGameFieldTiles.getTileByNameWithRotation(currNotCopyTile.getTileNameWithRotation());
+                    } else if (currNotCopyTile.isHoleTile()) { //Loch
+                        copyTile = copyHoleTiles.getTile(existingHoleTiles.getTileIndex(currNotCopyTile));//Index reicht,
+                        // da Rotation keine Auswirkungen hat
+                    } else { //nichts gelegt
+                        copyTile = new Tile(TileNames.NNNN);
+                    }
+                } else { //Randstueck, Ecken und Farbrand kann einfach mit neuen Tiles gefuellt werden (Refferenz egal)
+                    //if(this.isFieldBorder(x, y) && ! this.isFieldEdge(x, y))
+                    copyTile = new Tile(currNotCopyTile.getTile());
                 }
+
+
                 if(copyTile != null) {
                     copy.layTile(x, y, copyTile); //den Stein in das neue Spielfeld legen
                 }
             }
         }
+        System.out.println("Cloned: " + copy);
         return (copy);
     }
 

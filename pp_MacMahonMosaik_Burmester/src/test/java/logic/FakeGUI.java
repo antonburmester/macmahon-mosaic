@@ -17,6 +17,15 @@ public class FakeGUI implements GUIConnector{
     }
 
     /**
+     * Methode welche das mittlere Spielfeld deaktiviert oder aktiviert
+     * @param status ob das mittlere Spielfeld GridPane zugreifbar sein soll
+     */
+    @Override
+    public void setDisableMiddleGridPane(boolean status){
+
+    }
+
+    /**
      * Methode welche die GridPane fuellt
      * @param gameField das Spielfeld
      */

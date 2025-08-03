@@ -116,9 +116,9 @@ public class Tiles {
         Tile resultTile = null;
         for(int i = 0; i < this.tiles.length; i++){ //jeden Spielstein durchlaufen
             Tile currTile = this.getTile(i); //der aktuelle Spielstein
-            //if(!currTile.getIsLaid()){ //Spielstein noch nicht gelegt TODO pruefen ob okay
                 //koennte auch ersetzt werden durch isGameFieldTile
                 int rotations = currTile.isHoleTile() || currTile.isPlaceHolderTile() ? 90 : 360;
+                int rotationBefore = currTile.getRotation();
                 for(int rotation = 0; rotation < rotations; rotation += 90){ //jede Rotation durchlaufen
                     if(currTile.getTileNameWithRotation().equals(tileName)){ //wenn der Spielstein mit Rotation
                         // dem uebergebenen Namen gleicht
@@ -129,8 +129,8 @@ public class Tiles {
                     }
                 }
             //wenn der aktuelle Spielstein in allen Rotationen nicht passt
-            currTile.resetTileRotation(); //die Rotation zuruecksetzen
-            //}
+            //currTile.resetTileRotation(); //die Rotation zuruecksetzen
+            currTile.setTileRotation(rotationBefore);
         }
         return(resultTile);
     }
