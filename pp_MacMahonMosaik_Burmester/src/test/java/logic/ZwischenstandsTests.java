@@ -27,8 +27,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.layTile(2, 2, new Tile("YGRG"));
         assertTrue(status);
@@ -46,8 +45,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.layTile(1, 1, new Tile("GRYG"));
         assertTrue(status);
@@ -65,8 +63,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.layTile(1, 1, new Tile("YYRR"));
         assertTrue(status);
@@ -83,8 +80,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(4); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.layTile(2, 2, new Tile("YYRR"));
         assertTrue(status);
@@ -106,8 +102,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.isGameFieldTileMatching(2, 2, false);
         assertTrue(status);
@@ -124,8 +119,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertTrue(status);
@@ -142,8 +136,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.isGameFieldTileMatching(1, 1, true);
         assertTrue(status);
@@ -160,8 +153,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertFalse(status);
@@ -178,8 +170,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertTrue(status);
@@ -202,8 +193,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher Anzahl selber gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertTrue(status);
@@ -221,8 +211,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertTrue(status);
@@ -241,8 +230,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "HHHH", "RYGY", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.checkIfGameFieldSolved(true);
         assertTrue(status);
@@ -260,8 +248,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "HHHH", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
@@ -279,8 +266,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "HHHH", "RYGY", "HHHH", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(2); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
@@ -298,8 +284,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "HHHH", "RYGY", "RGYY", "NNNG"}, //dort ist YGRG 90* rotiert
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(1); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
@@ -317,8 +302,7 @@ public class ZwischenstandsTests {
                                       {"NGNN", "HHHH", "RYGY", "HHHH", "NNNG"}, //dort ist YGRG 90* rotiert
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(4); //Loecher Anzahl gesetzt weil in dem Beispiel mehr Loecher als normal
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);

@@ -74,7 +74,7 @@ public class UserInterfaceController {
         Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
             this.setupGUI(this.game.getGameField().getGameField()[0].length - 2,
                 this.game.getGameField().getGameField().length - 2);
-            this.game.setIsGameActive(true);
+            this.game.setIsGameActive(true, true);
         });
     }
 
@@ -85,7 +85,7 @@ public class UserInterfaceController {
         if(!this.game.isEditorMode()) {
             this.game.removeGameFieldTiles();
             this.game.updateTiles();
-            this.game.setIsGameActive(true);
+            this.game.setIsGameActive(true, true);
         } else {
             ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
         }
@@ -105,7 +105,7 @@ public class UserInterfaceController {
                 }
                 this.setupGUI(this.game.getGameField().getGameField()[0].length - 2,
                         this.game.getGameField().getGameField().length - 2);
-                this.game.setIsGameActive(true);
+                this.game.setIsGameActive(true, true);
             }
         } catch (CustomException e){
             ErrorMessageHandler.showError(e);
@@ -120,7 +120,7 @@ public class UserInterfaceController {
             File file = openFileChooser(false);
             if(file != null) {
                 logic.GameData.saveGame(this.game.getGameFieldString(), file);
-                this.game.setIsGameActive(false);
+                this.game.setIsGameActive(false, false);
             }
         } catch (CustomException e) {
             ErrorMessageHandler.showError(e);
@@ -131,7 +131,7 @@ public class UserInterfaceController {
      * Methode welche aus dem Menue aufgerufen wird um ein bestehendes Spiel zu beenden
      */
     public void endGame(){
-        this.game.setIsGameActive(false);
+        this.game.setIsGameActive(false, false);
     }
 
     /**

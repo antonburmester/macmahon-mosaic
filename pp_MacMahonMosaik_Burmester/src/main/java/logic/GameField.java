@@ -29,9 +29,8 @@ public class GameField {
      * Konstruktor welcher ein bestehendes Spielfeld initialisiert
      * @param stringGameField eingelesenes Spielfeld
      * @param gameTiles die tiles Instanz der Spielsteine mit welcher das Spielfeld gefuellt wird
-     * @param holeTiles die tiles Instanz der Lochsteine mit welcher das Spielfeld gefuellt wird
      */
-    public GameField(String[][] stringGameField, Tiles gameTiles, Tiles holeTiles){
+    public GameField(String[][] stringGameField, Tiles gameTiles){
         int height = stringGameField.length;
         int width = stringGameField[0].length;
 
@@ -46,7 +45,7 @@ public class GameField {
                     String laidTileName = inputCompatible[heigthIndex][widthIndex];
                     Tile targetTile;
                     if (laidTileName.equals(TileNames.HHHH.name())) { //ein Loch gelegt
-                        targetTile = holeTiles.getTileByNameWithRotation(laidTileName);
+                        targetTile = new Tile(TileNames.HHHH);
                     } else if (laidTileName.equals(TileNames.NNNN.name())) { //nichts gelegt
                         targetTile = new Tile(TileNames.NNNN);
                     } else { //ein Spielstein gelegt
@@ -504,10 +503,10 @@ public class GameField {
 
     /**
      * Methode welche eine Kopie des Spielfelds erstellt
+     * @param copyGameFieldTiles die Instanz der Tiles Klasse der neuen Spielsteine welche im kopierten Feld liegen
      * @return die Kopie des Spielfelds
      */
-    public GameField cloneGameField(Tiles existingGameFieldTiles, Tiles existingHoleTiles,
-                                    Tiles copyGameFieldTiles, Tiles copyHoleTiles){
+    public GameField cloneGameField(Tiles copyGameFieldTiles){
         int width = this.gameField[0].length;
         int heigth = this.gameField.length;
         GameField copy = new GameField(heigth - 2, width - 2, false); //neue Instanz eines neuen Spielfelds
@@ -524,8 +523,7 @@ public class GameField {
                         //die kopie von dem aktuell im Spielfeld liegenden Spielstein
                         copyTile = copyGameFieldTiles.getTileByNameWithRotation(currNotCopyTile.getTileNameWithRotation());
                     } else if (currNotCopyTile.isHoleTile()) { //Loch
-                        copyTile = copyHoleTiles.getTile(existingHoleTiles.getTileIndex(currNotCopyTile));//Index reicht,
-                        // da Rotation keine Auswirkungen hat
+                        copyTile = new Tile(TileNames.HHHH);
                     } else { //nichts gelegt
                         copyTile = new Tile(TileNames.NNNN);
                     }
@@ -540,7 +538,6 @@ public class GameField {
                 }
             }
         }
-        System.out.println("Cloned: " + copy);
         return (copy);
     }
 

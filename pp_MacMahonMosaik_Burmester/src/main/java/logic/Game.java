@@ -14,12 +14,14 @@ public class Game {
     private final GUIConnector gui;
     private final GameField gameField;
     private final Tiles tiles;
-    private final Tiles holeTiles;
     private boolean editorMode;
 
 
     /**
      * Konstruktor welcher ein neues leeres Spiel erzeugt
+     * @param gui die GUI Instanz
+     * @param heigth die Hoehe des Spielfelds (Breite inklusive Rand)
+     * @param width die Breite des Spielfelds (Breite inklusive Rand)
      */
     public Game(GUIConnector gui, int heigth, int width){
         this.gui = gui;
@@ -27,8 +29,6 @@ public class Game {
 
         this.gameField = new GameField(heigth, width, true);
         this.tiles = new Tiles();
-        int holesAmount = heigth * width - 24;
-        this.holeTiles = new Tiles(Math.max(holesAmount, 0));
     }
 
     /**
@@ -44,47 +44,21 @@ public class Game {
 
     /**
      * Konstruktor welcher ein Spiel auf Grundlage eines StringArrays erstellt
+     * @param gui die GUI Instanz
+     * @param inputGameField das uebergebene Spielfeld als String
      */
     public Game(GUIConnector gui, String[][] inputGameField){
         this.gui = gui;
 
         this.tiles = new Tiles();
-        int holesAmount = (inputGameField.length - 2) * (inputGameField[0].length - 2) - 24;
-        this.holeTiles = new Tiles(Math.max(holesAmount, 0));
-        this.gameField = new GameField(inputGameField, this.tiles, this.holeTiles);
-    }
-
-    /**
-     * Konstruktor welcher ein Spiel initialisiert auf Grundlage eines neuen Spielfelds, neuer Spielsteine und neuer
-     * Lochsteine
-     * @param gameField die Instanz des neuen Spielfelds
-     * @param tiles die Instanz der neuen Spielsteine
-     * @param holeTiles die Instanz der neuen Lochsteine
-     */
-    private Game(GameField gameField, Tiles tiles, Tiles holeTiles){
-        this.gui = null;
-        this.gameField = gameField;
-        this.tiles = tiles;
-        this.holeTiles = holeTiles;
-    }
-
-    /**
-     * Methode welche die Game Instanz kopiert und erneuert
-     * @return die neue Game Instanz
-     */
-    public Game cloneGame(){
-        Tiles clonedTiles = this.tiles.cloneGameTiles();
-        Tiles clonedHoleTiles = this.holeTiles.cloneGameTiles();
-        GameField clonedGameField = this.gameField.cloneGameField(
-                this.tiles, this.holeTiles, clonedTiles, clonedHoleTiles);
-        return(new Game(clonedGameField, clonedTiles, clonedHoleTiles));
+        this.gameField = new GameField(inputGameField, this.tiles);
     }
 
     /**
      * Methode welche den Wahrheitswert ob ein Spiel aktiv ist setzt
      * @param isActive ob das Spiel aktiv ist
      */
-    public void setIsGameActive(boolean isActive){
+    public void setIsGameActive(boolean isActive, boolean setUpGame){
         if(isActive && this.gameField.isGameFieldBorderSetted()) { //Spiel soll aktiv werden und Rand ist gesetzt
             this.gui.setDisableRightGridPane(false);
             this.gui.setDisableMiddleGridPane(false);
@@ -152,7 +126,8 @@ public class Game {
      * @return ob das Spielfeld spielbar ist
      */
     public boolean isGameFieldPlayable(){
-        return(this.holeTiles.allTilesUsed() && this.gameField.isGameFieldBorderSetted());
+        //return(this.holeTiles.allTilesUsed() && this.gameField.isGameFieldBorderSetted()); TODO pruefen ob Hole Tiles nicht geprueft werden muss
+        return(this.gameField.isGameFieldBorderSetted());
     }
 
     /**
@@ -209,8 +184,8 @@ public class Game {
                 this.gameField.layTile(xTarget, yTarget, tile); //Spielstein auf die neue Position des Spielfelds legen
                 this.gameField.resetTile(xStart, yStart); //Spielstein von der alten Position
                 // des Spielfelds loeschen
-                this.gui.moveTileGameFieldToGameField(xTarget, yTarget, tile.getTile().ordinal(), tile.isHoleTile()); //
-                // den Spielstein oder Lochstein Graphisch verschieben
+                this.gui.moveTileGameFieldToGameField(xStart, yStart, xTarget, yTarget); //den Spielstein oder Lochstein
+                // Graphisch verschieben
                 this.highlightTileIfWrongPlaced();
             } else {
                 status = false;
@@ -252,7 +227,7 @@ public class Game {
         boolean win = this.gameField.checkIfGameFieldSolved(false);
         if (win) {
             ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_WIN));
-            this.setIsGameActive(false);
+            this.setIsGameActive(false, false);
         }
     }
 
@@ -376,9 +351,7 @@ public class Game {
         GameField gameField = this.gameField;
 
         Tiles clonedTiles = this.tiles.cloneGameTiles();
-        Tiles clonedHoleTiles = this.holeTiles.cloneGameTiles();
-        GameField clonedGameField = gameField.cloneGameField(
-                this.tiles, this.holeTiles, clonedTiles, clonedHoleTiles);
+        GameField clonedGameField = gameField.cloneGameField(clonedTiles);
 
         if(gameField.checkIfGameFieldSolved(false)) return(clonedGameField);
 

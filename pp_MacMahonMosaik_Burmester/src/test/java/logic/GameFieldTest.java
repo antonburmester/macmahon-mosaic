@@ -35,8 +35,7 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(1);
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.layTile(2, 2, new Tile("YYRR"));
         assertFalse(status);
@@ -56,8 +55,7 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(1);
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.layTile(2, 2, new Tile("YYRR"));
         assertFalse(status);
@@ -77,8 +75,7 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(1);
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         boolean status = gameField.layTile(2, 2, new Tile("YYRR"));
         assertTrue(status);
@@ -99,14 +96,11 @@ public class GameFieldTest {
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         //Original GameField
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher manuell gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
         Tiles cloneGameFieldTiles = new Tiles();
-        Tiles clonedHoleTiles = new Tiles(0);
-        GameField clonedGameField = gameField.cloneGameField(gameFieldTiles, holeTiles, cloneGameFieldTiles,
-                clonedHoleTiles);
+        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
 
         //compare those two
         boolean status = true;
@@ -136,14 +130,11 @@ public class GameFieldTest {
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         //Original GameField
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(0); //Loecher manuell gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
         Tiles cloneGameFieldTiles = new Tiles();
-        Tiles clonedHoleTiles = new Tiles(0);
-        GameField clonedGameField = gameField.cloneGameField(gameFieldTiles, holeTiles, cloneGameFieldTiles,
-                clonedHoleTiles);
+        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
 
         //compare those two
         boolean status = true;
@@ -174,14 +165,11 @@ public class GameFieldTest {
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
         //Original GameField
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(1); //Loecher manuell gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
         Tiles cloneGameFieldTiles = new Tiles();
-        Tiles clonedHoleTiles = new Tiles(1);
-        GameField clonedGameField = gameField.cloneGameField(gameFieldTiles, holeTiles, cloneGameFieldTiles,
-                clonedHoleTiles);
+        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
 
         //compare those two
         boolean status = true;
@@ -213,14 +201,11 @@ public class GameFieldTest {
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
         //Original GameField
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(6); //Loecher manuell gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
         Tiles cloneGameFieldTiles = new Tiles();
-        Tiles clonedHoleTiles = new Tiles(6);
-        GameField clonedGameField = gameField.cloneGameField(gameFieldTiles, holeTiles, cloneGameFieldTiles,
-                clonedHoleTiles);
+        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
 
         //compare those two
         boolean status = true;
@@ -252,14 +237,12 @@ public class GameFieldTest {
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
         //Original GameField
         Tiles gameFieldTiles = new Tiles();
-        Tiles holeTiles = new Tiles(12); //Loecher manuell gesetzt
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles, holeTiles);
+        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
         Tiles cloneGameFieldTiles = new Tiles();
         Tiles clonedHoleTiles = new Tiles(12);
-        GameField clonedGameField = gameField.cloneGameField(gameFieldTiles, holeTiles, cloneGameFieldTiles,
-                clonedHoleTiles);
+        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
 
         //compare those two
         boolean status = true;

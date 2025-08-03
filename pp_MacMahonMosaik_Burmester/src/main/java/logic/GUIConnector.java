@@ -53,12 +53,12 @@ public interface GUIConnector {
 
     /**
      * Methode welche einen Spielstein vom Spielfeld in die rechte Spielsteinauswahl bewegt
-     * @param targetX die Breitenkoordinate
-     * @param targetY die Hoehenkoordinate
-     * @param tileIndex der Index des zu bewegenden Spielsteins
-     * @param isHoleTile ob der zu bewegenden Spielstein ein normaler Spielstein ist oder einen Lochstein
+     * @param startX die Breitenkoordinate des Startfelds
+     * @param startY die Hoehenkoordinate des Startfelds
+     * @param targetX die Breitenkoordinate des Zielfelds
+     * @param targetY die Hoehenkoordinate des Zielfelds
      */
-    void moveTileGameFieldToGameField(int targetX, int targetY, int tileIndex, boolean isHoleTile);
+    void moveTileGameFieldToGameField(int startX, int startY, int targetX, int targetY);
 
     /**
      * Methode welche einen Spielstein vom Spielfeld in die rechte Spielsteinauswahl bewegt

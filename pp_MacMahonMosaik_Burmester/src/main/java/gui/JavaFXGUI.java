@@ -333,15 +333,15 @@ public class JavaFXGUI implements GUIConnector {
     }
 
     /**
-     * Methode welche einen Spielstein vom Spielfeld in die rechte Spielsteinauswahl bewegt
-     * @param targetX die Breitenkoordinate
-     * @param targetY die Hoehenkoordinate
-     * @param tileIndex der Index des zu bewegenden Spielsteins
-     * @param isHoleTile ob der zu bewegenden Spielstein ein normaler Spielstein ist oder einen Lochstein
+     * Methode welche einen Spielstein vom Spielfeld in ein anderes Feld bewegt
+     * @param startX die Breitenkoordinate des Startfelds
+     * @param startY die Hoehenkoordinate des Startfelds
+     * @param targetX die Breitenkoordinate des Zielfelds
+     * @param targetY die Hoehenkoordinate des Zielfelds
      */
-    public void moveTileGameFieldToGameField(int targetX, int targetY, int tileIndex, boolean isHoleTile){
-        Node movedTile = isHoleTile ? this.holeStackPanes[tileIndex] : this.imageViews[tileIndex]; //der zu
-        // verschiebende Spielstein
+    public void moveTileGameFieldToGameField(int startX, int startY, int targetX, int targetY){
+        Node movedTile = this.getGridPaneCell(startX, startY, this.gridPane).getChildren().getFirst(); //der Spielstein
+        // oder der Lochstein welcher bewegt werden soll
 
         //den Spielstein aus der Spielsteinauswahl loeschen
         StackPane movedTileSource = (StackPane) movedTile.getParent();
