@@ -472,7 +472,7 @@ public class GameField {
     }
 
     /**
-     * ob zwei Raender aneinanderpassen
+     * ob zwei Raender nicht aneinanderpassen
      * @param sourceTileBorderLetter die Randfarbe des einen Spielsteins
      * @param comparedTileBorderLetter die Randfarbe des anderen Spielsteins (Nachbar)
      * @param acceptN ob falls N also nichts gelegt an diesen Spielstein grenzt, dies akzeptiert wird

@@ -67,9 +67,11 @@ public class GameTest {
 
     /**
      * ob die isGameFieldSolvable Methode funktioniert
+     * 8x8 Feld
+     * True
      */
     @Test
-    public void testGameFieldSolvable8x8False() {
+    public void testGameFieldSolvable8x8True() {
         String[][] gameFieldInput = {
                 {"NNNN", "YYYY", "YYYY", "GGGG", "GGGG", "RRRR", "RRRR", "NNNN"},
                 {"YYYY", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
@@ -88,9 +90,11 @@ public class GameTest {
 
     /**
      * ob die isGameFieldSolvable Methode funktioniert
+     * 8x8 Feld
+     * True
      */
     @Test
-    public void testGameFieldSolvable8x8True() {
+    public void testGameFieldSolvable8x8_Second_True() {
         String[][] gameFieldInput = {
                 {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"},
                 {"GGGG", "HHHH", "NNNN", "NNNN", "HHHH", "NNNN", "HHHH", "RRRR"},
@@ -109,6 +113,8 @@ public class GameTest {
 
     /**
      * ob die isGameFieldSolvable Methode funktioniert
+     * 8x8 Feld
+     * True
      */
     @Test
     public void testGameFieldSolvable8x8SomeAlreadySolvedTrue() {
@@ -126,5 +132,47 @@ public class GameTest {
         Game game = new Game(new FakeGUI(), gameFieldInput);
         System.out.println(game.getGameField().toString());
         assertTrue(game.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 7x6 Feld
+     * True
+     */
+    @Test
+    public void testGameFieldSolvable7x6AlreadyLaidFalse() {
+        String[][] gameFieldInput = {
+                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "NNNN"},
+                {"RRRR", "GGYY", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "NNNN"}
+        };
+
+        Game game = new Game(new FakeGUI(), gameFieldInput);
+        System.out.println(game.getGameField().toString());
+        assertFalse(game.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 7x6 Feld
+     * True
+     */
+    @Test
+    public void testGameFieldSolvable7x6AlreadyLaidFalse2() {
+        String[][] gameFieldInput = {
+                {"NNNN", "RRRR", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"},
+                {"RRRR", "GGRR", "RGYG", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"NNNN", "RRRR", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"}
+        };
+
+        Game game = new Game(new FakeGUI(), gameFieldInput);
+        System.out.println(game.getGameField().toString());
+        assertFalse(game.isGameFieldSolvable());
     }
 }
