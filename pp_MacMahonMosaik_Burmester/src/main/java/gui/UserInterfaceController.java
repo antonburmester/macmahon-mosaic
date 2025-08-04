@@ -30,28 +30,29 @@ import java.util.Objects;
  */
 public class UserInterfaceController {
 
-    private Game game;
+    private Game game; //Nutzlast der Game Instanz welche durch diese Klasse initialisiert wird
 
-    private JavaFXGUI gui;
-
-    @FXML
-    private VBox editorControls;
-    @FXML
-    private Spinner<Integer> userHeightInput;
-    @FXML
-    private Spinner<Integer> userWidthInput;
+    private JavaFXGUI gui; //Nutzlast der GUI Instanz welche durch diese Klasse initialisiert wird
 
     @FXML
-    private GridPane gridPane;
+    private VBox editorControls; //Nutzlast der Flaeche der Spielfeld groessen Bedienung
+    @FXML
+    private Spinner<Integer> userHeightInput; //Nutzlast des Elements zur Auswahl der Spielfeldhoehe (+2)
+    @FXML
+    private Spinner<Integer> userWidthInput; //Nutzlast des Elements zur Auswahl der Spielfeldbreite (+2)
 
     @FXML
-    private BorderPane borderPane;
+    private GridPane gridPane; //Nutzlast des mittleren Spielfelds
 
     @FXML
-    private Pane centerPane;
+    private BorderPane borderPane; //TODO was ist das
 
     @FXML
-    private GridPane rightGridPane;
+    private Pane centerPane; //Nutzlast der Flaeche auf welchem das mittlere Spielfeld liegt um die Groesse abfragen zu
+    // koennen, weil dies mit der GridPane direkt probleme verursacht
+
+    @FXML
+    private GridPane rightGridPane; //Nutzlast der rechten Spielsteinauswahl
 
     /**
      * Initialisierung des Programms

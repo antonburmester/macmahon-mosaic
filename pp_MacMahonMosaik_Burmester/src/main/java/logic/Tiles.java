@@ -8,7 +8,7 @@ package logic;
  */
 
 public class Tiles {
-    private final Tile[] tiles;
+    private final Tile[] tiles; //Nutzlast der Tile Instanzen in einem Array
 
     /**
      * Konstruktor welcher diese Klasse mit allen Spielsteinen fuellt

@@ -2,10 +2,12 @@ package logic;
 
 /**
  * Klasse welche eine Koordinate darstellt
+ *
+ * @author Anton Burmester
  */
 class Position {
-    private int x;
-    private int y;
+    private int x; //Nutzlast der Breitenkoordinate
+    private int y; //Nutzlast der Hoehenkoordinate
 
     /**
      * Public Konstruktor welcher x und y initialisiert

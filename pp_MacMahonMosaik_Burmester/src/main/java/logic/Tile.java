@@ -6,9 +6,9 @@ package logic;
  * @author Anton Burmester
  */
 public class Tile {
-    private TileNames tile;
-    private int rotation;
-    private boolean isLaid;
+    private TileNames tile; //Nutzlast des Motivs des Spielsteins
+    private int rotation; //Nutzlast der Rotation des Spielsteins
+    private boolean isLaid; //Nutzlast ob der Spielstein liegt
 
     /**
      * Konstruktor welcher einen bestimmten Spielstein ohne bestimmte Rotation initialisiert

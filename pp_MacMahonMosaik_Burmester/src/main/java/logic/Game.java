@@ -11,10 +11,11 @@ import gui.ErrorMessageHandler;
  * @author Anton Burmester
  */
 public class Game {
-    private final GUIConnector gui;
-    private final GameField gameField;
-    private final Tiles tiles;
-    private boolean editorMode;
+    private final GUIConnector gui; //Nutzlast des GUIConnector mithilfe welches die Game Klasse mit der GUI (JavaFXGUI)
+    // kommuniziert
+    private final GameField gameField; //Nutzlast der Spielfeld Instanz
+    private final Tiles tiles; //Nutzlast der Spielstein Instanz
+    private boolean editorMode; //Nutzlast ob der EditorMode aktiv ist
 
 
     /**
@@ -352,7 +353,10 @@ public class Game {
         Tiles clonedTiles = this.tiles.cloneGameTiles();
         GameField clonedGameField = gameField.cloneGameField(clonedTiles);
 
-        if(gameField.checkIfGameFieldSolved(false)) return(clonedGameField);
+        if(gameField.checkIfGameFieldSolved(false)) return(clonedGameField); //Spielfeld schon geloest
+
+        if(!gameField.checkIfGameFieldSolved(true)) return(null); //nicht loesbar bezugelich der schon liegenden
+        // Spielsteine bei Aufruf dieser Methode
 
         Position pos = new Position(0, 0); //die aktuelle Position in einer Klasse, damit diese als Refferenz
         // uebergeben werden kann
@@ -364,11 +368,8 @@ public class Game {
         Tile lastTileBeforeGoingBack = null; //speichert immer wenn einen Schritt zurueckgegangen wurde den Spielstein
         // damit beim naechsten Durchlauf dieser nicht nochmal versucht wird (Backtracking)
 
-        int iterator = 0;
         boolean searchActive = true;
         while(searchActive){ //solange die Suche noch anläuft und kein Spielstein gefunden wurde
-            iterator++;
-            if(iterator % 100000 == 0) System.out.println(iterator);
             boolean nextFieldThere;
             if(lastTileBeforeGoingBack == null) { //es gab keine Schritt zurueck (Backtracking)
                 nextFieldThere = this.goToNextFreeMiddleField(gameField, pos); //das naechste freie Feld suchen

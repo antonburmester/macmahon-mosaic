@@ -31,7 +31,8 @@ public class CustomException extends Exception {
     public static final int ERROR_EDITOR_MODE_ON = 504;
 
 
-    private final int errorOrMessageCode;
+    private final int errorOrMessageCode; //Nutzlast welche den Code der Nachricht oder Fehlermeldung enthaelt; in der
+    // ErrorMessageController gibt es dann zu diesem Code die entsprechende textuelle Nachricht
 
     /**
      * Konstruktor welcher die Instanz initialisiert mit dem errorOrMessageCode

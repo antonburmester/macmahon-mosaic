@@ -9,7 +9,7 @@ import gui.ErrorMessageHandler;
  */
 
 public class GameField {
-    private final Tile[][] gameField;
+    private final Tile[][] gameField; //Nutzlast des Spielfelds als zweidimensionales Array vom Typ Tile (Spielstein)
 
     /**
      * Konstruktor welcher ein Spielfeld ohne Steine initialisiert
