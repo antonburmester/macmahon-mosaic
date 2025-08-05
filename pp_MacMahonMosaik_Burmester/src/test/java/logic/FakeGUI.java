@@ -7,6 +7,14 @@ package logic;
 public class FakeGUI implements GUIConnector{
 
     /**
+     * Methode welche die Spielfeld grossen Bedienung ein oder ausblendet
+     */
+    @Override
+    public void displayEditorControls(boolean displayControls){
+
+    }
+
+    /**
      * Methode welche ein bestehendes Spiel spielbar macht oder nicht ueber die rechte Spielstein Auswahl
      *
      * @param status ob die rechte GridPane (Auswahl) zugreifbar sein soll

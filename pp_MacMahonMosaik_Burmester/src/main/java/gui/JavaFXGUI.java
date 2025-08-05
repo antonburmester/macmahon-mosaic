@@ -24,6 +24,8 @@ public class JavaFXGUI implements GUIConnector {
 
     private final GridPane rightGridPane;
 
+    private VBox editorControls; //Nutzlast der Flaeche der Spielfeld groessen Bedienung
+
     private ImageView[] imageViews;
 
     private StackPane[] holeStackPanes;
@@ -49,19 +51,21 @@ public class JavaFXGUI implements GUIConnector {
 
     /**
      * Konstruktor welcher diese Klasse initialisiert
-     * @param borderPane der Gesamte Hintergrund
-     * @param centerPane der hintergrund der GridPane in der Mitte
-     * @param gridPane die FXML Instanz
+     * @param borderPane der Gesamte Hintergrund des Fensters in welchem alle Elemente sind
+     * @param centerPane der hintergrund der GridPane (Spielfeld) in der Mitte
+     * @param gridPane das mittlere Spielfeld
      * @param rightGridPane die rechte GridPane in welcher die noch nicht gelegten Spielsteine sind
+     * @param editorControls Flaeche der Spielfeld groessen Bedienung
      * @param imageViews die Bilder mit Listenern initialisiert in der UserInterfaceController Klasse
      * @param holeStackPanes die Loecher Stackpanes mit Listenern initialisiert in der UserInterfaceController Klasse
      */
     public JavaFXGUI(BorderPane borderPane, Pane centerPane, GridPane gridPane, GridPane rightGridPane,
-                     ImageView[] imageViews, StackPane[] holeStackPanes){
+                     VBox editorControls, ImageView[] imageViews, StackPane[] holeStackPanes){
         this.borderPane = borderPane;
         this.centerPane = centerPane;
         this.gridPane = gridPane;
         this.rightGridPane = rightGridPane;
+        this.editorControls = editorControls;
 
         this.imageViews = imageViews;
         this.holeStackPanes = holeStackPanes;
@@ -83,6 +87,15 @@ public class JavaFXGUI implements GUIConnector {
     public void setDisableMiddleGridPane(boolean status){
         this.gridPane.setDisable(status);
         this.gridPane.setOpacity(!status ? 1 : 0.7);
+    }
+
+    /**
+     * Methode welche die Spielfeld grossen Bedienung ein oder ausblendet
+     */
+    public void displayEditorControls(boolean displayControls){
+        editorControls.setVisible(displayControls); //macht die Spielfeldeingaben (Breite,Hoehe,Button)
+        // sichtbar/unsichtbar
+        editorControls.setManaged(displayControls); //entfernt den Platz wenn unsichtbar und nimmt ihn ein wenn sichtbar
     }
 
     /**

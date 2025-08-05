@@ -45,7 +45,9 @@ public class UserInterfaceController {
     private GridPane gridPane; //Nutzlast des mittleren Spielfelds
 
     @FXML
-    private BorderPane borderPane; //TODO was ist das
+    private BorderPane borderPane; //BorderPane welche den Hintergrund des Fensters darstellt und das Fenster in
+    // 5 Bereiche einteilt (links(editorControls), rechts(rightGridPane), oben(Menue Bar (keine Nutzlast dieser Klasse),
+    //  unten(nichts), mitte(Spielfeld)
 
     @FXML
     private Pane centerPane; //Nutzlast der Flaeche auf welchem das mittlere Spielfeld liegt um die Groesse abfragen zu
@@ -63,7 +65,8 @@ public class UserInterfaceController {
         BorderPane.setMargin(rightGridPane, new Insets(0, 0, 0, 10));
         this.userHeightInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
         this.userWidthInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
-        this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane, this.loadImages(), this.loadHolesStackPanes());
+        this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane,
+                this.editorControls, this.loadImages(), this.loadHolesStackPanes());
 
         // ChangeListener hinzufuegen, damit sich die GridPane durch die Pane an die
         // Groeßenveraenderung der BorderPane anpasst
@@ -83,13 +86,7 @@ public class UserInterfaceController {
      * Methode welche aus dem Menue aufgerufen wird um ein neues Spiel zu starten
      */
     public void restartGame(){
-        if(!this.game.isEditorMode()) {
-            this.game.removeGameFieldTiles();
-            this.game.updateTiles();
-            this.game.setIsGameActive(true, true);
-        } else {
-            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
-        }
+        this.game.restartGame();
     }
 
     /**
@@ -132,19 +129,15 @@ public class UserInterfaceController {
      * Methode welche aus dem Menue aufgerufen wird um ein bestehendes Spiel zu beenden
      */
     public void endGame(){
-        this.game.setIsGameActive(false, false);
+        this.game.endGame();
     }
 
     /**
-     * Methode welche aus dem Menue aufgerufen wird um den Editor Mode einzuschalten
+     * Methode welche aus dem Menue aufgerufen wird um den Editor Mode einzuschalten wenn vorher an oder auszuschalten
+     * wenn vorher aus
      */
     public void toggleEditorMode(){
-        boolean isEditorMode = !editorControls.isManaged(); //wenn sichtbar dann unsichtbar und umgekehrt (toggle)
-        editorControls.setVisible(isEditorMode); //macht die Spielfeldeingaben (Breite,Hoehe,Button) sichtbar/unsichtbar
-        editorControls.setManaged(isEditorMode); // Entfernt den Platz, wenn unsichtbar und nimmt ihn ein wenn sichtbar
-        if(this.game != null) {
-            this.game.setIsEditorMode(isEditorMode);
-        }
+        this.game.toggleEditorMode();
     }
 
     /**
@@ -183,12 +176,7 @@ public class UserInterfaceController {
      * werden kann
      */
     public void checkSolvability(){
-        boolean isGameFieldSolvable = this.game.isGameFieldSolvable();
-        if(isGameFieldSolvable){
-            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_GAMEFIELD_SOLVABLE));
-        } else {
-            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_GAMEFIELD_NOT_SOLVABLE));
-        }
+        this.game.checkSolvability();
     }
 
     /**
@@ -196,9 +184,7 @@ public class UserInterfaceController {
      * zu legen
      */
     public void layHint(){
-        boolean laidHint = this.game.layHintTile();
-        if(!laidHint) ErrorMessageHandler.showError(new CustomException(CustomException.
-                MESSAGE_NO_HINT_GAMEFIELD_NOT_SOLVABLE));
+        this.game.layHint();
     }
 
     /**

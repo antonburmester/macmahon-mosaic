@@ -1,14 +1,16 @@
 package logic;
 
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-
 /**
  * Interface, welches die Logik nutzt, um der Oberflaeche (GUI) etwas mitzuteilen.
  *
  * @author Anton Burmester
  */
 public interface GUIConnector {
+
+    /**
+     * Methode welche die Spielfeld grossen Bedienung ein oder ausblendet
+     */
+    void displayEditorControls(boolean displayControls);
 
     /**
      * Methode welche ein bestehendes Spiel spielbar macht oder nicht ueber die rechte Spielstein Auswahl

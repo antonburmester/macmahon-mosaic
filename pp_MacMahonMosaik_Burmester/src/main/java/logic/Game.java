@@ -55,6 +55,64 @@ public class Game {
     }
 
     /**
+     * Methode welche ein Spiel neustartet
+     */
+    public void restartGame(){
+        if(!this.editorMode) {
+            this.removeGameFieldTiles();
+            this.updateTiles();
+            this.setIsGameActive(true, true);
+        } else {
+            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
+        }
+    }
+
+    /**
+     * Methode welche das Spiel beendet
+     */
+    public void endGame(){
+        this.setIsGameActive(false, false);
+    }
+
+    /**
+     * Methode welche aus dem Menue durch die UserInterfaceController Klasse aufgerufen wird um zu pruefen, ob das
+     * bestehende Feld im aktuellen Zustand geloest werden kann.
+     * nutzt dafür die isGameFieldSolvable Methode der Game Klasse
+     * TODO der kommentar ueberpruefen
+     */
+    public void checkSolvability(){
+        boolean isGameFieldSolvable = this.isGameFieldSolvable();
+        if(isGameFieldSolvable){
+            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_GAMEFIELD_SOLVABLE));
+        } else {
+            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_GAMEFIELD_NOT_SOLVABLE));
+        }
+    }
+
+    /**
+     * Methode welche einen Hinweis legt
+     */
+    public void layHint(){
+        boolean laidHint = this.layHintTile();
+        if(!laidHint) ErrorMessageHandler.showError(new CustomException(CustomException.
+                MESSAGE_NO_HINT_GAMEFIELD_NOT_SOLVABLE));
+    }
+
+    /**
+     * Methode welche den EditorMode aktiviert wenn deaktiviert und deaktiviert wenn aktiviert.
+     * Zeigt dies auch visuell an
+     */
+    public void toggleEditorMode(){
+        this.editorMode = !this.editorMode; //Editor Mode umschalten
+        if(this.editorMode){ //wenn nun aktiviert
+            this.removeGameFieldTiles();
+            this.updateTiles();
+            this.gui.setDisableRightGridPane(true);
+        }
+        this.gui.displayEditorControls(this.editorMode); //Editor Elemente anzeigen oder nicht
+    }
+
+    /**
      * Methode welche den Wahrheitswert ob ein Spiel aktiv ist setzt
      * @param isActive ob das Spiel aktiv ist
      */
@@ -94,19 +152,6 @@ public class Game {
      */
     public String[][] getGameFieldString(){
         return(this.gameField.translateToSpielstandsdatei());
-    }
-
-    /**
-     * Methode welche setzt ob der Editor Mode aktiv ist oder nicht und wenn ja die Spielstein Auswahl deaktiviert
-     * @param status ob der eingeschaltet werden soll oder aus
-     */
-    public void setIsEditorMode(boolean status){
-        this.editorMode = status;
-        if(status){
-            this.removeGameFieldTiles();
-            this.updateTiles();
-            this.gui.setDisableRightGridPane(true);
-        }
     }
 
     /**
