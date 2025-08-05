@@ -97,13 +97,12 @@ public class Tiles {
      * @return ob alle Loecher gelegt wurden
      */
     public boolean allTilesUsed(){
-        boolean status = true;
-        for(int i = 0; i < this.tiles.length; i++){
-            if(!this.getTile(i).getIsLaid()){
-                status = false;
+        for(Tile currTile : this.tiles){
+            if(!currTile.getIsLaid()){
+                return(false);
             }
         }
-        return(status);
+        return(true);
     }
 
     /**
@@ -114,23 +113,20 @@ public class Tiles {
      */
     public Tile getTileByNameWithRotation(String tileName){
         Tile resultTile = null;
-        for(int i = 0; i < this.tiles.length; i++){ //jeden Spielstein durchlaufen
-            Tile currTile = this.getTile(i); //der aktuelle Spielstein
-                //koennte auch ersetzt werden durch isGameFieldTile
-                int rotations = currTile.isHoleTile() || currTile.isPlaceHolderTile() ? 90 : 360;
-                int rotationBefore = currTile.getRotation();
-                for(int rotation = 0; rotation < rotations; rotation += 90){ //jede Rotation durchlaufen
-                    if(currTile.getTileNameWithRotation().equals(tileName)){ //wenn der Spielstein mit Rotation
-                        // dem uebergebenen Namen gleicht
-                        resultTile = currTile;
-                        return(resultTile);
-                    } else { //wenn der Spielstein nicht dem Namen gleicht
-                        currTile.rotateTile(); //den Spielstein rotieren
-                    }
+        for(Tile currTile : this.tiles){ //jeden Spielstein durchlaufen
+            Rotation originalRotation = currTile.getRotation(); //um die Rotation nach den versuchen zurueckzusetzen
+            for(Rotation currRotation : Rotation.values()){ //jede Rotation durchlaufen
+                if(currTile.getTileNameWithRotation().equals(tileName)){ //wenn der Spielstein mit Rotation
+                    // dem uebergebenen Namen gleicht
+                    resultTile = currTile;
+                    return(resultTile);
+                } else { //wenn der Spielstein nicht dem Namen gleicht
+                    currTile.rotateTile(); //den Spielstein rotieren
                 }
-            //wenn der aktuelle Spielstein in allen Rotationen nicht passt
-            //currTile.resetTileRotation(); //die Rotation zuruecksetzen
-            currTile.setTileRotation(rotationBefore);
+                if(currTile.isHoleTile() || currTile.isPlaceHolderTile()) break; //Rotationen abbrechen da diese bei
+                // Lochstein und Platzhalter keine Auswirkungen haben
+            }
+            currTile.setTileRotation(originalRotation);
         }
         return(resultTile);
     }

@@ -28,8 +28,8 @@ public class TileTest {
      */
     @Test
     public void constructor2Test1Rotation() {
-        Tile tileClass = new Tile(TileNames.GRGR, 1);
-        assertEquals(tileClass.getRotation(), 90);
+        Tile tileClass = new Tile(TileNames.GRGR, Rotation.R1);
+        assertEquals(tileClass.getRotation(), Rotation.R1);
     }
 
     /**
@@ -37,17 +37,8 @@ public class TileTest {
      */
     @Test
     public void constructor2Test3Rotation() {
-        Tile tileClass = new Tile(TileNames.GRGR, 3);
-        assertEquals(tileClass.getRotation(), 270);
-    }
-
-    /**
-     * ob bei der Initialisierung der Tile Klasse die Rotation richtig gesetzt wurde
-     */
-    @Test
-    public void constructor2Test4Rotation() {
-        Tile tileClass = new Tile(TileNames.GRGR, 4);
-        assertEquals(tileClass.getRotation(), 0); //0 da viermal rotiert wurde, 4*90 = 360 also wieder Anfang
+        Tile tileClass = new Tile(TileNames.GRGR, Rotation.R3);
+        assertEquals(tileClass.getRotation(), Rotation.R3);
     }
 
     /**
@@ -77,7 +68,7 @@ public class TileTest {
      */
     @Test
     public void rotations3TileString() {
-        Tile tileClass = new Tile(TileNames.RGYG, 1);
+        Tile tileClass = new Tile(TileNames.RGYG, Rotation.R1);
         tileClass.rotateTile();
         tileClass.rotateTile();
         tileClass.rotateTile();
@@ -90,7 +81,8 @@ public class TileTest {
     @Test
     public void getTileClassFromTileName1() {
         Tile tileClass = Tile.getTileClassFromTileName(TileNames.GRYR.toString());
-        assertTrue(Objects.equals(tileClass.getTileNameWithRotation(), "GRYR") && tileClass.getRotation() == 0);
+        assertTrue(Objects.equals(tileClass.getTileNameWithRotation(), "GRYR") &&
+                tileClass.getRotation() == Rotation.R0);
     }
 
     /**
@@ -105,7 +97,7 @@ public class TileTest {
         //Viermal gedreht GRYR
         Tile tileClass = Tile.getTileClassFromTileName("YRGR");
         assertEquals("GRYR", tileClass.getTileString()); // überprüft den Namen nach der Drehung
-        assertEquals(180, tileClass.getRotation()); // überprüft die Rotation
+        assertEquals(Rotation.R2, tileClass.getRotation()); // überprüft die Rotation
     }
 
     /**
@@ -120,7 +112,7 @@ public class TileTest {
         //Viermal gedreht GRYR
         Tile tileClass = Tile.getTileClassFromTileName("RYRG");
         assertEquals("GRYR", tileClass.getTileString()); // überprüft den Namen nach der Drehung
-        assertEquals(270, tileClass.getRotation()); // überprüft die Rotation
+        assertEquals(Rotation.R3, tileClass.getRotation()); // überprüft die Rotation
     }
 
     /**
@@ -135,7 +127,7 @@ public class TileTest {
         //Viermal gedreht GRYR
         Tile tileClass = Tile.getTileClassFromTileName("GRYR");
         assertEquals("GRYR", tileClass.getTileString()); // überprüft den Namen nach der Drehung
-        assertEquals(0, tileClass.getRotation()); // überprüft die Rotation
+        assertEquals(Rotation.R0, tileClass.getRotation()); // überprüft die Rotation
     }
 
     /**
@@ -150,7 +142,7 @@ public class TileTest {
         //Viermal gedreht YGRY
         Tile tileClass = Tile.getTileClassFromTileName("YYGR");
         assertEquals("YGRY", tileClass.getTileString()); // überprüft den Namen nach der Drehung
-        assertEquals(90, tileClass.getRotation()); // überprüft die Rotation
+        assertEquals(Rotation.R1, tileClass.getRotation()); // überprüft die Rotation
     }
 
     /**
@@ -165,7 +157,7 @@ public class TileTest {
         //Viermal gedreht YGRY
         Tile tileClass = Tile.getTileClassFromTileName("GRYY");
         assertEquals("YGRY", tileClass.getTileString()); // überprüft den Namen nach der Drehung
-        assertEquals(270, tileClass.getRotation()); // überprüft die Rotation
+        assertEquals(Rotation.R3, tileClass.getRotation()); // überprüft die Rotation
     }
 
     /**
@@ -180,7 +172,7 @@ public class TileTest {
         //Viermal gedreht YGRY
         Tile tileClass = Tile.getTileClassFromTileName("YGRY");
         assertEquals("YGRY", tileClass.getTileString()); // überprüft den Namen nach der Drehung
-        assertEquals(0, tileClass.getRotation()); // überprüft die Rotation
+        assertEquals(Rotation.R0, tileClass.getRotation()); // überprüft die Rotation
     }
 
     /**
@@ -216,7 +208,7 @@ public class TileTest {
         Tile tile = new Tile(tileNameWithRotation);
         boolean isNameWithoutRotationMatching = tile.getTileString().equals("YRGY");
         boolean isNameWithRotationMatching = tile.getTileNameWithRotation().equals("GYYR");
-        boolean isRotationMatching = tile.getRotation() == 180;
+        boolean isRotationMatching = tile.getRotation() == Rotation.R2;
         assertTrue(isNameWithoutRotationMatching && isNameWithRotationMatching && isRotationMatching);
     }
 }

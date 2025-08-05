@@ -134,16 +134,18 @@ public class Game {
      * Methode welche die Spielstein Instanz zurueckgibt
      * @return die Instanz der Klasse aller Spielsteine
      */
-    public Tiles getTiles(){
-        return(this.tiles);
+    private Tiles getTilesCopy(){
+        return(this.tiles.cloneGameTiles());
     }
 
     /**
      * Methdode welche die Spielfeld Instanz zurueckgibt
      * @return die Instanz der Klasse des Spielfelds
+     * //TODO REMOVE
      */
-    public GameField getGameField(){
-        return(this.gameField);
+    public GameField getGameFieldCopy(){
+        Tiles clonedtiles = this.tiles.cloneGameTiles();
+        return(this.gameField.cloneGameField(clonedtiles));
     }
 
     /**
@@ -160,18 +162,16 @@ public class Game {
      */
     public void updateTiles(){
         //Bilder, Loecher und Faerbungen anzeigen
-        this.gui.displayGameFieldTiles(this.getGameField());
-        this.gui.displayNotUsedTiles(this.getTiles());
+        this.gui.displayGameFieldTiles(this.getGameFieldCopy());
+        this.gui.displayNotUsedTiles(this.getTilesCopy());
         this.highlightTileIfWrongPlaced();
     }
 
     /**
-     * Methode welche prueft ob das Spielfeld spielbar ist also ob alle Loecher falls vorhanden gelegt wurden und
-     * der Rand voll mit Randstuecken gefuellt ist
+     * Methode welche prueft ob das Spielfeld spielbar ist also ob der Rand voll mit Randstuecken gefuellt ist.
      * @return ob das Spielfeld spielbar ist
      */
     public boolean isGameFieldPlayable(){
-        //return(this.holeTiles.allTilesUsed() && this.gameField.isGameFieldBorderSetted()); TODO pruefen ob Hole Tiles nicht geprueft werden muss
         return(this.gameField.isGameFieldBorderSetted());
     }
 
@@ -200,13 +200,13 @@ public class Game {
         //Feld ist frei und es handelt sich um das mittlere Spielfeld
         if (this.gameField.isFieldFieldFree(x, y) && this.gameField.isFieldMiddleGamefield(x, y)) {
             this.gameField.layTile(x, y, tile); //Spielstein auf das Spielfeld legen
-            this.gui.moveTileSelectionToGameField(x, y, tileIndex); //den Spiel
+            this.gui.moveTileSelectionToGameField(x, y, tileIndex); //Zug visuell anzeigen
             this.highlightTileIfWrongPlaced();
             this.checkAndHandleWin(); //pruefen und handhaben ob das Spiel durch einen Sieg beendet wurde
         } else {
             status = false;
         }
-        System.out.println(this.gameField.toString());
+        System.out.println(this.gameField);
         return(status);
     }
 
@@ -237,7 +237,7 @@ public class Game {
         } else {
             status = false;
         }
-        System.out.println(this.gameField.toString());
+        System.out.println(this.gameField);
         return(status);
     }
 
@@ -259,20 +259,8 @@ public class Game {
         } else {
             status = false;
         }
-        System.out.println(this.gameField.toString());
+        System.out.println(this.gameField);
         return(status);
-    }
-
-    /**
-     * Methode welche prueft ob das Spiel geloest wurde und falls ja das Spiel beendet und dem Spieler die Meldung
-     * ausgibt, dass das Spiel erfolgreich geloest wurde
-     */
-    public void checkAndHandleWin(){
-        boolean win = this.gameField.checkIfGameFieldSolved(false);
-        if (win) {
-            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_WIN));
-            this.setIsGameActive(false, false);
-        }
     }
 
     /**
@@ -299,7 +287,7 @@ public class Game {
             this.gameField.layTile(x, y, newBorderTile);
             this.gui.setBorderColor(x, y, newBorderTile.getTile()); //die Farbaenderung visuell sichtbar machen
 
-            System.out.println(this.gameField.toString());
+            System.out.println(this.gameField);
             status = true;
         }
         return(status);
@@ -312,9 +300,22 @@ public class Game {
     public void rotateGameTile(int tileIndex){
         Tile tile = this.tiles.getTile(tileIndex);
         tile.rotateTile();
-        this.gui.rotateTile(tileIndex, tile.getRotation()); //die Rotation graphisch anzeigen
+        this.gui.rotateTile(tileIndex, Rotation.rotationToDegrees(tile.getRotation())); //die Rotation graphisch
+        // anzeigen
         this.highlightTileIfWrongPlaced();
         this.checkAndHandleWin(); //pruefen und handhaben ob das Spiel durch einen Sieg beendet wurde
+    }
+
+    /**
+     * Methode welche prueft ob das Spiel geloest wurde und falls ja das Spiel beendet und dem Spieler die Meldung
+     * ausgibt, dass das Spiel erfolgreich geloest wurde
+     */
+    private void checkAndHandleWin(){
+        boolean win = this.gameField.checkIfGameFieldSolved(false);
+        if (win) {
+            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_WIN));
+            this.setIsGameActive(false, false);
+        }
     }
 
     /**
@@ -342,8 +343,7 @@ public class Game {
                 }
             }
         }
-        this.highlightTileIfWrongPlaced();
-        System.out.println(this.gameField.toString());
+        this.highlightTileIfWrongPlaced(); //falls es falsche Felder gab die Markierung wieder wegnehmen
     }
 
     /**
@@ -351,16 +351,16 @@ public class Game {
      * Diese Methode greift auf die solveGameFieldAsCopy Methode zurueck
      * @return ob eine passende Kombination gefunden wurde und somit das Spielfeld geloest wurde
      */
-    public boolean isGameFieldSolvable(){
+    boolean isGameFieldSolvable(){
         GameField solvedGameFieldCopy = this.solveGameFieldAsCopy();
-        return(solvedGameFieldCopy != null && this.solveGameFieldAsCopy().checkIfGameFieldSolved(false));
+        return(solvedGameFieldCopy != null && solvedGameFieldCopy.checkIfGameFieldSolved(false));
     }
 
     /**
      * Methode welche einen weiteren Spielstein legt.
      * @return ob das Spielfeld loesbar ist und somit ein naechster Spielstein gelegt werden konnte
      */
-    public boolean layHintTile(){
+    private boolean layHintTile(){
         GameField solvedGameFieldCopy = this.solveGameFieldAsCopy(); //das geloeste Spielfeld oder null falls nicht
         if(solvedGameFieldCopy != null) { //Spielfeld wurde geloest
             Position pos = new Position(0, 0);
@@ -376,7 +376,8 @@ public class Game {
 
             //Graphisch den gefundenen Spielstein anzeigen
             this.gui.moveTileSelectionToGameField(pos.getX(), pos.getY(), hintTileOriginal.getTile().ordinal());
-            this.gui.rotateTile(hintTileOriginal.getTile().ordinal(), hintTileOriginal.getRotation());
+            this.gui.rotateTile(hintTileOriginal.getTile().ordinal(),
+                    Rotation.rotationToDegrees(hintTileOriginal.getRotation()));
             return(true);
         } else { //Spielfeld wurde nicht geloest
             //Fehler, das das Spielfeld nicht loesbar ist
@@ -392,7 +393,7 @@ public class Game {
      * Das geht solange bis das Spielfeld loesbar ist oder jede Kombination versucht wurde
      * @return null falls das Spielfeld nicht geloest wurde, sonst die Kopie des Spielfelds welche geloest ist
      */
-    GameField solveGameFieldAsCopy(){
+    private GameField solveGameFieldAsCopy(){
         GameField gameField = this.gameField;
 
         Tiles clonedTiles = this.tiles.cloneGameTiles();
@@ -533,33 +534,50 @@ public class Game {
                                       Tile lastTileBeforeGoingBack){
         Tile tile = lastTileBeforeGoingBack;
         int startIndex = tile != null  && !tile.getTile().equals(TileNames.NNNN) ?
-                inputTiles.getTileIndex(tile) : 0; //der Index zum Start
+                inputTiles.getTileIndex(tile) : 0; //der Index zum Start des aktuell dort liegenden Spielsteins
         // oder 0 falls es ein Aufruf fuer ein leeres Feld ist
-        int startRotation = tile != null && !tile.getTile().equals(TileNames.NNNN) ?
-                tile.getRotation() + 90 : 0; //die Rotation des übergebenen
-        // Spielsteins zum Start oder 0 falls es ein Aufruf fuer ein leeres Feld ist
-        // +90, da dies die einmalige Drehung eines Spielsteins ist und somit kein Spielstein mehrmals getestet wird
+
+        Rotation startRotation = tile != null && !tile.getTile().equals(TileNames.NNNN) ?
+                tile.getRotation() : Rotation.R0; //die Rotation des übergebenen Spielsteins zum Start oder R0
+        // falls es ein Aufruf fuer ein leeres Feld ist
+
+        boolean firstIteration = true;
 
         for(int tileIndex = startIndex; tileIndex < inputTiles.getTiles().length; tileIndex++){ //jeden moeglichen
             // Spielstein vom startIndex bis zum ende
             tile = inputTiles.getTile(tileIndex);
             if(!tile.getIsLaid()) { //nur nicht gelegte Spielsteine nutzen‚
 
-                for (int rotation = startRotation; rotation < 360; rotation += 90) { //jede Rotation von der start Rotation an
-                    tile.rotateTile(); //den Spielstein rotieren
-                    inputGameField.layTile(pos.getX(), pos.getY(), tile);
+                if(startRotation != Rotation.R3) { //nur Rotationen durchlaufen sofern der Spielstein nicht schon die
+                    // letze Rotation aufweist bei Aufruf dieser Methode
+                    for (Rotation currRotation : Rotation.values()) {
 
-                    if (inputGameField.isGameFieldTileMatching(pos.getX(), pos.getY(), true)) { //pruefen ob
-                        // der neue Spielstein passt
-                        inputGameField.resetTile(pos.getX(), pos.getY());
-                        return (tile);
+                        //nur Rotation versuchen, wenn es sich um eine neue noch nicht probierte handelt; nur relevant
+                        // in der ersten Iteration, da diese bereits mit einem Index ungleich 0 starten koennte
+                        if (startRotation.ordinal() < currRotation.ordinal() //erster Durchlauf muss neue Rotation sein
+                                || tile.getTile().equals(TileNames.NNNN) //oder egal falls mit NNNN gestartet wird, da
+                                // hier garantiert eine neue Kombination versucht wird
+                                || !firstIteration //oder nicht erster durchlauf wodurch es auch garantiert eine neue
+                            // Kombination ist
+                                ) {
+
+                            tile.rotateTile(); //den Spielstein rotieren
+                            inputGameField.layTile(pos.getX(), pos.getY(), tile);
+
+                            if (inputGameField.isGameFieldTileMatching(pos.getX(), pos.getY(), true)) { //
+                                // pruefen ob der neue Spielstein passt
+                                inputGameField.resetTile(pos.getX(), pos.getY());
+                                return (tile);
+                            }
+                            inputGameField.resetTile(pos.getX(), pos.getY());
+                        }
                     }
-                    inputGameField.resetTile(pos.getX(), pos.getY());
                 }
-                startRotation = 0; //StartRotation wieder auf 0 Anfang setzen,
+                startRotation = Rotation.R0; //StartRotation wieder auf 0 Anfang setzen,
                 // da jetzt nicht mehr der uebergebene Spielstein getestet wird
                 tile.resetTileRotation();
             }
+            firstIteration = false;
         }
         return(null);
     }

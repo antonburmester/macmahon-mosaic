@@ -7,7 +7,7 @@ package logic;
  */
 public class Tile {
     private TileNames tile; //Nutzlast des Motivs des Spielsteins
-    private int rotation; //Nutzlast der Rotation des Spielsteins
+    private Rotation rotation; //Nutzlast der Rotation des Spielsteins
     private boolean isLaid; //Nutzlast ob der Spielstein liegt
 
     /**
@@ -15,20 +15,17 @@ public class Tile {
      * @param tile der bestimmte Spielstein
      */
     public Tile(TileNames tile){
-        this(tile, 0);
+        this(tile, Rotation.R0);
     }
 
     /**
      * Konstruktor welcher einen bestimmten Spielstein inklusive Rotation initialisiert
      * @param tile der bestimmte Spielstein
-     * @param rotation die Rotation des Spielsteins (0 = 0°; 3 = 270°)
+     * @param rotation die Rotation des Spielsteins (R0 = 0°; R3 = 270°)
      */
-    public Tile(TileNames tile, int rotation){
+    public Tile(TileNames tile, Rotation rotation){
         this.tile = tile;
-        this.rotation = 0;
-        for(int i = 0; i < rotation; i++){
-            this.rotateTile();
-        }
+        this.rotation = rotation;
     }
 
     /**
@@ -39,10 +36,10 @@ public class Tile {
         for(int i = 0; i < TileNames.values().length; i++){
             TileNames currTileName = TileNames.values()[i];
 
-            for(int r = 0; r < 360; r+=90){
-                if(getTileNameWithRotation(currTileName.name(), r).equals(tileName)){
+            for(Rotation currRotation : Rotation.values()){
+                if(getTileNameWithRotation(currTileName.name(), currRotation).equals(tileName)){
                     this.tile = currTileName;
-                    this.rotation = r;
+                    this.rotation = currRotation;
                     return;
                 }
             }
@@ -55,7 +52,7 @@ public class Tile {
      * @param rotation die Rotation des Spielsteins
      * @param isLaid ob der Spielstein auf dem Spielfeld liegt
      */
-    public Tile(TileNames tile, int rotation, boolean isLaid){
+    public Tile(TileNames tile, Rotation rotation, boolean isLaid){
         this.tile = tile;
         this.rotation = rotation;
         this.isLaid = isLaid;
@@ -89,7 +86,7 @@ public class Tile {
      * die Rotation des Spielsteins
      * @return die Rotation (0, 90, 180, 270)
      */
-    public int getRotation(){
+    public Rotation getRotation(){
         return(this.rotation);
     }
 
@@ -113,10 +110,12 @@ public class Tile {
      * @param input der String welcher rotiert werden soll
      * @return der Name des Spielsteins unter Berucksichtigung der Drehung
      */
-    public static String getTileNameWithRotation(String input, int rotation){
+    public static String getTileNameWithRotation(String input, Rotation rotation){
         StringBuilder sb = new StringBuilder(input);
 
-        for(int i = 0; i < rotation; i+=90){ // durchlaeuft 90 Grad schritte
+        for (Rotation currRotation : Rotation.values()) {
+            if (currRotation.ordinal() >= rotation.ordinal()) break; //nur bis zur gewuenschten Rotation
+            // uebergebenen Rotation
             sb.insert(0, sb.charAt(sb.length() - 1)); //fuegt das letzte Zeichen an den Anfang
             sb.deleteCharAt(sb.length() - 1); //entfernt das letzte Zeichen, da es wieder am Anfang ist
         }
@@ -186,7 +185,8 @@ public class Tile {
      * @return ob das Spielstueck als Randstueck genutzt werden kann (GGGG oder RRRR oder YYYY)
      */
     public boolean isTileBorderCompatible(){
-        return(this.tile.equals(TileNames.GGGG) || this.tile.equals(TileNames.RRRR) || this.tile.equals(TileNames.YYYY));
+        return(this.tile.equals(TileNames.GGGG) || this.tile.equals(TileNames.RRRR) || this.tile.equals(TileNames.YYYY))
+                ;
     }
 
     /**
@@ -200,9 +200,9 @@ public class Tile {
         Tile currTile;
         for(TileNames currTileName : TileNames.values()) { //durchlaeuft jeden Spielstein
             currTile = new Tile(currTileName); //initialisiert mit diesem Motiv eine Klasse des Spielsteins
-            for (int i = 0; i < 4; i++) { //durchlauft jede Rotation des Spielsteins
-                if(currTile.getTileNameWithRotation().equals(inputTileName)){ //prueft ob das Motiv des aktuellen Spielsteins
-                    // inklusive seiner Drehungen dem uebergebenen Spielstein gleicht
+            for(Rotation currRotation : Rotation.values()){ //durchlauft jede Rotation
+                if(currTile.getTileNameWithRotation().equals(inputTileName)){ //prueft ob das Motiv des aktuellen
+                    // Spielsteins inklusive seiner Drehungen dem uebergebenen Spielstein gleicht
                     result = currTile;
                     return(result);
                 }
@@ -216,7 +216,8 @@ public class Tile {
      * Methode welche den Spielstein um 90 Grad rechtsrum rotiert (den Wert modifiziert welcher die Rotation speichert)
      */
     public void rotateTile(){
-        this.rotation = this.rotation == 270 ? 0 : this.rotation + 90; //ternaerer Operator: wenn 270 Grad + 90 = 360
+        this.rotation = this.rotation == Rotation.R3 ? Rotation.R0
+                : Rotation.values()[this.rotation.ordinal() + 1]; //ternaerer Operator: wenn 270 Grad + 90 = 360
         // also wieder am Anfang deshalb 0
     }
 
@@ -224,7 +225,7 @@ public class Tile {
      * Metdhode welche die Rotation eines Spielsteins setzt
      * @param rotation die Rotation
      */
-    public void setTileRotation(int rotation){
+    public void setTileRotation(Rotation rotation){
         this.rotation = rotation;
     }
 
@@ -232,7 +233,7 @@ public class Tile {
      * Methode welche die Rotation des Spielsteins zuruecksetzt
      */
     public void resetTileRotation(){
-        this.rotation = 0;
+        this.rotation = Rotation.R0;
     }
 
     /**
@@ -262,8 +263,8 @@ public class Tile {
         for(int i = 0; i < TileNames.values().length; i++){
             TileNames currTileName = TileNames.values()[i];
 
-            for(int r = 0; r < 360; r+=90){
-                if(getTileNameWithRotation(currTileName.name(), r).equals(tileName)){
+            for(Rotation currRotation : Rotation.values()){ //durchlauft jede Rotation
+                if(getTileNameWithRotation(currTileName.name(), currRotation).equals(tileName)){
                     return(currTileName.name());
                 }
             }
@@ -277,11 +278,9 @@ public class Tile {
      */
     @Override
     public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("Normal Tile Name: ").append(this.getTileString()).append("\n");
-        sb.append("Tile Name with Rotation: ").append(this.getTileNameWithRotation()).append("\n");
-        sb.append("Tile Rotation: ").append(this.getRotation()).append("\n");
-        sb.append("Tile isLaid: ").append(this.getIsLaid()).append("\n");
-        return(sb.toString());
+        return("Normal Tile Name: " + this.getTileString() + "\n" +
+                "Tile Name with Rotation: " + this.getTileNameWithRotation() + "\n" +
+                "Tile Rotation: " + this.getRotation() + "\n" +
+                "Tile isLaid: " + this.getIsLaid() + "\n");
     }
 }

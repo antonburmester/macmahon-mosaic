@@ -25,7 +25,7 @@ public class GameTest {
                                       {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
-        System.out.println(game.getGameField().toString());
+        System.out.println(game.getGameFieldCopy().toString());
         assertTrue(game.isGameFieldSolvable());
     }
 
@@ -43,7 +43,7 @@ public class GameTest {
                                       {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
-        System.out.println(game.getGameField().toString());
+        System.out.println(game.getGameFieldCopy().toString());
         assertTrue(game.isGameFieldSolvable());
     }
 
@@ -61,7 +61,7 @@ public class GameTest {
                                      {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
-        System.out.println(game.getGameField().toString());
+        System.out.println(game.getGameFieldCopy().toString());
         assertTrue(game.isGameFieldSolvable());
     }
 
@@ -84,7 +84,7 @@ public class GameTest {
         };
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
-        System.out.println(game.getGameField().toString());
+        System.out.println(game.getGameFieldCopy().toString());
         assertTrue(game.isGameFieldSolvable());
     }
 
@@ -107,7 +107,7 @@ public class GameTest {
         };
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
-        System.out.println(game.getGameField().toString());
+        System.out.println(game.getGameFieldCopy().toString());
         assertTrue(game.isGameFieldSolvable());
     }
 
@@ -130,7 +130,7 @@ public class GameTest {
         };
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
-        System.out.println(game.getGameField().toString());
+        System.out.println(game.getGameFieldCopy().toString());
         assertTrue(game.isGameFieldSolvable());
     }
 
@@ -151,7 +151,7 @@ public class GameTest {
         };
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
-        System.out.println(game.getGameField().toString());
+        System.out.println(game.getGameFieldCopy().toString());
         assertFalse(game.isGameFieldSolvable());
     }
 
@@ -172,7 +172,7 @@ public class GameTest {
         };
 
         Game game = new Game(new FakeGUI(), gameFieldInput);
-        System.out.println(game.getGameField().toString());
+        System.out.println(game.getGameFieldCopy().toString());
         assertFalse(game.isGameFieldSolvable());
     }
 }

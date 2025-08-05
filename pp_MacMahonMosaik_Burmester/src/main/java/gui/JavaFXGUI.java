@@ -6,8 +6,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import logic.*;
 
-import java.util.Stack;
-
 /**
  * Klasse durch welche die Logik veraenderungen der GUI durchfuehren kann.
  * Die JavaFXGUI wird vom UserInterfaceController erzeugt und als Parameter an die Logik uebergeben.
@@ -24,11 +22,11 @@ public class JavaFXGUI implements GUIConnector {
 
     private final GridPane rightGridPane;
 
-    private VBox editorControls; //Nutzlast der Flaeche der Spielfeld groessen Bedienung
+    private final VBox editorControls; //Nutzlast der Flaeche der Spielfeld groessen Bedienung
 
-    private ImageView[] imageViews;
+    private final ImageView[] imageViews;
 
-    private StackPane[] holeStackPanes;
+    private final StackPane[] holeStackPanes;
 
     //die Kennungen der verschiedenen Drag and Drop Objekte
     public static final String ID_PIECE = "0";
@@ -133,7 +131,8 @@ public class JavaFXGUI implements GUIConnector {
                         //Bild von seinem vorherigen Ort (Parent) loesen falls es gebunden ist
                         StackPane parent = (StackPane) imageView.getParent();
                         if(parent != null) parent.getChildren().remove(imageView);
-                        imageView.setRotate(currTile.getRotation()); //Bild rotieren falls rotiert
+                        imageView.setRotate(Rotation.rotationToDegrees(currTile.getRotation())); //Bild rotieren bis
+                        // richtige Rotation erreicht wurde
                         //groesse des Bildes anpassen
                         imageView.setFitWidth(slotWidth);
                         imageView.setFitHeight(slotHeight);
@@ -154,7 +153,7 @@ public class JavaFXGUI implements GUIConnector {
                                     "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
                                             "; -fx-background-color: " + COLOR_HEX_CODE_RED + ";"; //rot
                             //leere Zelle am Rand
-                            default -> "-fx-border-color: black; -fx-border-width: " + + JavaFXGUI.BORDER_SIZE + ";";
+                            default -> "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";";
                         };
                         slotStackPane.setStyle(initialCellStyle);
                     }
@@ -189,7 +188,8 @@ public class JavaFXGUI implements GUIConnector {
                         ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Spielsteins
                         imageView.setFitWidth(JavaFXGUI.NOT_LAID_TILE_SIZE);
                         imageView.setFitHeight(JavaFXGUI.NOT_LAID_TILE_SIZE);
-                        imageView.setRotate(currTile.getRotation());
+                        imageView.setRotate(Rotation.rotationToDegrees(currTile.getRotation())); //Bild rotieren bis
+                        // richtige Rotation erreicht wurde
                         //Bild vom bisherigen Slot loesen falls es schonmal lag
                         if(imageView.getParent() != null){
                             StackPane slotStackPane = (StackPane) imageView.getParent();

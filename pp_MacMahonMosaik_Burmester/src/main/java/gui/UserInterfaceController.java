@@ -61,8 +61,24 @@ public class UserInterfaceController {
      */
     @FXML
     public void initialize() {
-        //luecke zwischen der Mitte und der rechten GridPane
-        BorderPane.setMargin(rightGridPane, new Insets(0, 0, 0, 10));
+        //Abstaende fuer die Spielfeldgroessen Auswahl (editorControls)
+        BorderPane.setMargin(this.editorControls, new Insets(10, 0, 10, 10)); //links Abstand zum
+        // Fensterrand; oben + unten Abstand zum Fensterrand sowie rechts Abstand zum mittleren Spielfeld (centerPane
+        // und GridPane) = 0, da dieser im Spielfeld gehandhabt ist, da das Spielfeld permanent sichtbar ist und die
+        // EditorControls nicht
+
+        //Abstaende fuer das mittlere Spielfeld (gridPane) welches auf der centerPane liegt
+        BorderPane.setMargin(this.centerPane, new Insets(10, 10, 10, 10)); //links Abstand zum
+        // Fensterrand sowie der Groessenverstellung; oben und unten Abstand zum Fensterrand; rechts Abstand zur
+        // Spielsteinauswahl
+
+        //Abstaende fuer die rechte Spielsteinauswahl (rightGridPane)
+        BorderPane.setMargin(this.rightGridPane, new Insets(10, 10, 10, 0)); //links Abstand zum
+        // Spielfeld = 0 da dieser schon in im Spielfeld (centerPane) gehandhabt wird; oben zum Menue; unten sowie
+        // rechts Abstand zum Fensterrand
+
+
+        //Spielfeld Groessenauswahl Bedienung initialisieren (Bereich 2 - 6; Start 2)
         this.userHeightInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
         this.userWidthInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
         this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane,
@@ -76,9 +92,9 @@ public class UserInterfaceController {
                 this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
         this.game = new Game(this.gui); //erstaufruf welcher das beispielspiel initialisiert
         Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
-            this.setupGUI(this.game.getGameField().getGameField()[0].length - 2,
-                this.game.getGameField().getGameField().length - 2);
-            this.game.setIsGameActive(true, true);
+            this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length - 2,
+                this.game.getGameFieldCopy().getGameField().length - 2);
+            this.game.setIsGameActive(true, true); //TODO move to Game class
         });
     }
 
@@ -101,9 +117,9 @@ public class UserInterfaceController {
                 if(editorControls.isManaged()){ //alle Spielsteine aus dem Spielfeld entfernen wenn Editormode
                     this.game.removeGameFieldTiles();
                 }
-                this.setupGUI(this.game.getGameField().getGameField()[0].length - 2,
-                        this.game.getGameField().getGameField().length - 2);
-                this.game.setIsGameActive(true, true);
+                this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length - 2,
+                        this.game.getGameFieldCopy().getGameField().length - 2);
+                this.game.setIsGameActive(true, true); //TODO move to game class
             }
         } catch (CustomException e){
             ErrorMessageHandler.showError(e);
@@ -118,7 +134,7 @@ public class UserInterfaceController {
             File file = openFileChooser(false);
             if(file != null) {
                 logic.GameData.saveGame(this.game.getGameFieldString(), file);
-                this.game.setIsGameActive(false, false);
+                this.game.setIsGameActive(false, false); //TODO move to Game class
             }
         } catch (CustomException e) {
             ErrorMessageHandler.showError(e);
@@ -374,7 +390,6 @@ public class UserInterfaceController {
                 GridPane droppedObjectSourceGridPane = (GridPane) droppedObjectParent.getParent(); //die
                 // GridPane aus welcher das Objekt kommt
                 GridPane droppedObjectTargetGridPane = (GridPane) inputStackPane.getParent();
-                boolean dropSuccess = false;
                 //woher das gedroppte Objekt kommt (x und y)
                 //droppedObjectParent, da das droppedObjet auf diesem liegt und
                 // getColumnIndex einen child der ersten Ebene braucht
@@ -693,8 +708,6 @@ public class UserInterfaceController {
     public StackPane[] loadHolesStackPanes(){
         //Anzahl der benoetigten Loecher da fuer jede Zelle die es im Spielfeld mehr gibt als Bilder ein Loch sein muss
         // -2 da Rand nicht beachtet
-        //int holesAmount = (this.gridPane.getColumnCount() - 2) * (this.gridPane.getRowCount() - 2) - 24;
-        //StackPane[] holeStackPanes = new StackPane[Math.max(holesAmount, 0)];
         StackPane[] holeStackPanes = new StackPane[JavaFXGUI.MAX_HOLES_AMOUNT];
         for(int i = 0; i < holeStackPanes.length; i++){ //soviele Loecher wie noetig
             StackPane holeStackPane = new StackPane();
