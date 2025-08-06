@@ -14,8 +14,9 @@ public class Tiles {
      * Konstruktor welcher diese Klasse mit allen Spielsteinen fuellt
      */
     public Tiles(){
-        this.tiles = new Tile[TileNames.values().length - 2];
-        for (int i = 0; i < TileNames.values().length - 2; i++) { //durchlaeuft alle Mosaiksteine bis auf HHHH und NNNN
+        this.tiles = new Tile[Game.TILE_AMOUNT_NO_HOLE_NO_EMPTY];
+        for (int i = 0; i < Game.TILE_AMOUNT_NO_HOLE_NO_EMPTY; i++) { //durchlaeuft alle Mosaiksteine bis auf HHHH und
+            // NNNN
             this.tiles[i] = new Tile(TileNames.values()[i]);
         }
     }
@@ -109,17 +110,15 @@ public class Tiles {
      * Methode welche die richtige Klasse aus den Spielsteinen sucht
      * Der Name muss uebereinstimmen und der Spielstein darf noch nicht gelegt worden sein
      * @param tileName der Name des Spielsteins inklusive Rotationen
-     * @return die Instanz welche zum uebergebenen Namen passt und die Rotationen werden gespeichert
+     * @return die Instanz welche zum uebergebenen Namen passt und die Rotationen werden gespeichert oder null
      */
     public Tile getTileByNameWithRotation(String tileName){
-        Tile resultTile = null;
         for(Tile currTile : this.tiles){ //jeden Spielstein durchlaufen
             Rotation originalRotation = currTile.getRotation(); //um die Rotation nach den versuchen zurueckzusetzen
             for(Rotation currRotation : Rotation.values()){ //jede Rotation durchlaufen
                 if(currTile.getTileNameWithRotation().equals(tileName)){ //wenn der Spielstein mit Rotation
                     // dem uebergebenen Namen gleicht
-                    resultTile = currTile;
-                    return(resultTile);
+                    return(currTile);
                 } else { //wenn der Spielstein nicht dem Namen gleicht
                     currTile.rotateTile(); //den Spielstein rotieren
                 }
@@ -128,7 +127,7 @@ public class Tiles {
             }
             currTile.setTileRotation(originalRotation);
         }
-        return(resultTile);
+        return(null);
     }
 
     /**

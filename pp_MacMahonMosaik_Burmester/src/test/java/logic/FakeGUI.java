@@ -20,7 +20,7 @@ public class FakeGUI implements GUIConnector{
      * @param status ob die rechte GridPane (Auswahl) zugreifbar sein soll
      */
     @Override
-    public void setDisableRightGridPane(boolean status) {
+    public void setDisableTileSelection(boolean status) {
 
     }
 
@@ -29,7 +29,7 @@ public class FakeGUI implements GUIConnector{
      * @param status ob das mittlere Spielfeld GridPane zugreifbar sein soll
      */
     @Override
-    public void setDisableMiddleGridPane(boolean status){
+    public void setDisableGameField(boolean status){
 
     }
 
@@ -47,7 +47,7 @@ public class FakeGUI implements GUIConnector{
      * @param tiles die verfuegbaren Spielsteine
      */
     @Override
-    public void displayNotUsedTiles(Tiles tiles) {
+    public void displaySelectionTiles(Tiles tiles) {
 
     }
 

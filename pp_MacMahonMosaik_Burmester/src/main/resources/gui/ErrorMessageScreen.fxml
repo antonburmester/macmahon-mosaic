@@ -5,15 +5,17 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<!-- FXML welche ein Fenster darstellt, welches Meldungen ausgibt
+ Autor: Anton Burmester -->
+
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ErrorMessageController"
       maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="350.0"
       alignment="CENTER" spacing="20.0">
-   <children>
-      <Label fx:id="txtLabel" contentDisplay="CENTER" text="Text" textAlignment="CENTER">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
-      <Button fx:id="okBtn" minHeight="20.0" minWidth="50.0" mnemonicParsing="false" onAction="#onYesClicked" text="Close" />
-   </children>
+   <Label fx:id="txtLabel" contentDisplay="CENTER" text="Text" textAlignment="CENTER">
+      <font>
+         <Font size="14.0"/>
+      </font>
+   </Label>
+   <Button fx:id="okBtn" minHeight="20.0" minWidth="50.0" mnemonicParsing="false" onAction="#onYesClicked"
+           text="Close"/>
 </VBox>

@@ -17,9 +17,21 @@ public class Game {
     private final Tiles tiles; //Nutzlast der Spielstein Instanz
     private boolean editorMode; //Nutzlast ob der EditorMode aktiv ist
 
+    //Logic Konstanten
+    public static int TILE_AMOUNT_NO_HOLE_NO_EMPTY = 24; //wieviele Spielsteine es gibt ohne Loch und nichts gelegt
+    public static int TILE_AMOUNT_COMPLETE = 26; //wieviele Spielsteine es gibt mit Loch und nichts gelegt
+
+    public static final int MIN_GAMEFIELD_SIZE_WITH_BORDER = 4;
+    public static final int MAX_GAMEFIELD_SIZE_WITH_BORDER = 8;
+
+    public static final int MIN_GAMEFIELD_SIZE_WITHOUT_BORDER = 2;
+    public static final int MAX_GAMEFIELD_SIZE_WITHOUT_BORDER = 6;
+
+
 
     /**
      * Konstruktor welcher ein neues leeres Spiel erzeugt
+     * (nur fuer Editor genutzt)
      * @param gui die GUI Instanz
      * @param heigth die Hoehe des Spielfelds (Breite inklusive Rand)
      * @param width die Breite des Spielfelds (Breite inklusive Rand)
@@ -34,6 +46,7 @@ public class Game {
     /**
      * Konstruktor welcher das Standard Spiel erstellt nutzt hierfür den Konstruktor welcher ein Spiel auf Grundlage
      * eines StringArrays erstellt
+     * (Defaultspiel)
      */
     public Game(GUIConnector gui){
         this(gui, new String[][] {{"NNNN", "NNGN", "NNGN", "NNNN"},
@@ -44,6 +57,7 @@ public class Game {
 
     /**
      * Konstruktor welcher ein Spiel auf Grundlage eines StringArrays erstellt
+     * (zum laden eines bestehenden Spielfelds)
      * @param gui die GUI Instanz
      * @param inputGameField das uebergebene Spielfeld als String
      */
@@ -107,7 +121,7 @@ public class Game {
         if(this.editorMode){ //wenn nun aktiviert
             this.removeGameFieldTiles();
             this.updateTiles();
-            this.gui.setDisableRightGridPane(true);
+            this.gui.setDisableTileSelection(true);
         }
         this.gui.displayEditorControls(this.editorMode); //Editor Elemente anzeigen oder nicht
     }
@@ -118,14 +132,14 @@ public class Game {
      */
     public void setIsGameActive(boolean isActive, boolean setUpGame){
         if(isActive && this.gameField.isGameFieldBorderSetted()) { //Spiel soll aktiv werden und Rand ist gesetzt
-            this.gui.setDisableRightGridPane(false);
-            this.gui.setDisableMiddleGridPane(false);
+            this.gui.setDisableTileSelection(false);
+            this.gui.setDisableGameField(false);
         } else if (isActive){ //Spiel soll aktiv werden  aber Rand ist nicht komplett gesetzt
-            this.gui.setDisableRightGridPane(true);
-            this.gui.setDisableMiddleGridPane(false);
+            this.gui.setDisableTileSelection(true);
+            this.gui.setDisableGameField(false);
             ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
         } else { //Spiel soll nicht aktiv werden
-            this.gui.setDisableRightGridPane(true);
+            this.gui.setDisableTileSelection(true);
             //this.gui.setDisableMiddleGridPane(true);
         }
     }
@@ -163,7 +177,7 @@ public class Game {
     public void updateTiles(){
         //Bilder, Loecher und Faerbungen anzeigen
         this.gui.displayGameFieldTiles(this.getGameFieldCopy());
-        this.gui.displayNotUsedTiles(this.getTilesCopy());
+        this.gui.displaySelectionTiles(this.getTilesCopy());
         this.highlightTileIfWrongPlaced();
     }
 

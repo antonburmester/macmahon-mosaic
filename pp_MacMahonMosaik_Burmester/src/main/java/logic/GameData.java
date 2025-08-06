@@ -78,32 +78,35 @@ public class GameData {
      * @return ob das jsonObject valide ist
      */
     private static boolean isJsonValid(JsonObject jsonObject){
-        boolean status = true;
 
         if(jsonObject.has("field")) { //Json Objekt hat ein Member namens field
             if(jsonObject.get("field").isJsonArray()){ //Member field ist vom Typ JsonArray
                 JsonArray field = jsonObject.getAsJsonArray("field");
                 //Hoehe des Spielfelds pruefen (Anzahl Zeilen)
-                if(field.size() < JavaFXGUI.MIN_GAMEFIELD_SIZE || field.size() > JavaFXGUI.MAX_GAMEFIELD_SIZE){
-                    status = false;
+                if(field.size() < Game.MIN_GAMEFIELD_SIZE_WITH_BORDER ||
+                        field.size() > Game.MAX_GAMEFIELD_SIZE_WITH_BORDER){
+
                     ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE));
+                    return(false);
                 }
                 for(JsonElement currRowElement : field){ // jede Zeile durchlaufen
                     JsonArray currRow = currRowElement.getAsJsonArray();
                     //Breite des Spielfelds jeder Reihe pruefen (Anzahl Spalten)
-                    if(currRow.size() < JavaFXGUI.MIN_GAMEFIELD_SIZE || currRow.size() > JavaFXGUI.MAX_GAMEFIELD_SIZE){
-                        status = false;
+                    if(currRow.size() < Game.MIN_GAMEFIELD_SIZE_WITH_BORDER ||
+                            currRow.size() > Game.MAX_GAMEFIELD_SIZE_WITH_BORDER){
+
                         ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE));
+                        return(false);
                     }
                 }
             } else { //kein JsonArray
-                status = false;
                 ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_WRONG_FIELD_TYPE));
+                return(false);
             }
         } else { //kein Feld namens field
-            status = false;
             ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_NO_FIELD));
+            return(false);
         }
-        return (status);
+        return(true);
     }
 }

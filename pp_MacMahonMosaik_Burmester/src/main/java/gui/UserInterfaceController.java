@@ -34,25 +34,30 @@ public class UserInterfaceController {
 
     private JavaFXGUI gui; //Nutzlast der GUI Instanz welche durch diese Klasse initialisiert wird
 
-    @FXML
-    private VBox editorControls; //Nutzlast der Flaeche der Spielfeld groessen Bedienung
-    @FXML
-    private Spinner<Integer> userHeightInput; //Nutzlast des Elements zur Auswahl der Spielfeldhoehe (+2)
-    @FXML
-    private Spinner<Integer> userWidthInput; //Nutzlast des Elements zur Auswahl der Spielfeldbreite (+2)
-
-    @FXML
-    private GridPane gridPane; //Nutzlast des mittleren Spielfelds
-
+    //das Fenster insgesamt
     @FXML
     private BorderPane borderPane; //BorderPane welche den Hintergrund des Fensters darstellt und das Fenster in
     // 5 Bereiche einteilt (links(editorControls), rechts(rightGridPane), oben(Menue Bar (keine Nutzlast dieser Klasse),
     //  unten(nichts), mitte(Spielfeld)
 
+    //Editor Bedienung (Links in der borderPane)
+    @FXML
+    private VBox editorControls; //Nutzlast der Flaeche auf welcher die Editor Controls liegen
+    @FXML
+    private Spinner<Integer> userHeightInput; //Nutzlast des Elements zur Auswahl der Spielfeldhoehe
+    @FXML
+    private Spinner<Integer> userWidthInput; //Nutzlast des Elements zur Auswahl der Spielfeldbreite
+
+    //Spielfeld (mittig in der borderPane)
     @FXML
     private Pane centerPane; //Nutzlast der Flaeche auf welchem das mittlere Spielfeld liegt um die Groesse abfragen zu
-    // koennen, weil dies mit der GridPane direkt probleme verursacht
+    // koennen und diese zu skalieren, weil dies mit der GridPane direkt probleme verursacht
+    @FXML
+    private GridPane gridPane; //Nutzlast des mittleren Spielfelds
 
+    //Spielsteinauswahl (rechts in der borderPane)
+    @FXML
+    private VBox rightVBox; //Nutzlast der rechten VBox in welcher die rightGridPane ist
     @FXML
     private GridPane rightGridPane; //Nutzlast der rechten Spielsteinauswahl
 
@@ -73,14 +78,23 @@ public class UserInterfaceController {
         // Spielsteinauswahl
 
         //Abstaende fuer die rechte Spielsteinauswahl (rightGridPane)
-        BorderPane.setMargin(this.rightGridPane, new Insets(10, 10, 10, 0)); //links Abstand zum
+        //BorderPane.setMargin(this.rightGridPane, new Insets(10, 10, 10, 0)); //links Abstand zum
         // Spielfeld = 0 da dieser schon in im Spielfeld (centerPane) gehandhabt wird; oben zum Menue; unten sowie
         // rechts Abstand zum Fensterrand
 
+        rightVBox.setPadding(new Insets(10, 10, 10, 0));
+
+
 
         //Spielfeld Groessenauswahl Bedienung initialisieren (Bereich 2 - 6; Start 2)
-        this.userHeightInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
-        this.userWidthInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 6, 2));
+        this.userHeightInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER, Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER,
+                Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER));
+
+        this.userWidthInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER, Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER,
+                Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER));
+
         this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane,
                 this.editorControls, this.loadImages(), this.loadHolesStackPanes());
 
@@ -92,8 +106,8 @@ public class UserInterfaceController {
                 this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
         this.game = new Game(this.gui); //erstaufruf welcher das beispielspiel initialisiert
         Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
-            this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length - 2,
-                this.game.getGameFieldCopy().getGameField().length - 2);
+            this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length,
+                this.game.getGameFieldCopy().getGameField().length);
             this.game.setIsGameActive(true, true); //TODO move to Game class
         });
     }
@@ -117,8 +131,8 @@ public class UserInterfaceController {
                 if(editorControls.isManaged()){ //alle Spielsteine aus dem Spielfeld entfernen wenn Editormode
                     this.game.removeGameFieldTiles();
                 }
-                this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length - 2,
-                        this.game.getGameFieldCopy().getGameField().length - 2);
+                this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length,
+                        this.game.getGameFieldCopy().getGameField().length);
                 this.game.setIsGameActive(true, true); //TODO move to game class
             }
         } catch (CustomException e){
@@ -162,9 +176,11 @@ public class UserInterfaceController {
     public void applyEditorChanges(){
         int height = this.userHeightInput.getValue();
         int width = this.userWidthInput.getValue();
-        if (height >= 2 && width >= 2 && height <= 6 && width <= 6) {
+        if (height >= Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER && width >= Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER &&
+                height <= Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER && width <= Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER) {
+
             this.game = new Game(this.gui, height, width);
-            this.setupGUI(width, height);
+            this.setupGUI(width + 2, height + 2);
         } else {
             ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
         }
@@ -176,10 +192,10 @@ public class UserInterfaceController {
      * @param height die Hoehe des Spielfelds
      */
     private void setupGUI(int width, int height){
-        this.addAllSlotsWithDropListenerGridPane(false, 3, 8); //rechte GP
-        this.updateGridPaneFormat(height + 2, width + 2);
-        this.addAllSlotsWithDropListenerGridPane(true, width + 2, height + 2); //mittlere GP
-        this.middleGridPaneHandleEdges();
+        this.addSlotsAndListenerEmptyFields(false, 3, 8); //rechte GP
+        this.updateGridPaneFormat(height, width);
+        this.addSlotsAndListenerEmptyFields(true, width, height); //mittlere GP
+        this.gameFieldGridPaneHandleEdges();
         centerPane.applyCss(); //centerPane css setzen bevor die Methode weiterlaeuft
         centerPane.layout(); //centerPane Layout setzen bevor die Methode weiterlaeuft
         this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
@@ -242,28 +258,30 @@ public class UserInterfaceController {
     }
 
     /**
-     * Methode welche die GridPanes mit Hintergrund Slots (StackPane) fuellt und ihnen ueber die dazugehoerigen Methdoen
-     * Listener gibt
+     * Methode welche die GridPanes (Spielfeld oder Spielsteinauswahl) mit Hintergrund Slots (StackPane) fuellt
+     * und ihnen ueber die dazugehoerigen Methdoen Listener gibt.
      * Die mittlere GridPane (Spielfeld): den mittleren Teil mit addDropListenerMiddleGridPane Listenern und den
-     * aeußeren randteil mit den addSlotListenerBorderGridPane Listenern
-     * Die rechte GridPane (Spielsteinauswahl): alles mit den addDropListenerRightGridPane Listenern
+     * aeußeren randteil mit den addSlotListenerBorderGridPane Listenern.
+     * Die rechte GridPane (Spielsteinauswahl): alles mit den addDropListenerRightGridPane Listenern.
      * @param middleGridPane ob die mittlere GridPane oder die rechte
      * @param xSize die x groeße des Spielfelds
      * @param ySize die y groeße des Spielfelds
      */
-    public void addAllSlotsWithDropListenerGridPane(boolean middleGridPane, int xSize, int ySize){
+    public void addSlotsAndListenerEmptyFields(boolean middleGridPane, int xSize, int ySize){
         for(int y = 0; y < ySize; y++) { //Hoehe durchlaufen
             for (int x = 0; x < xSize; x++) { //Breite durchlaufen
-                //nur Felder welche noch keine Slots haben, sollen neue mit Listenern bekommen
                 StackPane slotStackPane =
                         this.gui.getGridPaneCell(x, y, middleGridPane ? this.gridPane : this.rightGridPane);
+
                 if(slotStackPane == null) { //slot existiert noch nicht
                     slotStackPane = new StackPane(); //neuer Slot welcher die Listener bekommt
                     if (middleGridPane) { //mittlere GridPane (Spielfeld)
+
                         if (!GameField.isFieldEdge(x, y, xSize, ySize)) { //kein Eckstueck
                             slotStackPane.setStyle("-fx-background-color: transparent; -fx-border-color: black;" +
-                                    "-fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
+                                    "-fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";");
                         }
+
                         if (!GameField.isFieldBorder(x, y, xSize, ySize)) { //Feld gehoert zum mittleren Spielfeld
                             this.addDropListenerMiddleGridPane(slotStackPane); //Listener dem Slot anfuegen
                             slotStackPane.setUserData(JavaFXGUI.ID_PIECE); //damit man weiß was der Slot darstellt
@@ -272,27 +290,34 @@ public class UserInterfaceController {
                             slotStackPane.setUserData(JavaFXGUI.ID_BORDER);
                         }
                         this.gridPane.add(slotStackPane, x, y); //der mittleren GridPane den Slot hinzuefuegen
+
                     } else { //rechte GridPane (Spielsteinauswahl)
                         this.addDropListenerRightGridPane(slotStackPane); //Listener dem Slot anfuegen
                         slotStackPane.setUserData(JavaFXGUI.ID_PIECE);
                         this.rightGridPane.add(slotStackPane, x, y); //der rechten GridPane den Slot hinzuefuegen
                     }
-                } else { //Slot existiert schon
+
+                } else { //Slot existiert schon (nur fuer Spielfeld, da nur dieses veraendert werden kann)
                     if (middleGridPane) {
+
                         if(slotStackPane.getUserData().equals(JavaFXGUI.ID_BORDER) &&
                                 !GameField.isFieldBorder(x, y, xSize, ySize)){ //slot existiert schon und ist Rand aber
                             // nun nach den neuen massen (vergroesserung) kein Rand mehr sondern mittleres Spielfeld
+
                             this.removeListener(slotStackPane); //auch wenn einfach Listener ueberschrieben werden diese
                             // sauber null setzen (deaktivieren und loeschen)
                             this.addDropListenerMiddleGridPane(slotStackPane); //Spielfeld Listener dem Slot anfuegen
                             slotStackPane.setUserData(JavaFXGUI.ID_PIECE);
+
                         } else if(slotStackPane.getUserData().equals(JavaFXGUI.ID_PIECE) &&
                                 GameField.isFieldBorder(x, y, xSize, ySize)){ //slot exisitiert schon und ist Spielfeld
                             // aber nun nach den neuen massen (verkleinerung) kein Spielfeld mehr sondern Rand
+
                             this.removeListener(slotStackPane); //auch wenn einfach Listener ueberschrieben werden diese
                             // sauber null setzen (deaktivieren und loeschen)
                             this.addSlotListenerBorderGridPane(slotStackPane); //Listener dem Slot anfuegen
                             slotStackPane.setUserData(JavaFXGUI.ID_BORDER);
+
                         }
                     }
 
@@ -302,7 +327,7 @@ public class UserInterfaceController {
     }
 
     /**
-     * Methode welche alle in diesem Programm genutzen Listener auf null setzt also zuruecksetzt
+     * Methode welche alle in diesem Programm genutzen Listener einer Node auf null setzt also zuruecksetzt
      * @param node das Objekt von welchem die Listener zurueckgesetzt werden
      */
     private void removeListener(Node node){
@@ -322,8 +347,6 @@ public class UserInterfaceController {
             if(this.game.isEditorMode()) {
                 this.game.toggleBorderColor(GridPane.getColumnIndex(inputStackPane),
                         GridPane.getRowIndex(inputStackPane));
-                //ueberpruefen ob alle Spielsteine passen, sonst farblich markieren
-                this.game.highlightTileIfWrongPlaced();
             }
         });
     }
@@ -339,15 +362,18 @@ public class UserInterfaceController {
             Dragboard dragboard = event.getDragboard(); //der Inhalt der verschoben wird
             if (event.getGestureSource() != inputStackPane && dragboard.hasString()) {
                 if(inputStackPane.getChildren().isEmpty()) { //wenn das Feld NNNN ist also leer ist und keine Kinder hat
+                    // und somit frei fuer neues ist
 
                     //Drop wird nur akzeptiert wenn es sich um ein Spielstein handelt im nicht Editormode oder ein Loch
                     // oder Randstein im EditorMode
-                    if((!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)) ||
-                            (game.isEditorMode() && (dragboard.getString().startsWith(JavaFXGUI.ID_HOLE) ||
-                                    dragboard.getString().startsWith(JavaFXGUI.ID_BORDER)))){
-                        //hintergrund faerben und Rand setzen
+                    if((!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)) || //Spielstein
+                            (game.isEditorMode() && (dragboard.getString().startsWith(JavaFXGUI.ID_HOLE) || //Lochstein
+                                    // und EditorMode
+                                    dragboard.getString().startsWith(JavaFXGUI.ID_BORDER)))){ //Randstein und EditorMode
+
+                        //Hintergrund faerben und Rand setzen
                         inputStackPane.setStyle("-fx-background-color: pink; " +
-                                "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
+                                "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";");
                     }
                 }
             }
@@ -355,21 +381,23 @@ public class UserInterfaceController {
 
         //wenn ein Objekt vom Typ StackPane (Loch oder Spielstein) ueber den Slot war und wieder weggezogen wird
         inputStackPane.setOnDragExited(event -> {
-            //Hintergrund entfernen und Rand setzen
-            inputStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
+            //Hintergrund Farbe entfernen und Rand setzen
+            inputStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
+                    ";");
         });
 
         //wenn ein Objekt vom Typ StackPane (Loch oder Spielstein) ueber diesen Slot gezogen wird
         inputStackPane.setOnDragOver(event -> {
             Dragboard dragboard = event.getDragboard(); //der Inhalt der verschoben wird
-            if (event.getGestureSource() != inputStackPane && dragboard.hasString()) {
+            if (event.getGestureSource() != inputStackPane && dragboard.hasString()) { //nicht Bewegung im selben Feld
                 if(inputStackPane.getChildren().isEmpty()) { //wenn das Feld NNNN ist also leer ist und keine Kinder hat
 
                     //Drop wird nur akzeptiert wenn es sich um ein Spielstein handelt im nicht Editormode oder ein Loch
                     // oder Randstein im EditorMode
-                    if ((!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)) ||
-                            (game.isEditorMode() && (dragboard.getString().startsWith(JavaFXGUI.ID_HOLE) ||
-                                    dragboard.getString().startsWith(JavaFXGUI.ID_BORDER)))) {
+                    if((!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)) || //Spielstein
+                            (game.isEditorMode() && (dragboard.getString().startsWith(JavaFXGUI.ID_HOLE) || //Lochstein
+                                    // und EditorMode
+                                    dragboard.getString().startsWith(JavaFXGUI.ID_BORDER)))){ //Randstein und EditorMode
                         event.acceptTransferModes(TransferMode.MOVE); //Bild bewegung registrieren
                     }
                 }
@@ -381,16 +409,18 @@ public class UserInterfaceController {
         inputStackPane.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             if (db.hasString()) {
-                String inputString = db.getString();
+
                 Object droppedObject = event.getGestureSource(); //das gedroppte Objekt (Loch als StackPane oder
                 // Spielstein als ImageView)
                 Node droppedObjectNode = (Node) droppedObject; //das gedroppte Objekt als Node
-                StackPane droppedObjectParent = (StackPane) droppedObjectNode.getParent(); //die StackPane auf
+                StackPane droppedObjectParent = (StackPane) droppedObjectNode.getParent(); //die StackPane (Slot) auf
                 // welcher das gedroppte Objekt liegt
                 GridPane droppedObjectSourceGridPane = (GridPane) droppedObjectParent.getParent(); //die
                 // GridPane aus welcher das Objekt kommt
-                GridPane droppedObjectTargetGridPane = (GridPane) inputStackPane.getParent();
-                //woher das gedroppte Objekt kommt (x und y)
+                GridPane droppedObjectTargetGridPane = (GridPane) inputStackPane.getParent(); //die GridPane in welche
+                // das gedroppte Element soll
+
+                //woher das gedroppte Objekt kommt (Spielfeld oder Spielsteinauswahl)
                 //droppedObjectParent, da das droppedObjet auf diesem liegt und
                 // getColumnIndex einen child der ersten Ebene braucht
                 int sourceX = GridPane.getColumnIndex(droppedObjectParent);
@@ -398,15 +428,17 @@ public class UserInterfaceController {
                 //wohin das Objekt soll (x und y)
                 int targetX = GridPane.getColumnIndex(inputStackPane);
                 int targetY = GridPane.getRowIndex(inputStackPane);
-                // sonst Loch
+
                 if(droppedObjectSourceGridPane == this.gridPane){ //Objekt kommt vom Spielfeld
                     if(droppedObjectTargetGridPane == this.gridPane){ //Objekt soll in das Spielfeld
+                        //Methode der Game Klasse fuehrt Zug aus und aktualisiert falls noetig Grafik GUI
                         if(this.game.moveTileFromGamefieldToGameField(sourceX, sourceY, targetX, targetY)){
                             event.setDropCompleted(true);
                         }
                     }
                 } else { //Objekt kommt aus der rechten Spielstein Auswahl
                     if(droppedObjectTargetGridPane == this.gridPane){ //Objekt soll in das Spielfeld
+                        //Methode der Game Klasse fuehrt Zug aus und aktualisiert falls noetig GUI
                         if(this.game.moveTileFromNotLaidTilesToGameField(
                                 targetX, targetY, this.gui.getTileIndex(droppedObjectNode))){
                             event.setDropCompleted(true);
@@ -430,7 +462,7 @@ public class UserInterfaceController {
         // rechte GridPane braucht bezueglich ihrer Platzhalter eine groeße, da sonst sollte eine
         // ganze reihe frei sein, diese sich in ihrer Hoehe und oder Breite zusammenzieht
         inputStackPane.setPrefSize(JavaFXGUI.NOT_LAID_TILE_SIZE, JavaFXGUI.NOT_LAID_TILE_SIZE);
-        inputStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
+        inputStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";");
 
         //wenn ein Objekt vom Typ StackPane Spielstein ueber den Slot gezogen wird
         inputStackPane.setOnDragEntered(event -> {
@@ -442,16 +474,17 @@ public class UserInterfaceController {
                     if(!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)){
                         //hintergrund faerben und Rand setzen
                         inputStackPane.setStyle("-fx-background-color: pink; " +
-                                "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
+                                "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";");
                     }
                 }
             }
         });
 
-        //wenn ein Objekt vom Typ StackPane (Spielstein) ueber den Slot war und wieder weggezogen wird
+        //wenn ein Objekt vom Typ StackPane (Spielstein) ueber dem Slot war und wieder weggezogen wird
         inputStackPane.setOnDragExited(event -> {
             //Hintergrund entfernen und Rand setzen
-            inputStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";");
+            inputStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
+                    ";");
         });
 
         //wenn ein Objekt vom Typ StackPane (Spielstein) ueber diesen Slot gezogen wird
@@ -462,7 +495,7 @@ public class UserInterfaceController {
 
                     //Drag wird nur akzeptiert wenn es sich um ein Bild handelt im nicht EditorMode
                     if (!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)){
-                        event.acceptTransferModes(TransferMode.COPY_OR_MOVE); //Bild bewegung registrieren
+                        event.acceptTransferModes(TransferMode.MOVE); //Bild bewegung registrieren
                     }
                 }
             }
@@ -473,23 +506,23 @@ public class UserInterfaceController {
         inputStackPane.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             if (db.hasString()) {
-                String inputString = db.getString();
-                Object droppedObject = event.getGestureSource(); //das gedroppte Objekt (Spielstein als
-                // ImageView)
+
+                Object droppedObject = event.getGestureSource(); //das gedroppte Objekt (Spielstein als ImageView)
                 ImageView droppedImageView = (ImageView) droppedObject; //das gedroppte Objekt als Node
                 StackPane droppedImageViewParent = (StackPane) droppedImageView.getParent(); //die StackPane auf
                 // welcher das gedroppte Objekt liegt
                 GridPane droppedImageViewSourceGridPane = (GridPane) droppedImageViewParent.getParent(); //die
-                // GridPane aus welcher das Objekt kommt
-                GridPane droppedImageViewTargetGridPane = (GridPane) inputStackPane.getParent();
-                //woher das gedroppte Objekt kommt (x und y)
-                //droppedImageViewParent, da das droppedObjet auf diesem liegt und
+                // GridPane aus welcher das Objekt kommt (Spielfeld oder Spielsteinauswahl)
+                GridPane droppedImageViewTargetGridPane = (GridPane) inputStackPane.getParent(); //woher das Objekt
+                // kommt (Spielfeld GridPane oder Spielsteinauswahl GridPane)
+
                 // getColumnIndex einen child der ersten Ebene braucht
                 int sourceX = GridPane.getColumnIndex(droppedImageViewParent);
                 int sourceY = GridPane.getRowIndex(droppedImageViewParent);
 
                 if(droppedImageViewSourceGridPane == this.gridPane){ //Objekt kommt vom Spielfeld
                     if(droppedImageViewTargetGridPane == this.rightGridPane) { //Objekt soll zurueck in die Auswahl
+                        //Methode der Game Klasse fuehrt Zug aus und aktualisiert falls noetig GUI
                         if(this.game.moveTileFromGamefieldToNotLaidTileSelection(sourceX, sourceY))
                             event.setDropCompleted(true);
                     }
@@ -505,9 +538,9 @@ public class UserInterfaceController {
     /**
      * Methode welche die Ecken der mittleren GridPane unsichtbar und nicht klickbar macht
      * Sollte das Spielfeld vergroeßert werden, werden die vorherigen Ecken wieder sichtbar und klickbar gemacht und
-     * die neuen Ecken gehandlet
+     * die neuen Ecken unsichtbar und nicht klickbar.
      */
-    private void middleGridPaneHandleEdges(){
+    private void gameFieldGridPaneHandleEdges(){
         int xSize = this.gridPane.getColumnCount();
         int ySize = this.gridPane.getRowCount();
         for(int y = 0; y < ySize; y++) { //Hoehe durchlaufen
@@ -527,50 +560,59 @@ public class UserInterfaceController {
     }
 
     /**
-     * Methode welche die Form der GridPane anzeigt
-     * @param rows die neue hoehe des Spielfelds
-     * @param columns die neue Breite des Spielfelds
+     * Methode welche die Form der GridPane anzeigt und aktualisiert falls Spielfeld vergroessert oder verkleinert wird
+     * ohne bestehende Zeilen und Spalten falls es vergroessert wird zu loeschen.
+     * @param newRowAmount die neue hoehe des Spielfelds
+     * @param newColumsAmount die neue Breite des Spielfelds
      */
-    public void updateGridPaneFormat(int rows, int columns){
-        //Die Differenz der bestehenden GridSize Breite zur neuen
-        int widthGrowLoss = columns - gridPane.getColumnCount();
-        //Die Differenz der bestehenden GridSize Hoehe zur neuen
-        int heigthGrowLoss = rows - gridPane.getRowCount();
+    public void updateGridPaneFormat(int newRowAmount, int newColumsAmount){
+        int existingCols = this.gridPane.getColumnCount();
+        int existingRows = this.gridPane.getRowCount();
+
+        //die Differenz der bestehenden GridSize Breite zur neuen
+        int widthGrowLoss = newColumsAmount - existingCols;
+        //die Differenz der bestehenden GridSize Hoehe zur neuen
+        int heigthGrowLoss = newRowAmount - existingRows;
 
         gridPane.setMinSize(0, 0); //minimalgroeße der GridPane
 
-        double middleColWidthSizePercentage = 100 / (columns - 1.5d); //Breite der mittleren Felder
+        double middleColWidthSizePercentage = 100 / (newColumsAmount - 1.5d); //Breite der mittleren Felder
         double borderColWidthSizePercentage = middleColWidthSizePercentage / 4; //Breite der Rand Spalten Felder
-        double middleRowWidthSizePercentage = 100 / (rows - 1.5d); //Hoehe der mittleren Felder
+        double middleRowWidthSizePercentage = 100 / (newRowAmount - 1.5d); //Hoehe der mittleren Felder
         double borderRowWidthSizePercentage = middleRowWidthSizePercentage / 4; //Breite der Rand Zeilen Felder
 
         if(widthGrowLoss > 0){ //GirdPane soll groeßer bezueglich Breite werden (Spalten)
 
-            int existingCols = gridPane.getColumnCount();
-            for(int i = 0; i < columns; i++) { //von den bestehenden bis zur neuen Breite
+            for(int i = 0; i < newColumsAmount; i++) { //von den bestehenden bis zur neuen Breite
                 ColumnConstraints colConstraints;
                 if(i >= existingCols){ //wenn das Spaltenobjekt noch nicht existiert
+
                     colConstraints = new ColumnConstraints();
                     colConstraints.setHgrow(Priority.ALWAYS);
-                    gridPane.getColumnConstraints().add(i, colConstraints); //neue Constraints den Constraints
+                    gridPane.getColumnConstraints().add(i, colConstraints); //neue Constraint den Constraints
                     // hinzufuegen
+
                 } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
+                    // werden, da es an die neue groesse angepasst werden muss
                     colConstraints = gridPane.getColumnConstraints().get(i);
                 }
-                colConstraints.setPercentWidth((i == 0 || i == columns - 1) ? borderColWidthSizePercentage
+
+                colConstraints.setPercentWidth((i == 0 || i == newColumsAmount - 1) ? borderColWidthSizePercentage
                         : middleColWidthSizePercentage); //Ternaerer Operator: wenn linkeste oder rechteste Reihe dann
-                // eine schmale Zelle in Bezug auf die Breite sonst fuer die mittleren dicke Zellen
+                // eine schmale Zelle in Bezug auf die Breite sonst fuer die mittleren eine dicke Zellen
             }
         } else if(widthGrowLoss < 0){ //GirdPane soll kleiner bezueglich Breite werden (Spalten)
 
-            int existingCols = gridPane.getColumnCount();
             for(int i = existingCols - 1; i >= 0; i--) { //von den bestehenden bis zur neuen Breite
-                if(i >= columns){ //wenn die zu loeschenden Spalten erreicht wurden
+                if(i >= newColumsAmount){ //wenn die zu loeschenden Spalten erreicht wurden
                     gridPane.getColumnConstraints().remove(i); //bestehende Constraints aus den Constraints loeschen
                 } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
+                    // werden, da es an die neue groesse angepasst werden muss
+
                     ColumnConstraints colConstraints;
                     colConstraints = gridPane.getColumnConstraints().get(i);
-                    colConstraints.setPercentWidth((i == 0 || i == columns - 1) ? borderColWidthSizePercentage
+
+                    colConstraints.setPercentWidth((i == 0 || i == newColumsAmount - 1) ? borderColWidthSizePercentage
                             : middleColWidthSizePercentage); //Ternaerer Operator: wenn linkeste oder rechteste Reihe
                     // dann eine schmale Zelle in Bezug auf die Breite sonst fuer die mittleren dicke Zellen
                 }
@@ -579,51 +621,60 @@ public class UserInterfaceController {
 
         if(heigthGrowLoss > 0){ //GirdPane soll groeßer bezueglich Hoehe werden (mehr Zeilen)
 
-            int existingRows = this.gridPane.getRowCount();
-            for (int i = 0; i < rows; i++) {
+            for (int i = 0; i < newRowAmount; i++) {
                 RowConstraints rowConstraints;
                 if(i >= existingRows) { //wenn das Reihenobjekt noch nicht existiert
+
                     rowConstraints = new RowConstraints();
                     rowConstraints.setVgrow(Priority.ALWAYS);
                     gridPane.getRowConstraints().add(i, rowConstraints); //neue Constraints den Constraints
                     // hinzufuegen
+
                 } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
+                    // werden, da es an die neue groesse angepasst werden muss
                     rowConstraints = gridPane.getRowConstraints().get(i);
                 }
-                rowConstraints.setPercentHeight((i == 0 || i == rows - 1) ? borderRowWidthSizePercentage
+
+                rowConstraints.setPercentHeight((i == 0 || i == newRowAmount - 1) ? borderRowWidthSizePercentage
                         : middleRowWidthSizePercentage);//Ternaerer Operator: wenn oberste oder unterste Reihe dann eine
                 // schmale Zelle in Bezug auf die Hoehe sonst fuer die mittleren dicke Zellen
             }
         } else if(heigthGrowLoss < 0){ //GirdPane soll kleiner bezueglich Hoehe werden (weniger Zeilen)
 
-            int existingRows = gridPane.getRowCount();
             for(int i = existingRows - 1; i >= 0; i--) { //von den bestehenden bis zur neuen Hoehe
-                if(i >= rows){ //wenn die zu loeschenden Reihen erreicht wurden
+                if(i >= newRowAmount){ //wenn die zu loeschenden Reihen erreicht wurden
                     gridPane.getRowConstraints().remove(i); //bestehende Constraints aus den Constraints loeschen
                 } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
+
                     RowConstraints rowConstraints;
                     rowConstraints = gridPane.getRowConstraints().get(i);
-                    rowConstraints.setPercentHeight((i == 0 || i == rows - 1) ? borderRowWidthSizePercentage
+
+                    rowConstraints.setPercentHeight((i == 0 || i == newRowAmount - 1) ? borderRowWidthSizePercentage
                             : middleRowWidthSizePercentage);//Ternaerer Operator: wenn oberste oder unterste Reihe dann
                     // eine schmale Zelle in Bezug auf die Hoehe sonst fuer die mittleren dicke Zellen
                 }
             }
         }
-        //Lambda Ausdruck welcher alle Elemente der GridPane entfernt welche außerhalb ihrer Groeße liegen (bei
-        // verkleinerungen der GridPane)
+
+        //Lambda Ausdruck welcher alle Elemente der GridPane entfernt welche außerhalb ihrer Groeße liegen
+        // (bei verkleinerungen der GridPane)
         gridPane.getChildren().removeIf(node -> { //alle Elemente der GridPane sollen entfernt werden sofern return true
             Integer col = GridPane.getColumnIndex(node);
             Integer row = GridPane.getRowIndex(node);
-            col = (col == null) ? 0 : col;
-            row = (row == null) ? 0 : row;
-            return col >= columns || row >= rows; //ist True wenn ein Element groeßer als die neue Breite oder Hoehe ist
+            col = (col == null) ? 0 : col; //da getColumnIndex statt 0 null nutzt muss null mit 0 ersetzt werden
+            row = (row == null) ? 0 : row; //da getRowIndex statt 0 null nutzt muss null mit 0 ersetzt werden
+            return col >= newColumsAmount || row >= newRowAmount; //ist True wenn ein Element groeßer als die
+            // neue Breite oder neue Hoehe ist
         });
+
+        //Gesamtgroesse des neuen Spielfelds anpassen
         adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
     }
 
     /**
-     * Methode welche die mittlere Spielflaeche sowie die Bilder in den Zellen dieser an die Groeße anpasst
-     * @param gridPane Spielflaeche
+     * Methode welche die mittlere Spielflaeche sowie die Bilder in den Zellen dieser an die Groeße des Spielfelds
+     * anpasst
+     * @param gridPane Spielfeld
      * @param width Breite des mittleren Flaeche auf welcher die GridPane liegt
      * @param height Hoehe des mittleren Flaeche auf welcher die GridPane liegt
      */
@@ -631,13 +682,14 @@ public class UserInterfaceController {
         final int middleCols = gridPane.getColumnCount() - 2; //-2 da 2 Columns Rand sind
         final int middleRows = gridPane.getRowCount() - 2; //-2 da 2 Rows Rand sind
         //die aeußeren beiden Spalten/Reihen zaehlen zusammen nur als halbe Spalte/Reihe
+
         final double colCount = middleCols + 0.25d * 2; //0,5 da eine Randspalte 0,25 einer normalen ist und 0,5 da zwei
         final double rowCount = middleRows + 0.25d * 2; //0,5 da eine Randreihe 0,25 einer normalen ist und 0,5 da zwei
 
         double cellSize = Math.floor(Math.min(width / colCount, height / rowCount)); //die Zellengroeße abgerundet
 
         gridPane.setPrefSize(cellSize * colCount, cellSize * rowCount); //setzt diese Zellengroeße fuer GridPane
-        double cellSizeWithoutBorder = cellSize - JavaFXGUI.BORDER_SIZE * 2; //abzueglich der Randgroeße * 2,
+        double cellSizeWithoutBorder = cellSize - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2; //abzueglich der Randgroeße * 2,
         // da jede Zelle einen Rand hat
 
         //aktualisierung der Bildgroeßen und Abstaende
@@ -651,6 +703,7 @@ public class UserInterfaceController {
                     if(child instanceof ImageView imageView) {
                         //Groeße updaten
 
+                        //Breite und Hoehe anpassen
                         imageView.setFitWidth(cellSizeWithoutBorder);
                         imageView.setFitHeight(cellSizeWithoutBorder);
                     }
@@ -665,7 +718,7 @@ public class UserInterfaceController {
      * in der Reihenfolge des TileNames Enums gespeichert
      */
     private ImageView[] loadImages(){
-        ImageView[] imageViews = new ImageView[TileNames.values().length - 2]; //Laenge -2 da die TileNames
+        ImageView[] imageViews = new ImageView[Game.TILE_AMOUNT_NO_HOLE_NO_EMPTY];
         // NNNN und HHHH nicht geladen werden da sie kein Bild haben
         String imagePath;
         for(int i = 0; i < imageViews.length; i++){ //-2 weil HHHH und NNNN nicht als Bild vorhanden sind
@@ -675,6 +728,7 @@ public class UserInterfaceController {
 
             final int imageIndex = i;
 
+            //Listener (Drag und Rotation) hinzufuegen
             //Drag des Images
             currIndexImage.setOnDragDetected(event -> {
                 if (!this.game.isEditorMode()) { //kein EditorMode
@@ -715,6 +769,7 @@ public class UserInterfaceController {
 
             final int imageIndex = i;
 
+            //Drag Listener hinzufuegen
             holeStackPane.setOnDragDetected(event -> {
                 if (this.game.isEditorMode()) { //EditorMode
                     Dragboard db = holeStackPane.startDragAndDrop(TransferMode.MOVE);

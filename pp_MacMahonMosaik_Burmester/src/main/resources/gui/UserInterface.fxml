@@ -13,35 +13,37 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.control.Spinner?>
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.UserInterfaceController">
-    <top>
+
+<!-- FXML welche ein Fenster darstellt, welches das Spielfeld darstellt
+ Autor: Anton Burmester -->
+
+<!-- BorderPane ist der Hintergrund welcher das Fenster in 5 Bereiche einteilt.
+(Links: Editor Bedienung) (Oben: Menue) (Mitte: Spielfeld) (Unten: nichts) (rechts: Spielsteinauswahl) -->
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gui.UserInterfaceController">
+
+    <top> <!-- das Menue -->
         <MenuBar fx:id="menueBar" BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="Spiel">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#restartGame" text="Spiel neustarten" />
-                        <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Spielstand laden" />
-                        <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Spielstand speichern" />
-                        <MenuItem mnemonicParsing="false" onAction="#endGame" text="Spiel beenden" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Lösbarkeit">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#checkSolvability" text="Lösbarkeit prüfen" />
-                        <MenuItem mnemonicParsing="false" onAction="#layHint" text="Lösungstipp" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Editor">
-                    <items>
-                        <CheckMenuItem mnemonicParsing="false" onAction="#toggleEditorMode" text="Bearbeitungsmodus" />
-                    </items>
-                </Menu>
-            </menus>
+            <Menu mnemonicParsing="false" text="Spiel">
+                <MenuItem mnemonicParsing="false" onAction="#restartGame" text="Spiel neustarten"/>
+                <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Spielstand laden"/>
+                <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Spielstand speichern"/>
+                <MenuItem mnemonicParsing="false" onAction="#endGame" text="Spiel beenden"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Lösbarkeit">
+                <MenuItem mnemonicParsing="false" onAction="#checkSolvability" text="Lösbarkeit prüfen"/>
+                <MenuItem mnemonicParsing="false" onAction="#layHint" text="Lösungstipp"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Editor">
+                <CheckMenuItem mnemonicParsing="false" onAction="#toggleEditorMode" text="Bearbeitungsmodus"/>
+            </Menu>
         </MenuBar>
     </top>
 
-    <center>
-        <Pane fx:id="centerPane" BorderPane.alignment="CENTER">
+    <center> <!-- das Spielfeld -->
+        <Pane fx:id="centerPane" BorderPane.alignment="CENTER"> <!-- Spielfeld GridPane ist auf Pane, da man von der
+        Pane verlaesslich die groesse Abfragen kann und diese einfach skalieren kann -->
             <GridPane fx:id="gridPane" BorderPane.alignment="CENTER">
                 <columnConstraints>
                     <ColumnConstraints hgrow="ALWAYS"/>
@@ -52,21 +54,27 @@
             </GridPane>
         </Pane>
     </center>
-    <right>
-        <GridPane fx:id="rightGridPane" BorderPane.alignment="CENTER">
-            <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS"/>
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints vgrow="NEVER"/>
-            </rowConstraints>
-        </GridPane>
+
+    <right> <!-- die Spielsteinauswahl -->
+        <VBox fx:id="rightVBox" BorderPane.alignment="CENTER" prefHeight="Infinity" maxHeight="Infinity">
+            <GridPane fx:id="rightGridPane" BorderPane.alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="NEVER"/>
+                </rowConstraints>
+            </GridPane>
+        </VBox>
     </right>
-   <left>
-       <VBox fx:id="editorControls" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" spacing="10" visible="false" managed="false">
+
+   <left> <!-- die Editor Bedienung -->
+       <VBox fx:id="editorControls" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" spacing="10"
+             visible="false" managed="false">
            <Spinner fx:id="userHeightInput" prefWidth="100"/>
            <Spinner fx:id="userWidthInput" prefWidth="100"/>
            <Button fx:id="applyButton" text="Anwenden" onAction="#applyEditorChanges"/>
        </VBox>
    </left>
+
 </BorderPane>

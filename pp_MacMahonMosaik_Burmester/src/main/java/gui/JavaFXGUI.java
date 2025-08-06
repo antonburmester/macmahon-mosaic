@@ -29,23 +29,20 @@ public class JavaFXGUI implements GUIConnector {
     private final StackPane[] holeStackPanes;
 
     //die Kennungen der verschiedenen Drag and Drop Objekte
-    public static final String ID_PIECE = "0";
-    public static final String ID_HOLE = "1";
-    public static final String ID_BORDER = "2";
-    public static final String ID_Overlay_RED = "3";
+    static final String ID_PIECE = "0";
+    static final String ID_HOLE = "1";
+    static final String ID_BORDER = "2";
+    static final String ID_Overlay_RED = "3";
 
-    public static final int BORDER_SIZE = 2;
-    public static final double NOT_LAID_TILE_SIZE = 80;
+    static final int BORDER_SIZE_GRAPHICAL = 2;
+    static final double NOT_LAID_TILE_SIZE = 80;
 
-    public static final int MAX_HOLES_AMOUNT = 12;
-
-    public static final int MIN_GAMEFIELD_SIZE = 4;
-    public static final int MAX_GAMEFIELD_SIZE = 8;
+    static final int MAX_HOLES_AMOUNT = 12;
 
     //die HEX Farbkennungen des Randes damit die Randfarben den Spielsteinen gleichen
-    public static final String COLOR_HEX_CODE_GREEN = "#007F0E;";
-    public static final String COLOR_HEX_CODE_YELLOW = "#FFD800;";
-    public static final String COLOR_HEX_CODE_RED = "#B60000;";
+    static final String COLOR_HEX_CODE_GREEN = "#007F0E;";
+    static final String COLOR_HEX_CODE_YELLOW = "#FFD800;";
+    static final String COLOR_HEX_CODE_RED = "#B60000;";
 
     /**
      * Konstruktor welcher diese Klasse initialisiert
@@ -73,7 +70,7 @@ public class JavaFXGUI implements GUIConnector {
      * Methode welche ein bestehendes Spiel spielbar macht oder nicht ueber die rechte Spielstein Auswahl
      * @param status ob die rechte GridPane (Auswahl) zugreifbar sein soll
      */
-    public void setDisableRightGridPane(boolean status){
+    public void setDisableTileSelection(boolean status){
             this.rightGridPane.setDisable(status);
             this.rightGridPane.setOpacity(!status ? 1 : 0.7);
     }
@@ -82,7 +79,7 @@ public class JavaFXGUI implements GUIConnector {
      * Methode welche das mittlere Spielfeld deaktiviert oder aktiviert
      * @param status ob das mittlere Spielfeld GridPane zugreifbar sein soll
      */
-    public void setDisableMiddleGridPane(boolean status){
+    public void setDisableGameField(boolean status){
         this.gridPane.setDisable(status);
         this.gridPane.setOpacity(!status ? 1 : 0.7);
     }
@@ -110,9 +107,9 @@ public class JavaFXGUI implements GUIConnector {
                 StackPane slotStackPane = this.getGridPaneCell(x, y, this.gridPane); //der Slot des jeweiligen Feldes
 
                 //Groeße die die StackPane (Loch) oder des ImageView Element (Bild) bekommen soll
-                double slotWidth = slotStackPane.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
+                double slotWidth = slotStackPane.getWidth() - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2; //*2 da Rand links
                 // und rechts
-                double slotHeight = slotStackPane.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
+                double slotHeight = slotStackPane.getHeight() - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2;//*2 da Rand oben
                 // und unten
 
                 if(gameField.isFieldMiddleGamefield(x, y)) { //mittleres Spielfeld ohne Rand
@@ -144,16 +141,16 @@ public class JavaFXGUI implements GUIConnector {
                         //switch Statement welches je nach Randstein den Rand faerbt
                         String initialCellStyle = switch (currTile.getTile()) {
                             case TileNames.GGGG ->
-                                    "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
+                                    "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
                                             "; -fx-background-color: " + COLOR_HEX_CODE_GREEN + ";"; //Gruen
                             case TileNames.YYYY ->
-                                    "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
+                                    "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
                                             "; -fx-background-color: " + COLOR_HEX_CODE_YELLOW + ";"; //Gelb
                             case TileNames.RRRR ->
-                                    "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
+                                    "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
                                             "; -fx-background-color: " + COLOR_HEX_CODE_RED + ";"; //rot
                             //leere Zelle am Rand
-                            default -> "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";";
+                            default -> "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";";
                         };
                         slotStackPane.setStyle(initialCellStyle);
                     }
@@ -166,7 +163,7 @@ public class JavaFXGUI implements GUIConnector {
      * Methode welche alle verfuegbaren Spielsteine rechts neben dem Spielfeld anzeigt
      * @param tiles die verfuegbaren Spielsteine
      */
-    public void displayNotUsedTiles(Tiles tiles) {
+    public void displaySelectionTiles(Tiles tiles) {
         this.removeAllPiecesAndColouringsButLeaveSlots(this.rightGridPane); //Slots der rechten GridPane von ImageViews
         // (Spielsteine) bereinigen
         //Abstand zwischen den Spalten und Reihen
@@ -282,7 +279,7 @@ public class JavaFXGUI implements GUIConnector {
                 StackPane slotStackPane = this.getGridPaneCell(x, y, gridPane);
                 if (!GameField.isFieldEdge(x, y, width, height)) {
                     slotStackPane.setStyle("-fx-background-color: transparent; -fx-border-color: black;" +
-                            "-fx-border-width: " + JavaFXGUI.BORDER_SIZE + ";"); //den Stil zuruecksetzen
+                            "-fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";"); //den Stil zuruecksetzen
                 }
                 slotStackPane.getChildren().clear(); //alles entfernen (Loecher und Bilder)
             }
@@ -335,9 +332,9 @@ public class JavaFXGUI implements GUIConnector {
         StackPane movedTileTarget = this.getGridPaneCell(targetX, targetY, this.gridPane);
 
         //Groeße des gedroppten StackPane oder ImageView Elements anpassen
-        double slotWidth = movedTileTarget.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
+        double slotWidth = movedTileTarget.getWidth() - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2; //*2 da Rand links
         // und rechts
-        double slotHeight = movedTileTarget.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
+        double slotHeight = movedTileTarget.getHeight() - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2;//*2 da Rand oben
         // und unten
         movedTile.setFitWidth(slotWidth);
         movedTile.setFitHeight(slotHeight);
@@ -364,9 +361,9 @@ public class JavaFXGUI implements GUIConnector {
         StackPane movedTileTarget = this.getGridPaneCell(targetX, targetY, this.gridPane);
 
         //Groeße des gedroppten StackPane oder ImageView Elements anpassen
-        double slotWidth = movedTileTarget.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
+        double slotWidth = movedTileTarget.getWidth() - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2; //*2 da Rand links
         // und rechts
-        double slotHeight = movedTileTarget.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
+        double slotHeight = movedTileTarget.getHeight() - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2;//*2 da Rand oben
         // und unten
         if (movedTile instanceof StackPane stackPane) { //Loch StackPane
             stackPane.setPrefSize(slotWidth, slotHeight);
@@ -395,9 +392,9 @@ public class JavaFXGUI implements GUIConnector {
 
         //Groeße des gedroppten StackPane oder ImageView Elements anpassen
         if(movedTileTarget != null) {
-            double slotWidth = movedTileTarget.getWidth() - JavaFXGUI.BORDER_SIZE * 2; //*2 da Rand links
+            double slotWidth = movedTileTarget.getWidth() - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2; //*2 da Rand links
             // und rechts
-            double slotHeight = movedTileTarget.getHeight() - JavaFXGUI.BORDER_SIZE * 2;//*2 da Rand oben
+            double slotHeight = movedTileTarget.getHeight() - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2;//*2 da Rand oben
             // und unten
             movedTile.setFitWidth(slotWidth);
             movedTile.setFitHeight(slotHeight);
@@ -425,22 +422,20 @@ public class JavaFXGUI implements GUIConnector {
     public void setBorderColor(int targetX, int targetY, TileNames color){
         Pane targetPane = this.getGridPaneCell(targetX, targetY, this.gridPane);
 
-        String styleResultString;
+        String stringColor;
         switch(color){
             case TileNames.GGGG ->
-                    styleResultString = "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
-                            "; -fx-background-color: " + JavaFXGUI.COLOR_HEX_CODE_GREEN + ";"; //Gruen
+                    stringColor = JavaFXGUI.COLOR_HEX_CODE_GREEN; //Gruen
             case TileNames.YYYY ->
-                    styleResultString = "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
-                            "; -fx-background-color: " + JavaFXGUI.COLOR_HEX_CODE_YELLOW + ";"; //Gelb
+                    stringColor = JavaFXGUI.COLOR_HEX_CODE_YELLOW; //Gelb
             case TileNames.RRRR ->
-                    styleResultString = "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE +
-                            "; -fx-background-color: " + JavaFXGUI.COLOR_HEX_CODE_RED + ";"; //rot
+                    stringColor = JavaFXGUI.COLOR_HEX_CODE_RED; //rot
             //leere Zelle am Rand
-            default -> styleResultString = "-fx-border-color: black; -fx-border-width: " +
-                    JavaFXGUI.BORDER_SIZE + ";";
+            default -> stringColor = "transparent";
         }
-        targetPane.setStyle(styleResultString);
+
+        targetPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
+                "; -fx-background-color: " + stringColor + ";");
     }
 
     /**

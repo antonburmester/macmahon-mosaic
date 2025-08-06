@@ -33,8 +33,7 @@ public class Tile {
      * @param tileName der Name des Spielsteins (kann auch rotiert sein)
      */
     public Tile(String tileName){
-        for(int i = 0; i < TileNames.values().length; i++){
-            TileNames currTileName = TileNames.values()[i];
+        for(TileNames currTileName : TileNames.values()){
 
             for(Rotation currRotation : Rotation.values()){
                 if(getTileNameWithRotation(currTileName.name(), currRotation).equals(tileName)){
@@ -196,20 +195,18 @@ public class Tile {
      * @return die Klasse des erstellten Spielsteins
      */
     public static Tile getTileClassFromTileName(String inputTileName){
-        Tile result = null;
         Tile currTile;
         for(TileNames currTileName : TileNames.values()) { //durchlaeuft jeden Spielstein
             currTile = new Tile(currTileName); //initialisiert mit diesem Motiv eine Klasse des Spielsteins
             for(Rotation currRotation : Rotation.values()){ //durchlauft jede Rotation
                 if(currTile.getTileNameWithRotation().equals(inputTileName)){ //prueft ob das Motiv des aktuellen
                     // Spielsteins inklusive seiner Drehungen dem uebergebenen Spielstein gleicht
-                    result = currTile;
-                    return(result);
+                    return(currTile);
                 }
                 currTile.rotateTile(); //rotiert den Spielstein um 90 Grad
             }
         }
-        return(result);
+        return(null);
     }
 
     /**
@@ -237,32 +234,13 @@ public class Tile {
     }
 
     /**
-     * Methode welche zurueckgibt, ob ein String einem TileNames gleicht.
-     * Beim Rand gibt es die Besonderheit, das das Randstueck in meinem Code 4Buchstaben lang die Farbe hat aber in der
-     * Aufgabenstellung die Randstuecke nur 1 Stelle im String mit einer Farbe (G oder R oder Y) und 3 Stellen mit N
-     * @param tileString der String von welchem geprueft werden soll, ob es sich um einen Tile Spielstein handelt
-     * @param isBorder ob es sich bei dem geprueften String welcher ein Spielstein sein soll als Randstueck liegts
-     */
-    public void isStringTileValid(String tileString, boolean isBorder){
-        boolean isValid = false;
-        for(TileNames currTile : TileNames.values()){
-            if(currTile.toString().equals(tileString) ||
-                    (isBorder && (tileString.contains("G") || tileString.contains("Y") || tileString.contains("R")))){ //TODO pruefen das die Position stimmts
-                isValid = true;
-            }
-        }
-    }
-
-    /**
      * Methode welche aus einem String den dazugehoerigen TileNames zurueckgibt
      * Hierfuer werden alle TileNames namen durchlaufen und jeder Name in jeder Rotation getestet.
      * @param tileName der Name des Spielsteins (kann auch rotiert sein)
      * @return der unrotierte standard Name des Spielsteins
      */
     public static String getTileNamesString(String tileName){
-        for(int i = 0; i < TileNames.values().length; i++){
-            TileNames currTileName = TileNames.values()[i];
-
+        for(TileNames currTileName : TileNames.values()){ //durchlaeuft jeden Spielstein
             for(Rotation currRotation : Rotation.values()){ //durchlauft jede Rotation
                 if(getTileNameWithRotation(currTileName.name(), currRotation).equals(tileName)){
                     return(currTileName.name());

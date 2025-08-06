@@ -46,9 +46,12 @@ public class GameField {
                     Tile targetTile;
                     if (laidTileName.equals(TileNames.HHHH.name())) { //ein Loch gelegt
                         targetTile = new Tile(TileNames.HHHH);
+
                     } else if (laidTileName.equals(TileNames.NNNN.name())) { //nichts gelegt
                         targetTile = new Tile(TileNames.NNNN);
+
                     } else { //ein Spielstein gelegt
+
                         if (!this.isFieldBorder(widthIndex, heigthIndex)) { //wenn es sich um ein
                             // Spielfeldstueck handelt
                             targetTile = gameTiles.getTileByNameWithRotation(laidTileName);
@@ -56,11 +59,11 @@ public class GameField {
                             targetTile = new Tile(laidTileName);
                         }
                     }
-                    this.layTile(widthIndex, heigthIndex, targetTile);
+                    this.layTile(widthIndex, heigthIndex, targetTile); //Stein legen auf das Spielfeld
                 }
             }
-        } else {
-            this.placeGameFieldHoles();
+        } else { //falls kein valides Spiel geladen werden kann ein leeres erzeugen
+            this.placeGameFieldHoles(); //TODO lieber zurueckgeben, das Spielfeld nicht valide
         }
     }
 
@@ -74,8 +77,7 @@ public class GameField {
      */
     private boolean isInputStringGameFieldValid(String[][] stringGameField){
         String[][] inputCompatible = this.translateFromSpielstandsdatei(stringGameField); //der Input Logik Kompatibel
-        int[] tileCountArray = new int[TileNames.values().length];
-        System.out.println();
+        int[] tileCountArray = new int[Game.TILE_AMOUNT_COMPLETE];
         int height = inputCompatible.length;
         int width = inputCompatible[0].length;
         for(int y = 0; y < height; y++){
@@ -86,13 +88,15 @@ public class GameField {
                     return(false);
                 } else {
                     if(GameField.isFieldBorder(x, y, width, height)){ //Rand Position
-                        if(!Tile.isTileStringBorderLayable(tileName)) { //kein Randkompatibler Stein
-                            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES_BORDER));
+                        if(!Tile.isTileStringBorderLayable(tileName)) { //kein Randkompatibler Stein oder leer
+                            ErrorMessageHandler.showError(new CustomException(
+                                    CustomException.ERROR_INVALID_TILENAMES_BORDER));
                             return(false);
                         }
                     } else if(GameField.isFieldEdge(x, y, width, height)){ //Ecken
                         if(!Tile.isTileStringEdgeLayable(tileName)) { //kein Randkompatibler Stein
-                            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES_EDGE));
+                            ErrorMessageHandler.showError(new CustomException(
+                                    CustomException.ERROR_INVALID_TILENAMES_EDGE));
                             return(false);
                         }
                     } else {
@@ -103,17 +107,20 @@ public class GameField {
         }
         //die gezaehlte Anzahl ueberpruefen
         for(int i = 0; i < tileCountArray.length; i++){
-            if(i < TileNames.values().length - 2){ //Spielsteine ohne Loecher und Nichts gelegt auf Anzahl pruefen 0-1
+            if(i < Game.TILE_AMOUNT_NO_HOLE_NO_EMPTY){ //Spielsteine ohne Loecher und Nichts gelegt auf Anzahl pruefen
+                // 0-1
                 if(tileCountArray[i] > 1){ //mindestens ein mittlerer Spielfeld Stein liegt mehr als einmal
-                    ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN));
+                    ErrorMessageHandler.showError(new CustomException(
+                            CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN));
                     return(false);
                 }
-            } else if(i == TileNames.values().length - 2){ //Loecher auf Anzahl pruefen
+            } else if(i == TileNames.HHHH.ordinal()){ //Loecher auf Anzahl pruefen
                 if(tileCountArray[i] != GameField.calcNeededHoles(width, height)){ //falsche Anzahl an Loechern
-                    ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_HOLE));
+                    ErrorMessageHandler.showError(new CustomException(
+                            CustomException.ERROR_MIDDLEGAMEFIELD_HOLE));
                     return(false);
                 }
-            } //Leer muss nicht geprueft werden
+            } //Leer (NNNN) muss nicht geprueft werden
         }
         return(true);
     }

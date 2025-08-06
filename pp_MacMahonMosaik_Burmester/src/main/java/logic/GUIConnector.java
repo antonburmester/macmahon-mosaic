@@ -16,13 +16,13 @@ public interface GUIConnector {
      * Methode welche ein bestehendes Spiel spielbar macht oder nicht ueber die rechte Spielstein Auswahl
      * @param status ob die rechte GridPane (Auswahl) zugreifbar sein soll
      */
-    void setDisableRightGridPane(boolean status);
+    void setDisableTileSelection(boolean status);
 
     /**
      * Methode welche das mittlere Spielfeld deaktiviert oder aktiviert
      * @param status ob das mittlere Spielfeld GridPane zugreifbar sein soll
      */
-    void setDisableMiddleGridPane(boolean status);
+    void setDisableGameField(boolean status);
 
     /**
      * Methode welche die GridPane fuellt
@@ -34,7 +34,7 @@ public interface GUIConnector {
      * Methode welche alle verfuegbaren Spielsteine rechts neben dem Spielfeld anzeigt
      * @param tiles die verfuegbaren Spielsteine
      */
-    void displayNotUsedTiles(Tiles tiles);
+    void displaySelectionTiles(Tiles tiles);
 
     /**
      * Methode welche Spielsteine falls sie falsch gelegt wurden rot umrandet und dies wieder rueckgaengig machen kann

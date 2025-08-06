@@ -30,37 +30,41 @@ public class ErrorMessageHandler {
                     " Kann keinen naechsten Spielstein als Hilfe legen, da Spielfeld nicht loesbar!";
 
             case CustomException.ERROR_WINDOW_OPEN ->
-                    "Fehler " + exception.getErrorOrMessageCode() + " : Fenster konnte nicht geladen/ geoeffnet werden!";
+                    "Fehler " + exception.getErrorOrMessageCode() + " : Fenster konnte nicht geladen/ geoeffnet werden!"
+                    ;
             case CustomException.ERROR_INVALID_FILE ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Keine gueltige Datei ausgewaehlt!";
             case CustomException.ERROR_FILE_READ_FAILED ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Datei konnte nicht gelesen werden!";
             case CustomException.ERROR_INVALID_JSON_STRUCTURE ->
-                    "Fehler " + exception.getErrorOrMessageCode() + " : Der Inhalt der Datei entspricht nicht der notwendigen " +
-                            "Json Struktur!";
+                    "Fehler " + exception.getErrorOrMessageCode() + " : Der Inhalt der Datei entspricht nicht der " +
+                            "notwendigen Json Struktur!";
             case CustomException.ERROR_INVALID_TILENAMES ->
-                    "Fehler " + exception.getErrorOrMessageCode() + " : Mindestens ein Feld der Datei entspricht nicht den " +
-                            "Spielstein Namen!";
+                    "Fehler " + exception.getErrorOrMessageCode() + " : Mindestens ein Feld der Datei entspricht " +
+                            "nicht den Spielstein Namen!";
             case CustomException.ERROR_INVALID_TILENAMES_BORDER ->
-                    "Fehler " + exception.getErrorOrMessageCode() + " : Mindestens ein Stein auf dem Rand der kein Randstein " +
-                            "ist!";
+                    "Fehler " + exception.getErrorOrMessageCode() + " : Mindestens ein Stein auf dem Rand der kein " +
+                            "Randstein ist!";
             case CustomException.ERROR_INVALID_TILENAMES_EDGE ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Mindestens eine Ecke heisst nicht NNNN!";
             case CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN ->
-                    "Fehler " + exception.getErrorOrMessageCode() + " : Mindestens ein mittlerer Spielstein liegt doppelt!";
+                    "Fehler " + exception.getErrorOrMessageCode() + " : Mindestens ein mittlerer Spielstein liegt " +
+                            "doppelt!";
             case CustomException.ERROR_MIDDLEGAMEFIELD_HOLE ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Falsche Anzahl an Loechern im Spielfeld!";
             case CustomException.ERROR_INVALID_JSON_GAME_SIZE ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Falsche JSON Spielfeldgroeße! 4x4 - 8x8 " +
                             "(inklusive Raendern)";
             case CustomException.ERROR_INVALID_JSON_WRONG_FIELD_TYPE ->
-                    "Fehler " + exception.getErrorOrMessageCode() + " : JSON field Attribut vorhanden aber nicht vom Typ Array!";
+                    "Fehler " + exception.getErrorOrMessageCode() + " : JSON field Attribut vorhanden aber nicht vom " +
+                            "Typ Array!";
             case CustomException.ERROR_INVALID_JSON_NO_FIELD ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : JSON field Attribut nicht vorhanden!";
             case CustomException.ERROR_INVALID_GAME_SIZE ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Falsche Spielfeldgroeße! 2x2 - 6x6";
             case CustomException.ERROR_NO_GAME_OPEN ->
-                    "Fehler " + exception.getErrorOrMessageCode() + " : Kein Spiel aktiv! Erstelle oder Lade ein Spiel.";
+                    "Fehler " + exception.getErrorOrMessageCode() + " : Kein Spiel aktiv! Erstelle oder Lade ein Spiel."
+                    ;
             case CustomException.ERROR_BORDER_NOT_SETTED ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Mindestens ein Rand Feld ist nicht gefaerbt.";
             case CustomException.ERROR_EDITOR_MODE_ON ->
@@ -70,7 +74,8 @@ public class ErrorMessageHandler {
         };
         //Mit dem Text ein Fehler Fenster aufrufen
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(ErrorMessageHandler.class.getResource("ErrorMessageScreen.fxml")); //eine FXML
+            FXMLLoader fxmlLoader = new FXMLLoader(ErrorMessageHandler.class.getResource(
+                    "ErrorMessageScreen.fxml")); //eine FXML
             // Instanz laden
             Parent messageBildschirmInhalt = fxmlLoader.load(); //den Inhalt der FXML Instanz laden
 
