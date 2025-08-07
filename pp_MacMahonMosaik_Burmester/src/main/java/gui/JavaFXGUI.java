@@ -175,26 +175,23 @@ public class JavaFXGUI implements GUIConnector {
         for (Tile currTile : tiles.getTiles()) { //durchlaeuft jeden Spielstein
 
             //da NNNN und HHHH nicht legbar sind, sollen sie auch nicht in der Auswahl auftauchen
-            if(!(!currTile.getIsLaid() &&
-                    (currTile.getTile() == TileNames.NNNN || currTile.getTile() == TileNames.HHHH))) {
+            if(!(currTile.getTile() == TileNames.NNNN || currTile.getTile() == TileNames.HHHH)) {
 
-                if (!currTile.getIsLaid()) {
-                    String tileName = currTile.getTileString();
-                    if (currTile.isNormalGameTile()) { //wenn nicht NNNN und HHHH da diese kein Bild haben
-                        int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
-                        ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Spielsteins
-                        imageView.setFitWidth(JavaFXGUI.NOT_LAID_TILE_SIZE);
-                        imageView.setFitHeight(JavaFXGUI.NOT_LAID_TILE_SIZE);
-                        imageView.setRotate(Rotation.rotationToDegrees(currTile.getRotation())); //Bild rotieren bis
-                        // richtige Rotation erreicht wurde
-                        //Bild vom bisherigen Slot loesen falls es schonmal lag
-                        if(imageView.getParent() != null){
-                            StackPane slotStackPane = (StackPane) imageView.getParent();
-                            slotStackPane.getChildren().remove(imageView);
-                        }
-                        StackPane slotStackPane = this.getGridPaneCell(col, row, this.rightGridPane); //Slot des Feldes
-                        slotStackPane.getChildren().add(imageView);
+                String tileName = currTile.getTileString();
+                if (currTile.isNormalGameTile()) { //wenn nicht NNNN und HHHH da diese kein Bild haben
+                    int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
+                    ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Spielsteins
+                    imageView.setFitWidth(JavaFXGUI.NOT_LAID_TILE_SIZE);
+                    imageView.setFitHeight(JavaFXGUI.NOT_LAID_TILE_SIZE);
+                    imageView.setRotate(Rotation.rotationToDegrees(currTile.getRotation())); //Bild rotieren bis
+                    // richtige Rotation erreicht wurde
+                    //Bild vom bisherigen Slot loesen falls es schonmal lag
+                    if(imageView.getParent() != null){
+                        StackPane slotStackPane = (StackPane) imageView.getParent();
+                        slotStackPane.getChildren().remove(imageView);
                     }
+                    StackPane slotStackPane = this.getGridPaneCell(col, row, this.rightGridPane); //Slot des Feldes
+                    slotStackPane.getChildren().add(imageView);
                 }
                 //Verwaltung fuer Reihen und Spalten
                 col++; //nach jedem durchlauf in die naechste Zeile

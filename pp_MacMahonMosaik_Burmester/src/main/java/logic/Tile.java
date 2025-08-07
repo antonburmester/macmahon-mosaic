@@ -8,7 +8,6 @@ package logic;
 public class Tile {
     private TileNames tile; //Nutzlast des Motivs des Spielsteins
     private Rotation rotation; //Nutzlast der Rotation des Spielsteins
-    private boolean isLaid; //Nutzlast ob der Spielstein liegt
 
     /**
      * Konstruktor welcher einen bestimmten Spielstein ohne bestimmte Rotation initialisiert
@@ -46,23 +45,11 @@ public class Tile {
     }
 
     /**
-     * Konstruktor welcher einen Spielstein mit allen Tile Werten initialisiert
-     * @param tile der bestimmte Spielstein
-     * @param rotation die Rotation des Spielsteins
-     * @param isLaid ob der Spielstein auf dem Spielfeld liegt
-     */
-    public Tile(TileNames tile, Rotation rotation, boolean isLaid){
-        this.tile = tile;
-        this.rotation = rotation;
-        this.isLaid = isLaid;
-    }
-
-    /**
      * Methode welche die Instanz eines Spielstein dupliziert
      * @return die Instanz als neue unabhaengige Instanz
      */
     public Tile cloneTile() {
-        return(new Tile(this.tile, this.rotation, this.isLaid));
+        return(new Tile(this.tile, this.rotation));
     }
 
     /**
@@ -90,14 +77,6 @@ public class Tile {
     }
 
     /**
-     * Getter welcher zurueckgibt ob der Spielstein gelegt wurde
-     * @return ob der Spielstein gelegt wurde
-     */
-    public boolean getIsLaid(){
-        return(this.isLaid);
-    }
-
-    /**
      * Methode welche den aktuellen Spielstein rotiert und durch die Methode getTileNameWithRotation
      */
     public String getTileNameWithRotation(){
@@ -120,14 +99,6 @@ public class Tile {
         }
 
         return(sb.toString());
-    }
-
-    /**
-     * Setter welcher Setzt dass ein Spielstein gelegt wurde oder nicht
-     * @param input ob der Spielstein gelegt wurde
-     */
-    public void setIsLaid(boolean input){
-        this.isLaid = input;
     }
 
     /**
@@ -251,6 +222,18 @@ public class Tile {
     }
 
     /**
+     * Methode welche den Index eines uebergebenen Spielsteins zurueckgibt
+     * @return der Index des Spielsteins; wenn nichts gefunden -1
+     */
+    public int getTileIndex(){
+        for(int i = 0; i < Game.TILE_AMOUNT_COMPLETE; i++){
+            if(TileNames.values()[i].equals(this.tile))
+                return(i);
+        }
+        return(-1);
+    }
+
+    /**
      * Methode welche die toString Methode fuer die Tile Klasse ueberschreibt
      * @return alle Nutzlasten im String
      */
@@ -258,7 +241,6 @@ public class Tile {
     public String toString(){
         return("Normal Tile Name: " + this.getTileString() + "\n" +
                 "Tile Name with Rotation: " + this.getTileNameWithRotation() + "\n" +
-                "Tile Rotation: " + this.getRotation() + "\n" +
-                "Tile isLaid: " + this.getIsLaid() + "\n");
+                "Tile Rotation: " + this.getRotation() + "\n");
     }
 }

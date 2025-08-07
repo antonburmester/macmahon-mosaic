@@ -2,8 +2,6 @@ package logic;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,7 +19,7 @@ public class TilesTest {
         Tiles tilesClass = new Tiles();
         boolean status = true;
         for(int i = 0; i < TileNames.values().length - 2; i++){ //-2 da kein NNNN und kein HHHH
-            if(!tilesClass.getTile(i).getTileString().equals(TileNames.values()[i].name())){
+            if(!tilesClass.getTileByTileNamesIndex(i).getTileString().equals(TileNames.values()[i].name())){
                 status = false;
             }
         }

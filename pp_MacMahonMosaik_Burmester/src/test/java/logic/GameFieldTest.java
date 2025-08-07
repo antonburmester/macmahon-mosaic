@@ -99,8 +99,7 @@ public class GameFieldTest {
         GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
-        Tiles cloneGameFieldTiles = new Tiles();
-        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
+        GameField clonedGameField = gameField.cloneGameField();
 
         //compare those two
         boolean status = true;
@@ -133,8 +132,7 @@ public class GameFieldTest {
         GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
-        Tiles cloneGameFieldTiles = new Tiles();
-        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
+        GameField clonedGameField = gameField.cloneGameField();
 
         //compare those two
         boolean status = true;
@@ -168,8 +166,7 @@ public class GameFieldTest {
         GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
-        Tiles cloneGameFieldTiles = new Tiles();
-        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
+        GameField clonedGameField = gameField.cloneGameField();
 
         //compare those two
         boolean status = true;
@@ -204,8 +201,7 @@ public class GameFieldTest {
         GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
-        Tiles cloneGameFieldTiles = new Tiles();
-        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
+        GameField clonedGameField = gameField.cloneGameField();
 
         //compare those two
         boolean status = true;
@@ -240,9 +236,7 @@ public class GameFieldTest {
         GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
 
         //Cloned GameField
-        Tiles cloneGameFieldTiles = new Tiles();
-        Tiles clonedHoleTiles = new Tiles(12);
-        GameField clonedGameField = gameField.cloneGameField(cloneGameFieldTiles);
+        GameField clonedGameField = gameField.cloneGameField();
 
         //compare those two
         boolean status = true;

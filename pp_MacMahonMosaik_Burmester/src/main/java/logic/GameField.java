@@ -60,6 +60,13 @@ public class GameField {
                         }
                     }
                     this.layTile(widthIndex, heigthIndex, targetTile); //Stein legen auf das Spielfeld
+                    //wenn mittleres Spielfeld und nicht NNNN
+                    if(!this.isFieldBorder(widthIndex, heigthIndex) && !targetTile.getTile().equals(TileNames.NNNN)){
+
+                        gameTiles.removeTile(targetTile); //Spielstein aus Spielsteinauswahl loeschen, da dieser
+                        // hiernach mit layTile() gelegt wird
+                    }
+
                 }
             }
         } else { //falls kein valides Spiel geladen werden kann ein leeres erzeugen
@@ -142,14 +149,36 @@ public class GameField {
     }
 
     /**
-     * Methode welche das Spielfeld mit nicht platzierten Feldern (NNNN) fuellt
+     * Methode welche das Spielfeld mit nicht platzierten Feldern (NNNN) fuellt und den Rand mit Rot gefaerbten
+     * Spielsteinen, damit der Rand schonmal gefaerbt ist
+     * //TODO MAYBE wieder nur NNNN
      */
     private void placeGameFieldEmpty(){
+        Tile tile;
         for(int y = 0; y < this.gameField.length; y++){
             for(int x = 0; x < this.gameField[y].length; x++){
-                this.gameField[y][x] = new Tile(TileNames.NNNN);
+                if(this.isFieldBorder(x, y) && ! this.isFieldEdge(x, y)){ //Rand aber nicht Ecke
+                    tile = new Tile(TileNames.RRRR);
+                } else { //mittleres Spielfeld und Ecke
+                    tile = new Tile(TileNames.NNNN);
+                }
+                this.gameField[y][x] = tile;
             }
         }
+    }
+
+    /**
+     * Methode welche prueft, ob der uebergebene Spielstein gelegt ist also im Spielfeld vorkommt.
+     * @param tile der gepruefte Spielstein
+     * @return ob der Spielstein vorkommt
+     */
+    public boolean isTileLaid(Tile tile){
+        for(int y = 1; y < this.gameField.length - 1; y++) { //jede Reihe des mittleren Spielfelds durchlaufen
+            for (int x = 1; x < this.gameField[y].length - 1; x++) { //jede Spalte des mittleren Spielfelds durchlaufen
+                if(this.getTile(x, y).equals(tile)) return(true); //wenn Spielstein vorkommt
+            }
+        }
+        return(false); //Spielstein ist nicht im Spielfeld -> nicht gelegt
     }
 
     /**
@@ -302,13 +331,11 @@ public class GameField {
         if(this.isFieldMiddleGamefield(xIndex, yIndex)){ //mittleres Feld des Spielfelds
             if(this.isFieldFieldFree(xIndex, yIndex)){ //ob das Feld frei ist
                 this.gameField[yIndex][xIndex] = tile;
-                tile.setIsLaid(true);
                 status = true;
             }
         } else if(this.isFieldBorder(xIndex, yIndex)){ //Rand Feld des Spielfelds
             if(tile.isTileBorderLayable()){ //ob der uebergebene Spielstein gueltig fuer den Rand ist
                 this.gameField[yIndex][xIndex] = tile;
-                tile.setIsLaid(true);
                 status = true;
             }
         }
@@ -318,18 +345,14 @@ public class GameField {
     /**
      * Methode welche ein Spielfeld Feld zuruecksetzt und den Status des Spielsteins des zurueckgesetzten Feldes auf
      * not Laid gesetzt wird
+     *
      * @param xIndex der Spaltenindex des Feldes
      * @param yIndex der Zeilenindex des Feldes
-     * @return ob das Spielfeld korrekt zurueckgesetzt werden konnte
      */
-    public boolean resetTile(int xIndex, int yIndex){
-        boolean status = false;
+    public void resetTile(int xIndex, int yIndex){
         if(this.isFieldGamefield(xIndex, yIndex)){
-            this.gameField[yIndex][xIndex].setIsLaid(false);
             this.gameField[yIndex][xIndex] = new Tile(TileNames.NNNN);
-            status = true;
         }
-        return(status);
     }
 
     /**
@@ -516,10 +539,9 @@ public class GameField {
 
     /**
      * Methode welche eine Kopie des Spielfelds erstellt
-     * @param copyGameFieldTiles die Instanz der Tiles Klasse der neuen Spielsteine welche im kopierten Feld liegen
      * @return die Kopie des Spielfelds
      */
-    public GameField cloneGameField(Tiles copyGameFieldTiles){
+    public GameField cloneGameField(){
         int width = this.gameField[0].length;
         int heigth = this.gameField.length;
         GameField copy = new GameField(heigth - 2, width - 2, false); //neue Instanz eines neuen Spielfelds
@@ -531,21 +553,9 @@ public class GameField {
             for(int x = 0; x < width; x++){ //Breitenindex
                 currNotCopyTile = this.getTile(x, y); //der aktuelle Stein welcher in das neue Spielfeld kopiert werden
                 // soll
-                if(this.isFieldMiddleGamefield(x, y)) { //nicht Randstueck -> Tiles sind einmalig (Refferenz wichtig)
-                    if (currNotCopyTile.isNormalGameTile()) { //normaler Spielstein
-                        //die kopie von dem aktuell im Spielfeld liegenden Spielstein
-                        copyTile = copyGameFieldTiles.getTileByNameWithRotation(currNotCopyTile.getTileNameWithRotation());
-                    } else if (currNotCopyTile.isHoleTile()) { //Loch
-                        copyTile = new Tile(TileNames.HHHH);
-                    } else { //nichts gelegt
-                        copyTile = new Tile(TileNames.NNNN);
-                    }
-                } else { //Randstueck, Ecken und Farbrand kann einfach mit neuen Tiles gefuellt werden (Refferenz egal)
-                    //if(this.isFieldBorder(x, y) && ! this.isFieldEdge(x, y))
-                    copyTile = new Tile(currNotCopyTile.getTile());
-                }
 
-
+                //aktuellen Stein klonen
+                copyTile = currNotCopyTile.cloneTile();
                 if(copyTile != null) {
                     copy.layTile(x, y, copyTile); //den Stein in das neue Spielfeld legen
                 }
