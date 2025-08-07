@@ -451,4 +451,12 @@ public class JavaFXGUI implements GUIConnector {
         return(null);
     }
 
+    /**
+     * Methode welche zurueckgibt, ob der EditorMode gerade aktiv ist oder nicht
+     * @return ob der Editormode aktiv ist
+     */
+    public boolean isEditorMode(){
+        return(this.editorControls.isManaged());
+    }
+
 }

@@ -82,4 +82,10 @@ public interface GUIConnector {
      * @param color die Farbe
      */
     void setBorderColor(int targetX, int targetY, TileNames color);
+
+    /**
+     * Methode welche zurueckgibt, ob der EditorMode gerade aktiv ist oder nicht
+     * @return ob der Editormode aktiv ist
+     */
+    boolean isEditorMode();
 }

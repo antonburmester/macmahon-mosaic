@@ -2,6 +2,7 @@ package logic;
 
 import gui.ErrorMessageHandler;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,6 @@ public class Game {
     // kommuniziert
     private final GameField gameField; //Nutzlast der Spielfeld Instanz
     private final Tiles tiles; //Nutzlast der Spielstein Instanz
-    private boolean editorMode; //Nutzlast ob der EditorMode aktiv ist
 
     //Logic Konstanten
     public static int TILE_AMOUNT_NO_HOLE_NO_EMPTY = 24; //wieviele Spielsteine es gibt ohne Loch und nichts gelegt
@@ -30,6 +30,10 @@ public class Game {
     public static final int MIN_GAMEFIELD_SIZE_WITHOUT_BORDER = 2;
     public static final int MAX_GAMEFIELD_SIZE_WITHOUT_BORDER = 6;
 
+    private static final String[][] DEFAULT_GAME =  {{"NNNN", "NNGN", "NNGN", "NNNN"},
+                                                     {"NGNN", "NNNN", "NNNN", "NNNG"},
+                                                     {"NRNN", "NNNN", "NNNN", "NNNR"},
+                                                     {"NNNN", "YNNN", "YNNN", "NNNN"}}; //Das Standard Spielfeld
 
 
     /**
@@ -41,7 +45,6 @@ public class Game {
      */
     public Game(GUIConnector gui, int heigth, int width){
         this.gui = gui;
-        this.editorMode = true;
         this.gameField = new GameField(heigth, width, true);
         this.tiles = new Tiles();
     }
@@ -52,19 +55,16 @@ public class Game {
      * (Defaultspiel)
      */
     public Game(GUIConnector gui){
-        this(gui, new String[][] {{"NNNN", "NNGN", "NNGN", "NNNN"},
-                                  {"NGNN", "NNNN", "NNNN", "NNNG"},
-                                  {"NRNN", "NNNN", "NNNN", "NNNR"},
-                                  {"NNNN", "YNNN", "YNNN", "NNNN"}});
+        this(gui, Game.DEFAULT_GAME);
     }
 
     /**
      * Konstruktor welcher ein Spiel auf Grundlage eines StringArrays erstellt
      * (zum laden eines bestehenden Spielfelds)
-     * @param gui die GUI Instanz
+     * @param gui die GUI Instanz mithilfe welcher die Game klasse mit dem graphischen Spielfeld interagiert
      * @param inputGameField das uebergebene Spielfeld als String
      */
-    public Game(GUIConnector gui, String[][] inputGameField){
+    Game(GUIConnector gui, String[][] inputGameField){
         this.gui = gui;
 
         this.tiles = new Tiles();
@@ -72,10 +72,39 @@ public class Game {
     }
 
     /**
+     * Konstruktor welcher auf Grundlage eines Dateipfads das dazugehoerige Spielfeld laedt
+     * @param gui die GUI Instanz mithilfe welcher die Game klasse mit dem graphischen Spielfeld interagiert
+     * @param fileWithPath der Dateipfad
+     */
+    public Game(GUIConnector gui, File fileWithPath) {
+        this.gui = gui;
+
+        Tiles tiles;
+        GameField gameField;
+
+        try { //versuchen das Spielfeld aus der Datei zu laden
+            String[][] inputStringGameField = GameData.loadGame(fileWithPath);
+            tiles = new Tiles();
+            gameField = new GameField(inputStringGameField, tiles);
+        } catch (CustomException e) { //Spielfeld konnte nicht aus der Datei geladen werden
+            ErrorMessageHandler.showError(e);
+            tiles = new Tiles();
+            gameField = new GameField(Game.DEFAULT_GAME, tiles);
+        }
+
+        this.tiles = tiles;
+        this.gameField = gameField;
+
+        if (this.isEditorMode()) { // alle Spielsteine aus dem Spielfeld entfernen, wenn Editormode
+            this.removeGameFieldTiles();
+        }
+    }
+
+    /**
      * Methode welche ein Spiel neustartet
      */
     public void restartGame(){
-        if(!this.editorMode) {
+        if(!this.isEditorMode()) {
             this.removeGameFieldTiles();
             this.updateTiles();
             this.setIsGameActive(true, true);
@@ -120,13 +149,13 @@ public class Game {
      * Zeigt dies auch visuell an
      */
     public void toggleEditorMode(){
-        this.editorMode = !this.editorMode; //Editor Mode umschalten
-        if(this.editorMode){ //wenn nun aktiviert
-            this.removeGameFieldTiles();
+        boolean toggledEditorMode = !this.isEditorMode();
+        this.gui.displayEditorControls(toggledEditorMode); //Editor Elemente anzeigen wenn nicht angezeigt und andersrum
+        if(toggledEditorMode){ //wenn nun aktiviert
+            this.removeGameFieldTiles(); //alle Steine die nicht Rand sind vom Spielfeld entfernen
             this.updateTiles();
-            this.gui.setDisableTileSelection(true);
+            this.gui.setDisableTileSelection(true); //Spielfeldauswahl deaktivieren
         }
-        this.gui.displayEditorControls(this.editorMode); //Editor Elemente anzeigen oder nicht
     }
 
     /**
@@ -241,7 +270,7 @@ public class Game {
         Tile tile = this.gameField.getTile(xStart, yStart);
         boolean status = true;
         //ob der Spielstein gefunden wurde und entweder ein normaler Stein ist oder der EditorMode aktiv und Loch Stein
-        if(tile != null && (tile.isNormalGameTile() || (this.editorMode && tile.isHoleTile()))){
+        if(tile != null && (tile.isNormalGameTile() || (this.isEditorMode() && tile.isHoleTile()))){
             if(this.gameField.isFieldMiddleGamefield(xTarget, yTarget) &&
                     this.gameField.isFieldFieldFree(xTarget, yTarget)){
                 this.gameField.layTile(xTarget, yTarget, tile); //Spielstein auf die neue Position des Spielfelds legen
@@ -272,7 +301,7 @@ public class Game {
         Tile tile = this.gameField.getTile(x, y);
         boolean status = true;
         //ob der Spielstein gefunden wurde und entweder ein normaler Stein ist oder der EditorMode aktiv und Loch Stein
-        if(tile != null && (tile.isNormalGameTile() || (this.editorMode && tile.isHoleTile()))){
+        if(tile != null && (tile.isNormalGameTile() || (this.isEditorMode() && tile.isHoleTile()))){
             this.gameField.resetTile(x, y); //Spielstein von der alten Position
             this.tiles.addTile(tile); //Spielstein der Auswahl wieder hinzufuegen
 
@@ -347,7 +376,7 @@ public class Game {
      * @return ob der EditorMode aktiv ist
      */
     public boolean isEditorMode(){
-        return(this.editorMode);
+        return(this.gui.isEditorMode());
     }
 
     /**

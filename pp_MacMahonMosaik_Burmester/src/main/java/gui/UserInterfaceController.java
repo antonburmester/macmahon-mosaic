@@ -84,8 +84,6 @@ public class UserInterfaceController {
 
         rightVBox.setPadding(new Insets(10, 10, 10, 0));
 
-
-
         //Spielfeld Groessenauswahl Bedienung initialisieren (Bereich 2 - 6; Start 2)
         this.userHeightInput.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
                 Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER, Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER,
@@ -123,20 +121,14 @@ public class UserInterfaceController {
      * Methode welche aus dem Menue aufgerufen wird um ein bestehendes Spiel zu laden
      */
     public void loadGame(){
-        try {
-            File file = openFileChooser(true);
-            if (file != null) {
-                String[][] field = logic.GameData.loadGame(file);
-                this.game = new Game(this.gui, field);
-                if(editorControls.isManaged()){ //alle Spielsteine aus dem Spielfeld entfernen wenn Editormode
-                    this.game.removeGameFieldTiles();
-                }
-                this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length,
-                        this.game.getGameFieldCopy().getGameField().length);
-                this.game.setIsGameActive(true, true); //TODO move to game class
-            }
-        } catch (CustomException e){
-            ErrorMessageHandler.showError(e);
+        File file = openFileChooser(true);
+        if (file != null) {
+            this.game = new Game(this.gui, file);
+            this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length,
+                    this.game.getGameFieldCopy().getGameField().length);
+            this.game.setIsGameActive(true, true); //TODO move to game class
+        } else {
+            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_FILE));
         }
     }
 

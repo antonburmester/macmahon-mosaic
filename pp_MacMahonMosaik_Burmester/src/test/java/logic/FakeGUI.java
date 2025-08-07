@@ -5,13 +5,24 @@ package logic;
  * @author Anton Burmester
  */
 public class FakeGUI implements GUIConnector{
+    boolean isEditorMode = false; //Nutzlast ob EditorMode aktiv ist, da wenn es eine GUI gibt in den Tests, man nicht
+    // darauf zugreifen kann, ob der EditorMode aktiv ist oder nicht
 
     /**
      * Methode welche die Spielfeld grossen Bedienung ein oder ausblendet
      */
     @Override
     public void displayEditorControls(boolean displayControls){
+        isEditorMode = displayControls;
+    }
 
+    /**
+     * Methode welche zurueckgibt, ob der EditorMode gerade aktiv ist oder nicht
+     * @return ob der Editormode aktiv ist
+     */
+    @Override
+    public boolean isEditorMode(){
+        return(isEditorMode);
     }
 
     /**
@@ -115,6 +126,7 @@ public class FakeGUI implements GUIConnector{
      * @param targetY die Hoehenkoordinate
      * @param color die Farbe
      */
+    @Override
     public void setBorderColor(int targetX, int targetY, TileNames color){
 
     }
