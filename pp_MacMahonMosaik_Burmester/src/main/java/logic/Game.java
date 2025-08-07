@@ -1,7 +1,9 @@
 package logic;
 
 import gui.ErrorMessageHandler;
+import javafx.application.Platform;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,11 +66,81 @@ public class Game {
      * @param gui die GUI Instanz
      * @param inputGameField das uebergebene Spielfeld als String
      */
-    public Game(GUIConnector gui, String[][] inputGameField){
+    Game(GUIConnector gui, String[][] inputGameField){
         this.gui = gui;
 
         this.tiles = new Tiles();
         this.gameField = new GameField(inputGameField, this.tiles);
+
+        Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
+            this.gui.setupGUI(this.getGameFieldCopy().getGameField()[0].length,
+                    this.getGameFieldCopy().getGameField().length);
+            this.setIsGameActive(true, true); //TODO move to Game class
+            this.gui.updateTiles(this.tiles.cloneGameTiles(), this.gameField.cloneGameField());
+        });
+    }
+
+    /**
+     * Methode welche ein Spiel aus einer Spielstandsdatei (FXML) laedt
+     */
+    public void loadGame(){
+        try {
+            File file = this.gui.openFileChooser(true);
+            if (file != null) {
+                String[][] field = logic.GameData.loadGame(file);
+                this.gameField.updateGameFieldSize(field[0].length, field.length);
+                if(this.isEditorMode()){ //alle Spielsteine aus dem Spielfeld entfernen wenn Editormode
+                    this.removeGameFieldTiles();
+                }
+                //this.setupGUI(this.getGameFieldCopy().getGameField()[0].length,
+                        //this.getGameFieldCopy().getGameField().length);
+                this.setIsGameActive(true, true); //TODO move to game class
+
+                Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
+                    this.gui.setupGUI(this.getGameFieldCopy().getGameField()[0].length,
+                            this.getGameFieldCopy().getGameField().length);
+                    this.setIsGameActive(true, true); //TODO move to Game class
+                });
+            }
+        } catch (CustomException e){
+            ErrorMessageHandler.showError(e);
+        }
+    }
+
+    /**
+     * Methode welche ein bestehendes Spiel in einer Spielstandsdatei (FXML) speichert
+     */
+    public void saveGame(){
+        try{
+            File file = this.gui.openFileChooser(false);
+            if(file != null) {
+                GameData.saveGame(this.getGameFieldString(), file);
+                this.setIsGameActive(false, false); //TODO move to Game class
+            }
+        } catch (CustomException e) {
+            ErrorMessageHandler.showError(e);
+        }
+    }
+
+    /**
+     * Methode welche das Spielfeld an die neue groesse anpasst
+     * @param width neue Breite
+     * @param height neue Hoehe
+     */
+    public void applyEditorChanges(int width, int height){
+        if (height >= Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER && width >= Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER &&
+                height <= Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER && width <= Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER) {
+
+            this.gameField.updateGameFieldSize(width + 2, height + 2);
+            Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
+                this.gui.setupGUI(this.getGameFieldCopy().getGameField()[0].length,
+                        this.getGameFieldCopy().getGameField().length);
+                this.setIsGameActive(true, true); //TODO move to Game class
+            });
+            //this.setupGUI(width + 2, height + 2);
+        } else {
+            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
+        }
     }
 
     /**
@@ -176,9 +248,7 @@ public class Game {
      * positioniert die Spielsteine zwischen Spielfeld und Auswahl, setzt die Loecher im Spielfeld und faerbt den Rand
      */
     public void updateTiles(){
-        //Bilder, Loecher und Faerbungen anzeigen
-        this.gui.displayGameFieldTiles(this.getGameFieldCopy());
-        this.gui.displaySelectionTiles(this.getTilesCopy());
+        this.gui.updateTiles(this.tiles.cloneGameTiles(), this.gameField.cloneGameField());
         this.highlightTileIfWrongPlaced();
     }
 

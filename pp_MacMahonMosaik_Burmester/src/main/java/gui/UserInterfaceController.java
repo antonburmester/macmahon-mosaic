@@ -12,14 +12,11 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import logic.CustomException;
 import logic.Game;
 import logic.GameField;
 import logic.TileNames;
 
-import java.io.File;
 import java.util.Objects;
 
 
@@ -101,15 +98,20 @@ public class UserInterfaceController {
         // ChangeListener hinzufuegen, damit sich die GridPane durch die Pane an die
         // Groeßenveraenderung der BorderPane anpasst
         this.centerPane.widthProperty().addListener((obs, oldVal, newVal) ->
-                this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
+                this.gui.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(),
+                        this.centerPane.getHeight()));
         this.centerPane.heightProperty().addListener((obs, oldVal, newVal) ->
-                this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
+                this.gui.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(),
+                        this.centerPane.getHeight()));
+
+        this.addSlotsAndListenerEmptyFields(false, 3, 8); //einmalig die Listener der rechten
+        // Spielsteinauswahl setzen, da diese das ganze Programm ueber gleich bleibt
+        this.gui.updateGridPaneFormat(4, 4); //Format des Graphischen Spielfelds anpassen
+        this.addSlotsAndListenerEmptyFields(true, 4, 4); //mittlere GridPane (Spielfeld) neue
+        // Listener setzen
+
+
         this.game = new Game(this.gui); //erstaufruf welcher das beispielspiel initialisiert
-        Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
-            this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length,
-                this.game.getGameFieldCopy().getGameField().length);
-            this.game.setIsGameActive(true, true); //TODO move to Game class
-        });
     }
 
     /**
@@ -123,36 +125,14 @@ public class UserInterfaceController {
      * Methode welche aus dem Menue aufgerufen wird um ein bestehendes Spiel zu laden
      */
     public void loadGame(){
-        try {
-            File file = openFileChooser(true);
-            if (file != null) {
-                String[][] field = logic.GameData.loadGame(file);
-                this.game = new Game(this.gui, field);
-                if(editorControls.isManaged()){ //alle Spielsteine aus dem Spielfeld entfernen wenn Editormode
-                    this.game.removeGameFieldTiles();
-                }
-                this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length,
-                        this.game.getGameFieldCopy().getGameField().length);
-                this.game.setIsGameActive(true, true); //TODO move to game class
-            }
-        } catch (CustomException e){
-            ErrorMessageHandler.showError(e);
-        }
+        this.game.loadGame();
     }
 
     /**
      * Methode welche aus dem Menue aufgerufen wird das aktuelle Spiel zu speichern
      */
     public void saveGame(){
-        try{
-            File file = openFileChooser(false);
-            if(file != null) {
-                logic.GameData.saveGame(this.game.getGameFieldString(), file);
-                this.game.setIsGameActive(false, false); //TODO move to Game class
-            }
-        } catch (CustomException e) {
-            ErrorMessageHandler.showError(e);
-        }
+        this.game.saveGame();
     }
 
     /**
@@ -176,31 +156,12 @@ public class UserInterfaceController {
     public void applyEditorChanges(){
         int height = this.userHeightInput.getValue();
         int width = this.userWidthInput.getValue();
-        if (height >= Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER && width >= Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER &&
-                height <= Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER && width <= Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER) {
 
-            this.game = new Game(this.gui, height, width);
-            this.setupGUI(width + 2, height + 2);
-        } else {
-            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
-        }
-    }
+        this.gui.updateGridPaneFormat(height, width); //Format des Graphischen Spielfelds anpassen
+        this.addSlotsAndListenerEmptyFields(true, width, height); //mittlere GridPane (Spielfeld) neue
+        // Listener setzen
 
-    /**
-     * Methode welche alle noetigen Grafik Methoden buendelt zum Anzeigen eines Spiels und aller noetigen Elemente
-     * @param width die Breite des Spielfelds
-     * @param height die Hoehe des Spielfelds
-     */
-    private void setupGUI(int width, int height){
-        this.addSlotsAndListenerEmptyFields(false, 3, 8); //rechte GP
-        this.updateGridPaneFormat(height, width);
-        this.addSlotsAndListenerEmptyFields(true, width, height); //mittlere GP
-        this.gameFieldGridPaneHandleEdges();
-        centerPane.applyCss(); //centerPane css setzen bevor die Methode weiterlaeuft
-        centerPane.layout(); //centerPane Layout setzen bevor die Methode weiterlaeuft
-        this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
-        this.gridPane.layout(); //centerPane Layout setzen bevor die Methode weiterlaeuft
-        this.game.updateTiles();
+        this.game.applyEditorChanges(width, height);
     }
 
     /**
@@ -217,44 +178,6 @@ public class UserInterfaceController {
      */
     public void layHint(){
         this.game.layHint();
-    }
-
-    /**
-     * Graphisches Dateisystem des Betriebssystems zum erstellen einer neuen Datei oder selektieren von einer
-     * @param selectFile ob eine Datei gesucht werden soll oder erstellt werden soll
-     * @return die Datei samt Dateipfad
-     */
-    public File openFileChooser(boolean selectFile) {
-        FileChooser fileChooser = new FileChooser();
-
-        //Startverzeichnis je nach Betriebssystem setzen. Getestet auf Windows, deshalb koennte man bei den anderen
-        // Betriebssystemen im Standardverzeichniss landen und nicht im gewuenschten
-        File initialDirectory = null;
-        String betriebssystemName = System.getProperty("os.name").toLowerCase();
-        if (betriebssystemName.contains("win")) { //Windows
-            initialDirectory = new File("pp_MacMahonMosaik_Burmester/src/main/resources/savedGames/");
-        } else if(betriebssystemName.contains("mac")) { //Mac
-            initialDirectory = new File("src/main/resources/savedGames/");
-        }
-
-        if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
-            fileChooser.setInitialDirectory(initialDirectory);
-        }
-
-        //Filter für Dateityp .json
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
-
-        //Stage aus dem Event holen da hierrueber ein Fenster goeffnet wird:
-        Stage stage = (Stage) this.centerPane.getScene().getWindow();
-
-        //Dateiauswahl Fenster oeffnen
-        File selectedFile;
-        if (selectFile) {
-            selectedFile = fileChooser.showOpenDialog(stage); //vorhandene Datei waehlen
-        } else {
-            selectedFile = fileChooser.showSaveDialog(stage); //neue Datei erstellen
-        }
-        return(selectedFile);
     }
 
     /**
@@ -533,183 +456,6 @@ public class UserInterfaceController {
             }
             event.consume();
         });
-    }
-
-    /**
-     * Methode welche die Ecken der mittleren GridPane unsichtbar und nicht klickbar macht
-     * Sollte das Spielfeld vergroeßert werden, werden die vorherigen Ecken wieder sichtbar und klickbar gemacht und
-     * die neuen Ecken unsichtbar und nicht klickbar.
-     */
-    private void gameFieldGridPaneHandleEdges(){
-        int xSize = this.gridPane.getColumnCount();
-        int ySize = this.gridPane.getRowCount();
-        for(int y = 0; y < ySize; y++) { //Hoehe durchlaufen
-            for (int x = 0; x < xSize; x++) { //Breite durchlaufen
-                StackPane slotStackPane = this.gui.getGridPaneCell(x, y, this.gridPane);
-                if(GameField.isFieldEdge(x, y, xSize, ySize)) { //Ecke
-                    //Slot nicht sichtbar und nicht klickbar machen
-                    slotStackPane.setVisible(false);
-                    slotStackPane.setMouseTransparent(true);
-                } else { //keine Ecke (genutzt falls das Spielfeld vergroeßert wird, da alte Ecken wieder normal werden)
-                    //Slot sichtbar und klickbar machen
-                    slotStackPane.setVisible(true);
-                    slotStackPane.setMouseTransparent(false);
-                }
-            }
-        }
-    }
-
-    /**
-     * Methode welche die Form der GridPane anzeigt und aktualisiert falls Spielfeld vergroessert oder verkleinert wird
-     * ohne bestehende Zeilen und Spalten falls es vergroessert wird zu loeschen.
-     * @param newRowAmount die neue hoehe des Spielfelds
-     * @param newColumsAmount die neue Breite des Spielfelds
-     */
-    public void updateGridPaneFormat(int newRowAmount, int newColumsAmount){
-        int existingCols = this.gridPane.getColumnCount();
-        int existingRows = this.gridPane.getRowCount();
-
-        //die Differenz der bestehenden GridSize Breite zur neuen
-        int widthGrowLoss = newColumsAmount - existingCols;
-        //die Differenz der bestehenden GridSize Hoehe zur neuen
-        int heigthGrowLoss = newRowAmount - existingRows;
-
-        gridPane.setMinSize(0, 0); //minimalgroeße der GridPane
-
-        double middleColWidthSizePercentage = 100 / (newColumsAmount - 1.5d); //Breite der mittleren Felder
-        double borderColWidthSizePercentage = middleColWidthSizePercentage / 4; //Breite der Rand Spalten Felder
-        double middleRowWidthSizePercentage = 100 / (newRowAmount - 1.5d); //Hoehe der mittleren Felder
-        double borderRowWidthSizePercentage = middleRowWidthSizePercentage / 4; //Breite der Rand Zeilen Felder
-
-        if(widthGrowLoss > 0){ //GirdPane soll groeßer bezueglich Breite werden (Spalten)
-
-            for(int i = 0; i < newColumsAmount; i++) { //von den bestehenden bis zur neuen Breite
-                ColumnConstraints colConstraints;
-                if(i >= existingCols){ //wenn das Spaltenobjekt noch nicht existiert
-
-                    colConstraints = new ColumnConstraints();
-                    colConstraints.setHgrow(Priority.ALWAYS);
-                    gridPane.getColumnConstraints().add(i, colConstraints); //neue Constraint den Constraints
-                    // hinzufuegen
-
-                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
-                    // werden, da es an die neue groesse angepasst werden muss
-                    colConstraints = gridPane.getColumnConstraints().get(i);
-                }
-
-                colConstraints.setPercentWidth((i == 0 || i == newColumsAmount - 1) ? borderColWidthSizePercentage
-                        : middleColWidthSizePercentage); //Ternaerer Operator: wenn linkeste oder rechteste Reihe dann
-                // eine schmale Zelle in Bezug auf die Breite sonst fuer die mittleren eine dicke Zellen
-            }
-        } else if(widthGrowLoss < 0){ //GirdPane soll kleiner bezueglich Breite werden (Spalten)
-
-            for(int i = existingCols - 1; i >= 0; i--) { //von den bestehenden bis zur neuen Breite
-                if(i >= newColumsAmount){ //wenn die zu loeschenden Spalten erreicht wurden
-                    gridPane.getColumnConstraints().remove(i); //bestehende Constraints aus den Constraints loeschen
-                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
-                    // werden, da es an die neue groesse angepasst werden muss
-
-                    ColumnConstraints colConstraints;
-                    colConstraints = gridPane.getColumnConstraints().get(i);
-
-                    colConstraints.setPercentWidth((i == 0 || i == newColumsAmount - 1) ? borderColWidthSizePercentage
-                            : middleColWidthSizePercentage); //Ternaerer Operator: wenn linkeste oder rechteste Reihe
-                    // dann eine schmale Zelle in Bezug auf die Breite sonst fuer die mittleren dicke Zellen
-                }
-            }
-        }
-
-        if(heigthGrowLoss > 0){ //GirdPane soll groeßer bezueglich Hoehe werden (mehr Zeilen)
-
-            for (int i = 0; i < newRowAmount; i++) {
-                RowConstraints rowConstraints;
-                if(i >= existingRows) { //wenn das Reihenobjekt noch nicht existiert
-
-                    rowConstraints = new RowConstraints();
-                    rowConstraints.setVgrow(Priority.ALWAYS);
-                    gridPane.getRowConstraints().add(i, rowConstraints); //neue Constraints den Constraints
-                    // hinzufuegen
-
-                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
-                    // werden, da es an die neue groesse angepasst werden muss
-                    rowConstraints = gridPane.getRowConstraints().get(i);
-                }
-
-                rowConstraints.setPercentHeight((i == 0 || i == newRowAmount - 1) ? borderRowWidthSizePercentage
-                        : middleRowWidthSizePercentage);//Ternaerer Operator: wenn oberste oder unterste Reihe dann eine
-                // schmale Zelle in Bezug auf die Hoehe sonst fuer die mittleren dicke Zellen
-            }
-        } else if(heigthGrowLoss < 0){ //GirdPane soll kleiner bezueglich Hoehe werden (weniger Zeilen)
-
-            for(int i = existingRows - 1; i >= 0; i--) { //von den bestehenden bis zur neuen Hoehe
-                if(i >= newRowAmount){ //wenn die zu loeschenden Reihen erreicht wurden
-                    gridPane.getRowConstraints().remove(i); //bestehende Constraints aus den Constraints loeschen
-                } else { //wenn es schon existiert soll es nicht neu erstellt werden sondern aus den Constraints geholt
-
-                    RowConstraints rowConstraints;
-                    rowConstraints = gridPane.getRowConstraints().get(i);
-
-                    rowConstraints.setPercentHeight((i == 0 || i == newRowAmount - 1) ? borderRowWidthSizePercentage
-                            : middleRowWidthSizePercentage);//Ternaerer Operator: wenn oberste oder unterste Reihe dann
-                    // eine schmale Zelle in Bezug auf die Hoehe sonst fuer die mittleren dicke Zellen
-                }
-            }
-        }
-
-        //Lambda Ausdruck welcher alle Elemente der GridPane entfernt welche außerhalb ihrer Groeße liegen
-        // (bei verkleinerungen der GridPane)
-        gridPane.getChildren().removeIf(node -> { //alle Elemente der GridPane sollen entfernt werden sofern return true
-            Integer col = GridPane.getColumnIndex(node);
-            Integer row = GridPane.getRowIndex(node);
-            col = (col == null) ? 0 : col; //da getColumnIndex statt 0 null nutzt muss null mit 0 ersetzt werden
-            row = (row == null) ? 0 : row; //da getRowIndex statt 0 null nutzt muss null mit 0 ersetzt werden
-            return col >= newColumsAmount || row >= newRowAmount; //ist True wenn ein Element groeßer als die
-            // neue Breite oder neue Hoehe ist
-        });
-
-        //Gesamtgroesse des neuen Spielfelds anpassen
-        adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight());
-    }
-
-    /**
-     * Methode welche die mittlere Spielflaeche sowie die Bilder in den Zellen dieser an die Groeße des Spielfelds
-     * anpasst
-     * @param gridPane Spielfeld
-     * @param width Breite des mittleren Flaeche auf welcher die GridPane liegt
-     * @param height Hoehe des mittleren Flaeche auf welcher die GridPane liegt
-     */
-    private void adjustMiddleGridPaneSize(GridPane gridPane, double width, double height) {
-        final int middleCols = gridPane.getColumnCount() - 2; //-2 da 2 Columns Rand sind
-        final int middleRows = gridPane.getRowCount() - 2; //-2 da 2 Rows Rand sind
-        //die aeußeren beiden Spalten/Reihen zaehlen zusammen nur als halbe Spalte/Reihe
-
-        final double colCount = middleCols + 0.25d * 2; //0,5 da eine Randspalte 0,25 einer normalen ist und 0,5 da zwei
-        final double rowCount = middleRows + 0.25d * 2; //0,5 da eine Randreihe 0,25 einer normalen ist und 0,5 da zwei
-
-        double cellSize = Math.floor(Math.min(width / colCount, height / rowCount)); //die Zellengroeße abgerundet
-
-        gridPane.setPrefSize(cellSize * colCount, cellSize * rowCount); //setzt diese Zellengroeße fuer GridPane
-        double cellSizeWithoutBorder = cellSize - JavaFXGUI.BORDER_SIZE_GRAPHICAL * 2; //abzueglich der Randgroeße * 2,
-        // da jede Zelle einen Rand hat
-
-        //aktualisierung der Bildgroeßen und Abstaende
-        for(Node node : gridPane.getChildren()) { //durchlaeuft jede Zelle und node ist die unterste Ebene des Inhalts
-            // also die StackPane
-
-            if(node instanceof StackPane tilePane) { //StackPane, da die unterste Ebene eine StackPane ist
-                tilePane.setPrefSize(cellSize, cellSize); //Setzt die Groeße der StackPane
-                for(Node child : tilePane.getChildren()) { //durchlaeuft jede naechste Ebene der StackPane da dort
-                    // das ImageView kommt
-                    if(child instanceof ImageView imageView) {
-                        //Groeße updaten
-
-                        //Breite und Hoehe anpassen
-                        imageView.setFitWidth(cellSizeWithoutBorder);
-                        imageView.setFitHeight(cellSizeWithoutBorder);
-                    }
-                }
-            }
-        }
     }
 
     /**

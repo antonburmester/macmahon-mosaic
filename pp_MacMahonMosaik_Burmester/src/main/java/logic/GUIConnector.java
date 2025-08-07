@@ -1,5 +1,7 @@
 package logic;
 
+import java.io.File;
+
 /**
  * Interface, welches die Logik nutzt, um der Oberflaeche (GUI) etwas mitzuteilen.
  *
@@ -82,4 +84,27 @@ public interface GUIConnector {
      * @param color die Farbe
      */
     void setBorderColor(int targetX, int targetY, TileNames color);
+
+    /**
+     * Graphisches Dateisystem des Betriebssystems zum erstellen einer neuen Datei oder selektieren von einer
+     * @param selectFile ob eine Datei gesucht werden soll oder erstellt werden soll
+     * @return die Datei samt Dateipfad
+     */
+    File openFileChooser(boolean selectFile);
+
+    /**
+     * Methode welche alle noetigen Grafik Methoden buendelt zum Anzeigen eines Spiels und aller noetigen Elemente
+     * abgesehen von der platzierung der Spielsteine
+     * @param width die Breite des Spielfelds
+     * @param height die Hoehe des Spielfelds
+     */
+    void setupGUI(int width, int height);
+
+    /**
+     * Methode welche graphisch die Spielsteine der Spielsteinauswahl hinzufuegt und das graphische Spielfeld mit
+     * Spielsteinen fuellt
+     * @param tiles die Spielsteine mit welchen die Spielsteinauswahl gefuellt werden soll
+     * @param gameField das Spielfeld welches als Refferenz dient wie das graphische Spielfeld gefuellt werden soll
+     */
+    void updateTiles(Tiles tiles, GameField gameField);
 }

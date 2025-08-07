@@ -1,5 +1,7 @@
 package logic;
 
+import java.io.File;
+
 /**
  * FakeGUI damit die Game Klasse auch in den Tests genutzt werden kann ohne Probleme
  * @author Anton Burmester
@@ -116,6 +118,35 @@ public class FakeGUI implements GUIConnector{
      * @param color die Farbe
      */
     public void setBorderColor(int targetX, int targetY, TileNames color){
+
+    }
+
+    /**
+     * Graphisches Dateisystem des Betriebssystems zum erstellen einer neuen Datei oder selektieren von einer
+     * @param selectFile ob eine Datei gesucht werden soll oder erstellt werden soll
+     * @return die Datei samt Dateipfad
+     */
+    public File openFileChooser(boolean selectFile) {
+        return(null);
+    }
+
+    /**
+     * Methode welche alle noetigen Grafik Methoden buendelt zum Anzeigen eines Spiels und aller noetigen Elemente
+     * abgesehen von der platzierung der Spielsteine
+     * @param width die Breite des Spielfelds
+     * @param height die Hoehe des Spielfelds
+     */
+    public void setupGUI(int width, int height){
+
+    }
+
+    /**
+     * Methode welche graphisch die Spielsteine der Spielsteinauswahl hinzufuegt und das graphische Spielfeld mit
+     * Spielsteinen fuellt
+     * @param tiles die Spielsteine mit welchen die Spielsteinauswahl gefuellt werden soll
+     * @param gameField das Spielfeld welches als Refferenz dient wie das graphische Spielfeld gefuellt werden soll
+     */
+    public void updateTiles(Tiles tiles, GameField gameField){
 
     }
 }
