@@ -71,8 +71,8 @@ public class JavaFXGUI implements GUIConnector {
      * @param status ob die rechte GridPane (Auswahl) zugreifbar sein soll
      */
     public void setDisableTileSelection(boolean status){
-            this.rightGridPane.setDisable(status);
-            this.rightGridPane.setOpacity(!status ? 1 : 0.7);
+        this.rightGridPane.setDisable(status);
+        this.rightGridPane.setOpacity(!status ? 1 : 0.7);
     }
 
     /**

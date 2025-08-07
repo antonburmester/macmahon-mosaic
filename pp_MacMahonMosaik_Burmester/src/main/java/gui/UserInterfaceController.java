@@ -105,7 +105,7 @@ public class UserInterfaceController {
         this.game = new Game(this.gui); //erstaufruf welcher das beispielspiel initialisiert
         Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
             this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length,
-                this.game.getGameFieldCopy().getGameField().length);
+                    this.game.getGameFieldCopy().getGameField().length);
             this.game.setIsGameActive(true, true); //TODO move to Game class
         });
     }

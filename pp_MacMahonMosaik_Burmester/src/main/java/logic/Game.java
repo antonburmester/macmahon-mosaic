@@ -621,7 +621,7 @@ public class Game {
                                       Tile lastTileBeforeGoingBack){
         Tile tile = lastTileBeforeGoingBack;
         int startIndex = tile != null  && !tile.getTile().equals(TileNames.NNNN) ?
-            TileNames.valueOf(tile.getTileString()).ordinal(): 0; //der Index zum Start des aktuell dort liegenden
+                TileNames.valueOf(tile.getTileString()).ordinal(): 0; //der Index zum Start des aktuell dort liegenden
         // Spielsteins nach der TileNames Reihenfolge oder 0 falls es ein Aufruf fuer ein leeres Feld ist
 
         Rotation startRotation = tile != null && !tile.getTile().equals(TileNames.NNNN) ?
@@ -650,7 +650,7 @@ public class Game {
                                 // hier garantiert eine neue Kombination versucht wird
                                 || !firstIteration //oder nicht erster durchlauf wodurch es auch garantiert eine neue
                             // Kombination ist
-                                ) {
+                        ) {
 
                             tile.rotateTile(); //den Spielstein rotieren
                             inputGameField.layTile(pos.getX(), pos.getY(), tile);

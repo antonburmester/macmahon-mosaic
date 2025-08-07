@@ -9,7 +9,7 @@ import gui.ErrorMessageHandler;
  */
 
 public class GameField {
-    private final Tile[][] gameField; //Nutzlast des Spielfelds als zweidimensionales Array vom Typ Tile (Spielstein)
+    private Tile[][] gameField; //Nutzlast des Spielfelds als zweidimensionales Array vom Typ Tile (Spielstein)
 
     /**
      * Konstruktor welcher ein Spielfeld ohne Steine initialisiert
@@ -71,6 +71,156 @@ public class GameField {
             }
         } else { //falls kein valides Spiel geladen werden kann ein leeres erzeugen
             this.placeGameFieldHoles(); //TODO lieber zurueckgeben, das Spielfeld nicht valide
+        }
+    }
+
+    /**
+     * Methode welche die groesse des Spielfelds aktualisiert
+     * @param newColumnAmount neue Anzahl der Spalten des Spielfelds
+     * @param newRowAmount neue Anzahl der Reihen des Spielfelds
+     */
+    void updateGameFieldSize2(int newColumnAmount, int newRowAmount){
+        int oldWidth = this.getGameFieldWidth();
+        int oldHeigth = this.getGameFieldHeight();
+
+        //die Differenz der bestehenden GridSize Breite zur neuen
+        int widthGrowLoss = newColumnAmount - oldWidth;
+        //die Differenz der bestehenden GridSize Hoehe zur neuen
+        int heigthGrowLoss = newRowAmount - oldHeigth;
+
+        if(widthGrowLoss != 0 || heigthGrowLoss != 0) {
+            Tile[][] newGameField = new Tile[newRowAmount][newColumnAmount];
+
+
+            int rowIteratorCopyStop = heigthGrowLoss > 0 ? oldHeigth - 1 : newRowAmount - 1; //wenn vergroessert dann
+            // bis zur vorletzten Reihe kopiern damit der Rand noch nicht kopiert wurde; wenn verkleinert bis zur
+            // vorletzten Reihe der neuen groesse kopieren damit der Rand nicht mitkopiert wird
+            int columnIteratorCopyStop = widthGrowLoss > 0 ? oldWidth - 1 : newColumnAmount - 1; //wenn vergroessert
+            // dann bis zur vorletzten Spalte kopiern damit der Rand noch nicht kopiert wurde; wenn verkleinert bis zur
+            // vorletzten Spalte der neuen groesse kopieren damit der Rand nicht mitkopiert wird
+
+            //das Spielfeld in die neue groesse kopieren ohne rechten und unteren Rand
+            for(int y = 0; y < rowIteratorCopyStop; y++){
+                for(int x = 0; x < columnIteratorCopyStop; x++){
+                    newGameField[y][x] = this.gameField[y][x];
+                }
+            }
+
+            if(widthGrowLoss > 0 || heigthGrowLoss > 0) { //Spielfeld soll vergroessert werden -> auffuellen mit
+                // leeren Feldern
+                int newWidthWithoutBorder = newColumnAmount - 1; //neue groesse ohne Rand
+                int newHeigthWithoutBorder = newRowAmount - 1; //neue groesse ohne Rand
+                for (int y = rowIteratorCopyStop; y < newHeigthWithoutBorder; y++) {
+                    for (int x = columnIteratorCopyStop; x < newWidthWithoutBorder; x++) {
+                        newGameField[y][x] = new Tile(TileNames.NNNN);
+                    }
+                }
+            }
+
+            //rechten Rand hinzufuegen
+            for (int y = 0; y < newRowAmount; y++) {
+                if(newColumnAmount > oldWidth){ //more column
+                    //newGameField[y][newColumnAmount - 1] = this.gameField[y][];
+                } else{ //less column
+
+                }
+            }
+
+
+            this.gameField = newGameField;
+        }
+    }
+
+    void updateGameFieldSize(int newColumnAmount, int newRowAmount){
+        int oldWidth = this.getGameFieldWidth();
+        int oldHeight = this.getGameFieldHeight();
+
+        int widthDiff = newColumnAmount - oldWidth;
+        int heightDiff = newRowAmount - oldHeight;
+
+        if(widthDiff != 0 || heightDiff != 0) {
+            Tile[][] newGameField = new Tile[newRowAmount][newColumnAmount];
+
+            int rowCopyLimit = heightDiff > 0 ? oldHeight - 1 : newRowAmount - 1;
+            int colCopyLimit = widthDiff > 0 ? oldWidth - 1 : newColumnAmount - 1;
+
+            // Kopiere inneres Spielfeld (ohne rechten/unten Rand)
+            for(int y = 0; y < rowCopyLimit; y++){
+                for(int x = 0; x < colCopyLimit; x++){
+                    newGameField[y][x] = this.gameField[y][x];
+                }
+            }
+
+            // Fülle neue Zellen bei Vergrößerung mit leeren Tiles
+            if(widthDiff > 0 || heightDiff > 0) {
+                int maxY = newRowAmount - 1;
+                int maxX = newColumnAmount - 1;
+
+                for (int y = 0; y < maxY; y++) {
+                    for (int x = colCopyLimit; x < maxX; x++) {
+                        if (newGameField[y][x] == null)
+                            newGameField[y][x] = new Tile(TileNames.NNNN);
+                    }
+                }
+                for (int y = rowCopyLimit; y < maxY; y++) {
+                    for (int x = 0; x < maxX; x++) {
+                        if (newGameField[y][x] == null)
+                            newGameField[y][x] = new Tile(TileNames.NNNN);
+                    }
+                }
+            }
+
+            //rechten Rand setzen
+            for (int y = 0; y < newRowAmount; y++) {
+                if (y < oldHeight) { //Hoehe muss im Bereich des neuen Spielfelds bleiben damit die Ecke leer ist
+                        newGameField[y][newColumnAmount - 1] = this.gameField[y][oldWidth - 1];
+                } else {
+                    newGameField[y][newColumnAmount - 1] = new Tile(TileNames.NNNN);
+                }
+            }
+
+
+            //unteren Rand setzen
+            for (int x = 0; x < newColumnAmount; x++) {
+                if (x < oldWidth) {
+                    newGameField[newRowAmount - 1][x] = this.gameField[oldHeight - 1][x];
+                } else {
+                    newGameField[newRowAmount - 1][x] = new Tile(TileNames.NNNN);
+                }
+            }
+
+            //Rechte untere Ecke immer neu setzen
+            newGameField[newRowAmount - 1][newColumnAmount - 1] = new Tile(TileNames.NNNN);
+
+            this.gameField = newGameField;
+            System.out.println(this.toString());
+        }
+    }
+
+
+    /**
+     * Methode welche eine neue Reihe erzeugt
+     * @param size die Anzahl der Spalten in der Reihe
+     * @return die neue Reihe
+     */
+    public Tile[] createRow(int size){
+        Tile[] newRowOrColumn = new Tile[size];
+        for(int i = 0; i < size; i++){
+            newRowOrColumn[i] = new Tile(TileNames.NNNN);
+        }
+        return(newRowOrColumn);
+    }
+
+    /**
+     * Methode welche alle null Felder mit einem NNNN Spielstein fuellt
+     */
+    private void gameFieldFillEmptyFields(){
+        for(int y = 0; y < this.getGameFieldHeight(); y++){
+            for(int x = 0; x < this.getGameFieldWidth(); x++){
+                if(this.gameField[y][x] == null){
+                    this.gameField[y][x] = new Tile(TileNames.NNNN);
+                }
+            }
         }
     }
 
