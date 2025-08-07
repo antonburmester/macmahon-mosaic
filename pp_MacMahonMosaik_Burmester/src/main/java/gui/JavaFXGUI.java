@@ -170,12 +170,17 @@ public class JavaFXGUI implements GUIConnector {
         this.rightGridPane.setHgap(10);
         this.rightGridPane.setVgap(10);
 
-        int col = 0, row = 0; //aktuelle Spalte und Reihe der Auswahl der Spielsteine
+        int col, row; //aktuelle Spalte und Reihe der Auswahl der Spielsteine
 
         for (Tile currTile : tiles.getTiles()) { //durchlaeuft jeden Spielstein
 
             //da NNNN und HHHH nicht legbar sind, sollen sie auch nicht in der Auswahl auftauchen
             if(!(currTile.getTile() == TileNames.NNNN || currTile.getTile() == TileNames.HHHH)) {
+
+                //einheitliche Reihenfolge durch TileNames
+                col = currTile.getTile().ordinal() % 3; //Modulo 3 da es 3 Spalten gibt und so die richtige erkannt wird
+                row = currTile.getTile().ordinal() / 3; //DIV 3 da in jede Spalte 3 Steine passen und mann so in die
+                // richtige Spalte kommt.
 
                 String tileName = currTile.getTileString();
                 if (currTile.isNormalGameTile()) { //wenn nicht NNNN und HHHH da diese kein Bild haben
@@ -193,12 +198,15 @@ public class JavaFXGUI implements GUIConnector {
                     StackPane slotStackPane = this.getGridPaneCell(col, row, this.rightGridPane); //Slot des Feldes
                     slotStackPane.getChildren().add(imageView);
                 }
+                /*
                 //Verwaltung fuer Reihen und Spalten
                 col++; //nach jedem durchlauf in die naechste Zeile
                 if (col == 3) { // Nach 3 Spalten neue Zeile beginnen
                     col = 0; // wieder in der obersten Reihe beginnen
                     row++;
                 }
+
+                 */
             }
         }
     }
@@ -384,8 +392,13 @@ public class JavaFXGUI implements GUIConnector {
         StackPane movedTileSource = (StackPane) movedTile.getParent();
         movedTileSource.getChildren().remove(movedTile);
 
-        //den Spielstein in das Spielfeld an der gewuenschten Position einfuegen
-        StackPane movedTileTarget = this.getGridPaneNextAvailabeField(this.rightGridPane);
+        //einheitliche Reihenfolge durch TileNames
+        int col = tileIndex % 3; //Modulo 3 da es 3 Spalten gibt und so die richtige erkannt wird
+        int row = tileIndex / 3; //DIV 3 da in jede Spalte 3 Steine passen und mann so in die
+        // richtige Spalte kommt.
+
+        //den Spielstein in die Spielsteinauswahl an der richtigen Position einfuegen (bestimmt durch TileNames Order)
+        StackPane movedTileTarget = this.getGridPaneCell(col, row, this.rightGridPane);
 
         //Groeße des gedroppten StackPane oder ImageView Elements anpassen
         if(movedTileTarget != null) {

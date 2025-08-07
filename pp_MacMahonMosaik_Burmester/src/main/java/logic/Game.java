@@ -3,8 +3,6 @@ package logic;
 import gui.ErrorMessageHandler;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Klasse welche das Spiel koodiniert
@@ -76,7 +74,6 @@ public class Game {
     public Game(GUIConnector gui, File fileWithPath) {
         this.gui = gui;
 
-        Tiles tiles;
         GameField gameField;
 
         try { //versuchen das Spielfeld aus der Datei zu laden
