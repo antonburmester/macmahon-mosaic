@@ -43,6 +43,15 @@ public class Game {
     public Game(GUIConnector gui, int heigth, int width){
         this.gui = gui;
         this.gameField = new GameField(heigth, width, true);
+
+        if(this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
+            // Spielbar ist ohne die liegenden Spielsteine
+            this.setIsGameActive(true, true);
+            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
+        } else { //nicht spielbar deshalb EditorMode aktivieren
+            this.setIsGameActive(false, true);
+            if(!isEditorMode()) this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
+        }
     }
 
     /**
@@ -56,6 +65,16 @@ public class Game {
     public Game(GUIConnector gui, int heigth, int width, GameField oldGameField){
         this(gui, heigth, width);
         this.gameField.setBorderFromGameField(oldGameField);
+
+
+        if(this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
+            // Spielbar ist ohne die liegenden Spielsteine
+            this.setIsGameActive(true, true);
+            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
+        } else { //nicht spielbar deshalb EditorMode aktivieren
+            this.setIsGameActive(false, true);
+            if(!isEditorMode()) this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
+        }
     }
 
     /**
@@ -77,6 +96,20 @@ public class Game {
         this.gui = gui;
 
         this.gameField = new GameField(inputGameField);
+
+        if(this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
+            // Spielbar ist ohne die liegenden Spielsteine
+            this.setIsGameActive(true, true);
+            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
+        } else { //nicht spielbar deshalb EditorMode aktivieren
+            this.setIsGameActive(false, true);
+            if(!isEditorMode()) {
+                this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
+            } else { //nochmal entfernen, da Spiel geladen wird und editor schon aktiv ist
+                // (Spielsteine falls da sollen weg)
+                this.removeGameFieldTiles();
+            }
+        }
     }
 
     /**
@@ -99,8 +132,18 @@ public class Game {
 
         this.gameField = gameField;
 
-        if (this.isEditorMode()) { // alle Spielsteine aus dem Spielfeld entfernen, wenn Editormode
-            this.removeGameFieldTiles();
+        if(this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
+            // Spielbar ist ohne die liegenden Spielsteine
+            this.setIsGameActive(true, true);
+            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
+        } else { //nicht spielbar deshalb EditorMode aktivieren
+            this.setIsGameActive(false, true);
+            if(!isEditorMode()) {
+                this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
+            } else { //nochmal entfernen, da Spiel geladen wird und editor schon aktiv ist
+                // (Spielsteine falls da sollen weg)
+                this.removeGameFieldTiles();
+            }
         }
     }
 
@@ -131,7 +174,7 @@ public class Game {
      * TODO der kommentar ueberpruefen
      */
     public void checkSolvability(){
-        boolean isGameFieldSolvable = this.isGameFieldSolvable();
+        boolean isGameFieldSolvable = this.gameField.isGameFieldSolvable();
         if(isGameFieldSolvable){
             ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_GAMEFIELD_SOLVABLE));
         } else {
@@ -385,35 +428,6 @@ public class Game {
     }
 
     /**
-     * Methode welche ein bestehendes Spiel neustartet.
-     * (entfernt alle Spielsteine aus dem Spielfeld, laesst aber den Rand und die Lochsteine)
-     */
-    public void removeGameFieldTiles(){
-        this.gameField.getGameField();
-        for(int y = 0; y < this.gameField.getGameFieldHeight(); y++){
-            for(int x = 0; x < this.gameField.getGameFieldWidth(); x++){
-                if(!this.gameField.isFieldBorder(x, y)){ //kein Randstueck
-                    Tile currTile = this.gameField.getTile(x,y);
-                    if(currTile.isNormalGameTile()){ //kein Loch und nicht leer
-                        this.gameField.resetTile(x, y);
-                    }
-                }
-            }
-        }
-        this.highlightTileIfWrongPlaced(); //falls es falsche Felder gab die Markierung wieder wegnehmen
-    }
-
-    /**
-     * Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
-     * Diese Methode greift auf die solveGameFieldAsCopy Methode zurueck
-     * @return ob eine passende Kombination gefunden wurde und somit das Spielfeld geloest wurde
-     */
-    boolean isGameFieldSolvable(){
-        GameField solvedGameFieldCopy = this.gameField.solveGameFieldAsCopy();
-        return(solvedGameFieldCopy != null && solvedGameFieldCopy.checkIfGameFieldSolved(false));
-    }
-
-    /**
      * Methode welche einen weiteren Spielstein legt.
      * @return ob das Spielfeld loesbar ist und somit ein naechster Spielstein gelegt werden konnte
      */
@@ -442,6 +456,15 @@ public class Game {
             //Fehler, das das Spielfeld nicht loesbar ist
             return(false);
         }
+    }
+
+    /**
+     * Methode welche ein bestehendes Spiel neustartet.
+     * (entfernt alle Spielsteine aus dem Spielfeld, laesst aber den Rand und die Lochsteine)
+     */
+    public void removeGameFieldTiles(){
+        this.gameField.removeGameFieldTiles();
+        this.highlightTileIfWrongPlaced(); //falls es falsche Felder gab die Markierung wieder wegnehmen
     }
 
     /**

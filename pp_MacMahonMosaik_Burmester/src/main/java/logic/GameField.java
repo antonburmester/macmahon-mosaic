@@ -860,6 +860,42 @@ public class GameField {
     }
 
     /**
+     * Methode welche prueft, ob ein Spielfeld vom Rand her und den Loechern loesbar ist
+     * @return ob das Spielfeld loesbar ist
+     */
+    boolean checkIfPlainGameFieldSolvable(){
+        GameField gameFieldCopy = this.cloneGameField();
+        gameFieldCopy.removeGameFieldTiles();
+        return(gameFieldCopy.solveGameFieldAsCopy() != null);
+    }
+
+    /**
+     * Methode welche prueft ob das Spielfeld im aktuellen Zustand loesbar ist
+     * Diese Methode greift auf die solveGameFieldAsCopy Methode zurueck
+     * @return ob eine passende Kombination gefunden wurde und somit das Spielfeld geloest wurde
+     */
+    boolean isGameFieldSolvable(){
+        GameField solvedGameFieldCopy = this.solveGameFieldAsCopy();
+        return(solvedGameFieldCopy != null && solvedGameFieldCopy.checkIfGameFieldSolved(false));
+    }
+
+    /**
+     * Methode welche alle Spielfeldsteine vom Spielfeld entfernt
+     */
+    void removeGameFieldTiles() {
+        for (int y = 0; y < this.getGameFieldHeight(); y++) {
+            for (int x = 0; x < this.getGameFieldWidth(); x++) {
+                if (!this.isFieldBorder(x, y)) { //kein Randstueck
+                    Tile currTile = this.getTile(x, y);
+                    if (currTile.isNormalGameTile()) { //kein Loch und nicht leer
+                        this.resetTile(x, y);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Methode welche die toString Methode ueberschreibt und das Array in der Konsole ausgibt
      * @return das Array als String
      */
