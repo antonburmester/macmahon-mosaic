@@ -76,19 +76,6 @@ public class GameField {
     }
 
     /**
-     * Konstruktor welcher ein Spiel mit dem Rand des vorherigen Spielfelds erzeugt.
-     * Die Groesse kann hierbei vom alten Spielfeld abweichen
-     * @param height Hoehe vom neuen Spielfeld
-     * @param width Breite vom neuen Spielfeld
-     * @param oldField das alte Spielfeld um von diesem den Rand zu bekommen
-     */
-    GameField(int height, int width, GameField oldField){
-        this(height, width, true); //Konstruktoren verkettung
-
-        this.setBorderFromGameField(oldField);
-    }
-
-    /**
      * Methode welche die Tiles Instanz zurueckgibt
      * @return die Tiles Instanz
      */
@@ -100,7 +87,7 @@ public class GameField {
      * Methode welche die Raender dieses Spielfeld nach dem Schema des uebergebenen einfaerbt
      * @param oldField das alte Spielfeld nach welchem das neue eingefaerbt wird
      */
-    private void setBorderFromGameField(GameField oldField){
+    void setBorderFromGameField(GameField oldField){
 
         //alten Rand setzen links und oben
         int smallerWidth = Math.min(this.getGameFieldWidth() - 1, oldField.getGameFieldWidth()); //-1 damit die Ecke

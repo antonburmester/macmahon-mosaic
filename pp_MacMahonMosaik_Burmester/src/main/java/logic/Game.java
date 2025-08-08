@@ -54,8 +54,8 @@ public class Game {
      * @param oldGameField das alte Spielfeld, da dieses als Refferenz zum Rand einfaerben dient des neuen Spielfelds
      */
     public Game(GUIConnector gui, int heigth, int width, GameField oldGameField){
-        this.gui = gui;
-        this.gameField = new GameField(heigth, width, oldGameField);
+        this(gui, heigth, width);
+        this.gameField.setBorderFromGameField(oldGameField);
     }
 
     /**
