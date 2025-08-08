@@ -20,8 +20,8 @@
 <!-- BorderPane ist der Hintergrund welcher das Fenster in 5 Bereiche einteilt.
 (Links: Editor Bedienung) (Oben: Menue) (Mitte: Spielfeld) (Unten: nichts) (rechts: Spielsteinauswahl) -->
 <BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="gui.UserInterfaceController">
+            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21.0.3"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.UserInterfaceController">
 
     <top> <!-- das Menue -->
         <MenuBar fx:id="menueBar" BorderPane.alignment="CENTER">
