@@ -810,6 +810,24 @@ public class GameField {
     }
 
     /**
+     * Methode welche jedes Spielfeld Feld ausser Rand absucht nach Spielsteinen und den richtigen Spielstein dessen
+     * index passt zurueckgegeben wird
+     * @param index der Index nach TileNames Reihenfolge
+     * @return der gesuchte Spielstein oder null falls nicht vorhanden
+     */
+    Tile getTileByTileNamesIndex(int index){
+        for(int y = 1; y < this.getGameFieldHeight() - 1; y++){ //ohne oberen und unteren Rand
+            for(int x = 1; x < this.getGameFieldHeight() - 1; x++){ //ohne linken und rechten Rand
+                Tile currTile = this.getTile(x, y);
+                if(currTile.getTileIndex() == index){
+                    return(currTile);
+                }
+            }
+        }
+        return(null);
+    }
+
+    /**
      * Methode welche die toString Methode ueberschreibt und das Array in der Konsole ausgibt
      * @return das Array als String
      */

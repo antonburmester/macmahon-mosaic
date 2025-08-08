@@ -337,10 +337,13 @@ public class Game {
 
     /**
      * rotiert einen Spielstein
-     * @param tileIndex der Index des zu rotierenden Spielsteins
+     * @param tileIndex der Index nach TileNames Reihenfolge des zu rotierenden Spielsteins
      */
     public void rotateGameTile(int tileIndex){
-        Tile tile = gameField.getTiles().getTileByTileNamesIndex(tileIndex);
+        Tile tile = gameField.getTiles().getTileByTileNamesIndex(tileIndex); //Stein in der Spielsteinauswahl suchen
+        if(tile == null){ //Stein nicht in der Spielsteinauswahl -> liegt auf dem Spielfeld
+            tile = this.gameField.getTileByTileNamesIndex(tileIndex); //Stein im Spielfeld suchen
+        }
         tile.rotateTile();
         this.gui.rotateTile(tileIndex, Rotation.rotationToDegrees(tile.getRotation())); //die Rotation graphisch
         // anzeigen

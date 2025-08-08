@@ -409,7 +409,8 @@ public class JavaFXGUI implements GUIConnector {
             movedTile.setFitWidth(slotWidth);
             movedTile.setFitHeight(slotHeight);
 
-            movedTileTarget.getChildren().add(movedTile);
+            movedTile.setRotate(0); //Rotation zuruecksetzen
+            movedTileTarget.getChildren().add(movedTile); //Spielstein zuruecklegen
         }
     }
 
