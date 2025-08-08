@@ -46,6 +46,19 @@ public class Game {
     }
 
     /**
+     * Konstruktor welcher ein neues leeres Spiel erzeugt mit Rand des uebergebenen Spielfelds
+     * (nur fuer Editor genutzt)
+     * @param gui die GUI Instanz
+     * @param heigth die Hoehe des Spielfelds (Breite inklusive Rand)
+     * @param width die Breite des Spielfelds (Breite inklusive Rand)
+     * @param oldGameField das alte Spielfeld, da dieses als Refferenz zum Rand einfaerben dient des neuen Spielfelds
+     */
+    public Game(GUIConnector gui, int heigth, int width, GameField oldGameField){
+        this.gui = gui;
+        this.gameField = new GameField(heigth, width, oldGameField);
+    }
+
+    /**
      * Konstruktor welcher das Standard Spiel erstellt nutzt hierfür den Konstruktor welcher ein Spiel auf Grundlage
      * eines StringArrays erstellt
      * (Defaultspiel)

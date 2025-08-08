@@ -171,7 +171,8 @@ public class UserInterfaceController {
         if (height >= Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER && width >= Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER &&
                 height <= Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER && width <= Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER) {
 
-            this.game = new Game(this.gui, height, width);
+            this.game = new Game(this.gui, height, width, this.game.getGameFieldCopy()); //neues Spielfeld mit altem
+            // Rand
             this.setupGUI(width + 2, height + 2);
         } else {
             ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));

@@ -67,7 +67,7 @@ public class GameField {
                     if(!this.isFieldBorder(widthIndex, heigthIndex) && !targetTile.getTile().equals(TileNames.NNNN)){
 
                         this.tiles.removeTile(targetTile); //Spielstein aus Spielsteinauswahl loeschen, da dieser
-                        // hiernach mit layTile() gelegt wird
+                        // hiervor mit layTile() ins Spielfeld gelegt wird
                     }
 
                 }
@@ -76,11 +76,56 @@ public class GameField {
     }
 
     /**
+     * Konstruktor welcher ein Spiel mit dem Rand des vorherigen Spielfelds erzeugt.
+     * Die Groesse kann hierbei vom alten Spielfeld abweichen
+     * @param height Hoehe vom neuen Spielfeld
+     * @param width Breite vom neuen Spielfeld
+     * @param oldField das alte Spielfeld um von diesem den Rand zu bekommen
+     */
+    GameField(int height, int width, GameField oldField){
+        this(height, width, true); //Konstruktoren verkettung
+
+        this.setBorderFromGameField(oldField);
+    }
+
+    /**
      * Methode welche die Tiles Instanz zurueckgibt
      * @return die Tiles Instanz
      */
     Tiles getTiles(){
         return(this.tiles);
+    }
+
+    /**
+     * Methode welche die Raender dieses Spielfeld nach dem Schema des uebergebenen einfaerbt
+     * @param oldField das alte Spielfeld nach welchem das neue eingefaerbt wird
+     */
+    private void setBorderFromGameField(GameField oldField){
+
+        //alten Rand setzen links und oben
+        int smallerWidth = Math.min(this.getGameFieldWidth() - 1, oldField.getGameFieldWidth()); //-1 damit die Ecke
+        // rechte obere Ecke im neuen Spielfeld frei bleibt
+        int smallerHeight = Math.min(this.getGameFieldHeight() - 1, oldField.getGameFieldHeight()); //-1 damit die Ecke
+        // linke untere Ecke im neuen Spielfeld frei bleibt
+        for(int y = 0; y < smallerHeight; y++){
+            for(int x = 0; x < smallerWidth; x++){
+                if(this.isFieldBorder(x, y)){
+                    this.layTile(x, y, oldField.getTile(x, y));
+                }
+            }
+        }
+
+        //alten Rand setzen rechts
+        for(int y = 1; y < smallerHeight; y++){ //bei 1 Starten da bei 0 immer NNNN liegt was schon im Spielfeld liegt
+            Tile oldTile = oldField.getTile(oldField.getGameFieldWidth() - 1, y);
+            this.layTile(this.getGameFieldWidth() - 1, y, oldTile);
+        }
+
+        //alten Rand setzen unten
+        for(int x = 1; x < smallerWidth; x++){ //bei 1 Starten da bei 0 immer NNNN liegt was schon im Spielfeld liegt
+            Tile oldTile = oldField.getTile(x, oldField.getGameFieldHeight() - 1);
+            this.layTile(x, this.getGameFieldHeight() - 1, oldTile);
+        }
     }
 
     /**
