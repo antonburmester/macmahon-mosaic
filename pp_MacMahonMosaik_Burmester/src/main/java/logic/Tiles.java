@@ -15,7 +15,7 @@ public class Tiles {
     /**
      * Konstruktor welcher diese Klasse mit allen Spielsteinen fuellt
      */
-    public Tiles(){
+    Tiles(){
         this.tiles = new ArrayList<>();
         for (int i = 0; i < Game.TILE_AMOUNT_NO_HOLE_NO_EMPTY; i++) { //durchlaeuft alle Mosaiksteine bis auf HHHH und
             // NNNN
@@ -26,57 +26,31 @@ public class Tiles {
     /**
      * Konstruktor welcher diese Klasse mit bestehenden Spielsteinen laedt
      */
-    public Tiles(ArrayList<Tile> tiles){
+    Tiles(ArrayList<Tile> tiles){
         this.tiles = tiles;
-    }
-
-    /**
-     * Konstruktor welcher diese Klasse mit Lochsteinen fuelt
-     * @param holesCount die Anzahl der Lochsteine
-     */
-    public Tiles(int holesCount) {
-        this.tiles = new ArrayList<>();
-        for(int i = 0; i < holesCount; i++){
-            this.tiles.add(new Tile(TileNames.HHHH));
-        }
-    }
-
-    /**
-     * Methode welche einen bestimmten Spielstein aus dem Array entfernt
-     * @param removedTile der zu entfernende Spielstein
-     * @return ob der Spielstein aus der Liste entfernt werden konnte oder gar nicht in der Liste war
-     */
-    public boolean removeTile(Tile removedTile){
-        return(this.tiles.remove(removedTile));
     }
 
     /**
      * Methode welche einen bestimmten Spielstein dem Array hinzufuegt
      * @param addedTile der hinzuzufuegende Spielstein
-     * @return ob der Spielstein der Liste hinzugefuegt werden konnte oder schon in der Liste war
      */
-    public boolean addTile(Tile addedTile){
-        return(this.tiles.add(addedTile));
+    void addTile(Tile addedTile){
+        this.tiles.add(addedTile);
     }
 
     /**
-     * Methode welche einen bestimmten Spielstein an den Anfang des Tiles Array einfuegt
-     * @param prependedTile der einzufugende Spielstein
-     * @return ob der Spielstein hinzugefuegt wurde oder schon vorhanden war
+     * Methode welche einen bestimmten Spielstein aus dem Array entfernt
+     * @param removedTile der zu entfernende Spielstein
      */
-    public boolean prependTile(Tile prependedTile){
-        if(!this.tiles.contains(prependedTile)) {
-            this.tiles.addFirst(prependedTile);
-            return(true);
-        }
-        return(false);
+    void removeTile(Tile removedTile){
+        this.tiles.remove(removedTile);
     }
 
     /**
      * Methode welche diese Instanz klont als DeepCopy
      * @return eine DeepCopy dieser Instanz
      */
-    public Tiles cloneGameTiles(){
+    Tiles cloneGameTiles(){
         ArrayList<Tile> clonedTiles = new ArrayList<>();
         for(Tile currTile: this.tiles){ //jeder Spielstein
             clonedTiles.add(currTile.cloneTile()); //Spielstein kopieren und nicht die refferenz
@@ -98,7 +72,7 @@ public class Tiles {
      * @param index der Index es Spielsteins
      * @return die Instanz des Spielsteins oder null falls dieser nicht vorhanden ist weil er geloescht wurde
      */
-    public Tile getTileByTileNamesIndex(int index){
+    Tile getTileByTileNamesIndex(int index){
         TileNames searchedTileName = TileNames.values()[index];
         for(Tile currTile : this.tiles){ //jeder Spielstein
             if(currTile.getTile().equals(searchedTileName)) return(currTile); //wenn TileName des Spielsteins dem
@@ -108,49 +82,12 @@ public class Tiles {
     }
 
     /**
-     * Methode welche den Spielstein an der gewuenschten Stelle zurueckgibt. Reihenfolge der TileNames
-     * Ist kein Spielstein vorhanden an der Stelle wird null zurueckgegeben
-     * @param index der Index es Spielsteins
-     * @return die Instanz des Spielsteins oder null falls dieser nicht vorhanden ist weil er geloescht wurde
-     */
-    public Tile getTileByArrayIndex(int index){
-        return(this.tiles.get(index));
-    }
-
-    /**
-     * Methode welche den anhand des uebergebenen Spielsteins seine Position/ Index im Array sucht
-     * @param tile der Spielstein
-     * @return die Position im Array oder -1 falls nicht gefunden
-     */
-    public int getTileIndexInTiles(Tile tile){
-        for(int i = 0; i < this.tiles.size(); i++){ //jeden Spielstein durchlaufen
-            if(this.tiles.get(i).equals(tile)) return(i); //wenn aktueller Spielstein dem uebergebenen gleicht Index
-            // zurueckgeben
-        }
-        return(-1);
-    }
-
-    /**
-     * Methode welche einen Spielstein an eine bestimmte Position im Array einfuegt
-     * @param index die Position im Array
-     * @param tile der einzufuegende Spielstein
-     * @return ob der Spielstein schon im Array war oder eingefuegt werden konnte
-     */
-    public boolean insertTile(int index, Tile tile){
-        if(!this.tiles.contains(tile)){
-            this.tiles.add(index, tile);
-            return(true);
-        }
-        return(false);
-    }
-
-    /**
      * Methode welche die richtige Klasse aus den Spielsteinen sucht
      * Der Name muss uebereinstimmen und der Spielstein darf noch nicht gelegt worden sein
      * @param tileName der Name des Spielsteins inklusive Rotationen
      * @return die Instanz welche zum uebergebenen Namen passt und die Rotationen werden gespeichert oder null
      */
-    public Tile getTileByNameWithRotation(String tileName){
+    Tile getTileByNameWithRotation(String tileName){
         for(Tile currTile : this.tiles){ //jeden Spielstein durchlaufen
             Rotation originalRotation = currTile.getRotation(); //um die Rotation nach den versuchen zurueckzusetzen
             for(Rotation currRotation : Rotation.values()){ //jede Rotation durchlaufen

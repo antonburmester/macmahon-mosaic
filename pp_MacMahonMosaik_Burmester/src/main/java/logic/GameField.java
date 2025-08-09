@@ -654,7 +654,7 @@ public class GameField {
 
                     if(!clonedGameField.getTile(pos.getX(), pos.getY()).isPlaceHolderTile()) { //kein Platzhalter
                         // sondern richtiger einmaliger Spielstein
-                        clonedTiles.prependTile(clonedGameField.getTile(pos.getX(), pos.getY())); //Spielstein wieder
+                        clonedTiles.addTile(clonedGameField.getTile(pos.getX(), pos.getY())); //Spielstein wieder
                         // zuruecklegen in Spielsteinauswahl da hiernach dieser aus dem Spielfeld geloescht wird
                     }
                     clonedGameField.resetTile(pos.getX(), pos.getY());
@@ -673,7 +673,7 @@ public class GameField {
 
                         if(!clonedGameField.getTile(pos.getX(), pos.getY()).isPlaceHolderTile()) { //kein Platzhalt
                             // sondern richtiger einmaliger Spielstein
-                            clonedTiles.prependTile(clonedGameField.getTile(pos.getX(), pos.getY())); //Spielstein
+                            clonedTiles.addTile(clonedGameField.getTile(pos.getX(), pos.getY())); //Spielstein
                             // wieder zuruecklegen in Spielsteinauswahl da hiernach dieser aus dem Spielfeld geloescht
                             // wird
                         }

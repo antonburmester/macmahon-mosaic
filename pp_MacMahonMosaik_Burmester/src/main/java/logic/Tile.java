@@ -35,21 +35,13 @@ public class Tile {
         for(TileNames currTileName : TileNames.values()){
 
             for(Rotation currRotation : Rotation.values()){
-                if(getTileNameWithRotation(currTileName.name(), currRotation).equals(tileName)){
+                if(simulateTileNameWithRotation(currTileName.name(), currRotation).equals(tileName)){
                     this.tile = currTileName;
                     this.rotation = currRotation;
                     return;
                 }
             }
         }
-    }
-
-    /**
-     * Methode welche die Instanz eines Spielstein dupliziert
-     * @return die Instanz als neue unabhaengige Instanz
-     */
-    public Tile cloneTile() {
-        return(new Tile(this.tile, this.rotation));
     }
 
     /**
@@ -80,7 +72,7 @@ public class Tile {
      * Methode welche den aktuellen Spielstein rotiert und durch die Methode getTileNameWithRotation
      */
     public String getTileNameWithRotation(){
-        return(Tile.getTileNameWithRotation(this.tile.name(), this.rotation));
+        return(Tile.simulateTileNameWithRotation(this.tile.name(), this.rotation));
     }
 
     /**
@@ -88,7 +80,7 @@ public class Tile {
      * @param input der String welcher rotiert werden soll
      * @return der Name des Spielsteins unter Berucksichtigung der Drehung
      */
-    public static String getTileNameWithRotation(String input, Rotation rotation){
+    public static String simulateTileNameWithRotation(String input, Rotation rotation){
         StringBuilder sb = new StringBuilder(input);
 
         for (Rotation currRotation : Rotation.values()) {
@@ -130,11 +122,13 @@ public class Tile {
      * @return ob RRRR, GGGG oder YYYY
      */
     public boolean isTileBorderLayable(){
-        return(this.tile.equals(TileNames.RRRR) || this.tile.equals(TileNames.GGGG) || this.tile.equals(TileNames.YYYY));
+        return(this.tile.equals(TileNames.RRRR) || this.tile.equals(TileNames.GGGG) ||
+                this.tile.equals(TileNames.YYYY));
     }
 
     /**
      * prueft ob es sich bei dem Spielstein String um einen Rand kompatiblen Spielstein handelt
+     * NNNN hier vorhanden, da das Spielfeld auch teils mit leerem Rand geladen werden kann
      * @return ob RRRR, GGGG, YYYY oder NNNN (leer)
      */
     public static boolean isTileStringBorderLayable(String input){
@@ -148,15 +142,6 @@ public class Tile {
      */
     public static boolean isTileStringEdgeLayable(String input){
         return(input.equals(TileNames.NNNN.name()));
-    }
-
-    /**
-     * Methode welche prueft, ob es sich bei dem Spielstein um einen handelt welcher als Randstueck genutzt werden kann
-     * @return ob das Spielstueck als Randstueck genutzt werden kann (GGGG oder RRRR oder YYYY)
-     */
-    public boolean isTileBorderCompatible(){
-        return(this.tile.equals(TileNames.GGGG) || this.tile.equals(TileNames.RRRR) || this.tile.equals(TileNames.YYYY))
-                ;
     }
 
     /**
@@ -213,7 +198,7 @@ public class Tile {
     public static String getTileNamesString(String tileName){
         for(TileNames currTileName : TileNames.values()){ //durchlaeuft jeden Spielstein
             for(Rotation currRotation : Rotation.values()){ //durchlauft jede Rotation
-                if(getTileNameWithRotation(currTileName.name(), currRotation).equals(tileName)){
+                if(simulateTileNameWithRotation(currTileName.name(), currRotation).equals(tileName)){
                     return(currTileName.name());
                 }
             }
@@ -231,6 +216,14 @@ public class Tile {
                 return(i);
         }
         return(-1);
+    }
+
+    /**
+     * Methode welche die Instanz eines Spielstein dupliziert
+     * @return die Instanz als neue unabhaengige Instanz
+     */
+    public Tile cloneTile() {
+        return(new Tile(this.tile, this.rotation));
     }
 
     /**

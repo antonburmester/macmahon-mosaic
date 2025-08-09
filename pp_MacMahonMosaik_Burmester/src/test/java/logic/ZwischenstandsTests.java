@@ -26,8 +26,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.layTile(2, 2, new Tile("YGRG"));
         assertTrue(status);
@@ -44,8 +43,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.layTile(1, 1, new Tile("GRYG"));
         assertTrue(status);
@@ -62,8 +60,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.layTile(1, 1, new Tile("YYRR"));
         assertTrue(status);
@@ -79,8 +76,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "HHHH", "NNNN", "HHHH", "NNNR"},
                                       {"NGNN", "NNNN", "HHHH", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.layTile(2, 2, new Tile("YYRR"));
         assertTrue(status);
@@ -101,8 +97,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.isGameFieldTileMatching(2, 2, false);
         assertTrue(status);
@@ -118,8 +113,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertTrue(status);
@@ -135,8 +129,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.isGameFieldTileMatching(1, 1, true);
         assertTrue(status);
@@ -152,8 +145,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertFalse(status);
@@ -169,8 +161,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.isGameFieldTileMatching(1, 1, false);
         assertTrue(status);
@@ -192,8 +183,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertTrue(status);
@@ -210,8 +200,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "HHHH", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertTrue(status);
@@ -229,8 +218,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "YGRG", "YRRG", "NNNR"},
                                       {"NGNN", "HHHH", "RYGY", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.checkIfGameFieldSolved(true);
         assertTrue(status);
@@ -247,8 +235,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
                                       {"NGNN", "HHHH", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
@@ -265,8 +252,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
                                       {"NGNN", "HHHH", "RYGY", "HHHH", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
@@ -283,8 +269,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "GYGR", "YRRG", "NNNR"}, //in der mitte Muesste YGRG sein aber
                                       {"NGNN", "HHHH", "RYGY", "RGYY", "NNNG"}, //dort ist YGRG 90* rotiert
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
@@ -301,8 +286,7 @@ public class ZwischenstandsTests {
                                       {"NRNN", "HHHH", "GYGR", "YRRG", "NNNR"}, //in der mitte Muesste YGRG sein aber
                                       {"NGNN", "HHHH", "RYGY", "HHHH", "NNNG"}, //dort ist YGRG 90* rotiert
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Tiles gameFieldTiles = new Tiles();
-        GameField gameField = new GameField(gameFieldInput, gameFieldTiles);
+        GameField gameField = new GameField(gameFieldInput);
 
         boolean status = gameField.checkIfGameFieldSolved(false);
         assertFalse(status);
@@ -324,9 +308,10 @@ public class ZwischenstandsTests {
                                       {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Game game = new Game(new FakeGUI(), gameFieldInput);
-        boolean status = game.isGameFieldSolvable();
-        assertTrue(status);
+        GameField gameField = new GameField(gameFieldInput);
+
+        boolean status = gameField.isGameFieldSolvable();
+        assertTrue(gameField.isGameFieldSolvable());
     }
 
     /**
@@ -340,10 +325,10 @@ public class ZwischenstandsTests {
                                       {"NRNN", "NNNN", "HHHH", "NNNN", "NNNR"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Game game = new Game(new FakeGUI(), gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
+        GameField gameField = new GameField(gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
         // wieviele Lochsteine es gibt, in diesem Fall sollte es 0 geben aber es ist trotzdem einer drin.
         // Es wird somit versucht einen Lochstein zu platzieren welcher gar nicht existent ist
-        boolean status = game.isGameFieldSolvable();
+        boolean status = gameField.isGameFieldSolvable();
         assertTrue(status);
     }
 
@@ -358,8 +343,8 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "NNNN", "YRRG", "NNNR"},
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Game game = new Game(new FakeGUI(), gameFieldInput);
-        boolean status = game.isGameFieldSolvable();
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.isGameFieldSolvable();
         assertTrue(status);
     }
 
@@ -374,10 +359,10 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "NNNN", "HHHH", "NNNR"}, //YGRR RYGR RRYG GRRY
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"}, //RYYG GRYY YGRY YYGR    RYGY YRYG GYRY YGYR   RGYY YRGY YYRG GYYR
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Game game = new Game(new FakeGUI(), gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
+        GameField gameField = new GameField(gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
         // wieviele Lochsteine es gibt, in diesem Fall sollte es 0 geben aber es ist trotzdem einer drin.
         // Es wird somit versucht einen Lochstein zu platzieren welcher gar nicht existent ist
-        boolean status = game.isGameFieldSolvable();
+        boolean status = gameField.isGameFieldSolvable();
         assertTrue(status);
     }
 
@@ -392,8 +377,8 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "NNNN", "GYRR", "NNNR"}, //bei GYRR sollte sein: YRRG
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Game game = new Game(new FakeGUI(), gameFieldInput);
-        boolean status = game.isGameFieldSolvable();
+        GameField gameField = new GameField(gameFieldInput);
+        boolean status = gameField.isGameFieldSolvable();
         assertTrue(status);
     }
 
@@ -408,10 +393,10 @@ public class ZwischenstandsTests {
                                       {"NRNN", "YGRR", "HHHH", "GYRR", "NNNR"}, //bei GYRR sollte sein: YRRG
                                       {"NGNN", "RYYG", "RYGY", "RGYY", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
-        Game game = new Game(new FakeGUI(), gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
+        GameField gameField = new GameField(gameFieldInput); //schlaegt Fehl da im Game Konstruktor berechnet wird
         // wieviele Lochsteine es gibt, in diesem Fall sollte es 0 geben aber es ist trotzdem einer drin.
         // Es wird somit versucht einen Lochstein zu platzieren welcher gar nicht existent ist TODO fragen ob so gewollt
-        boolean status = game.isGameFieldSolvable();
+        boolean status = gameField.isGameFieldSolvable();
         assertTrue(status);
     }
 
