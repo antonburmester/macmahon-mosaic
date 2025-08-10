@@ -2,7 +2,6 @@ package logic;
 
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,15 +13,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TilesTest {
 
-    //1 Tiles()
+    //Tiles()
 
     /**
      * Tiles()
-     * 1.1
+     * 1
      * ob Tiles Instanz mit allen Spielsteinen initialisiert wird
      */
     @Test
-    public void Test_1_1_Constructor1_AllGameTiles(){
+    public void Test_Constructor1_1_AllGameTiles(){
         Tiles tiles = new Tiles();
 
         ArrayList<Integer> errorTileIndexes = new ArrayList<>();
@@ -39,11 +38,11 @@ public class TilesTest {
 
     /**
      * Tiles()
-     * 1.2
+     * 2
      * ob Tiles Instanz ohne NNNN (nichts gelegt) und HHHH (Loch) Stein initialisiert wird
      */
     @Test
-    public void Test_1_2_Constructor1_NoHHHHandNNNN(){
+    public void Test_Constructor1_2_NoHHHHandNNNN(){
         Tiles tiles = new Tiles();
 
         assertNull(tiles.getTileByTileNamesIndex(TileNames.NNNN.ordinal())); //enthaelt nicht NNNN
@@ -55,11 +54,11 @@ public class TilesTest {
 
     /**
      * Tiles(ArrayList<Tile>)
-     * 2.1
+     * 1
      * ob Tiles Instanz mit allen Spielsteinen initialisiert wird
      */
     @Test
-    public void Test_2_1_Constructor2_AllTilesInputAndTilesTileSame(){
+    public void Test_Constructor2_1_AllTilesInputAndTilesTileSame(){
         //ArrayList manuell mit allen Spielsteinen inklusive HHHH und NNNN fuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         for(int i = 0; i < Game.TILE_AMOUNT_COMPLETE; i++){ //jeden Spielstein durchlaufen inklusive von
@@ -87,11 +86,11 @@ public class TilesTest {
 
     /**
      * Tiles(ArrayList<Tile>)
-     * 2.2
+     * 2
      * ob Tiles Instanz mit allen Spielsteinen initialisiert wird
      */
     @Test
-    public void Test_2_2_Constructor2_AllTilesInputAndTilesTileSame(){
+    public void Test_Constructor2_2_AllTilesInputAndTilesTileSame(){
         //ArrayList manuell mit allen Spielsteinen inklusive HHHH und NNNN fuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         tileArrayList.add(new Tile(TileNames.GRGR));
@@ -115,15 +114,191 @@ public class TilesTest {
     }
 
 
-    //3 addTile(Tile) void
+    //getTiles() ArrayList<Tile>
+        //keine Tests, da einfacher Getter
+
+
+    //getTileCount() int
+        //keine Tests, da einfacher Getter
+
+
+    //getTileByTileNamesIndex(int) Tile
+
+    /**
+     * getTileByTileNamesIndex(int) Tile
+     * 1
+     * ob der richtige Spielstein zurueckgegeben wird
+     */
+    @Test
+    public void Test_getTileByTileNamesIndex_1_Existing(){
+        Tile firstTile = new Tile(TileNames.NNNN);
+        Tile secondTile = new Tile(TileNames.GRYR);
+        ArrayList<Tile> tileArrayList = new ArrayList<>();
+        tileArrayList.add(firstTile);
+        tileArrayList.add(secondTile);
+
+        Tiles tiles = new Tiles(tileArrayList);
+
+        Tile firstTileByMethod = tiles.getTileByTileNamesIndex(firstTile.getTileIndex());
+        Tile secondTileByMethod = tiles.getTileByTileNamesIndex(secondTile.getTileIndex());
+
+        assertEquals(firstTile, firstTileByMethod);
+        assertEquals(secondTile, secondTileByMethod);
+    }
+
+    /**
+     * getTileByTileNamesIndex(int) Tile
+     * 2
+     * ob da der gesuchte Spielstein nicht vorhanden ist null zurueckgegeben wird
+     */
+    @Test
+    public void Test_getTileByTileNamesIndex_2_NotExisting(){
+        Tile firstTile = new Tile(TileNames.NNNN); //Index 25
+        Tile secondTile = new Tile(TileNames.GRYR); //Index 21
+        int notContainedIndex = 10; //Index 10 ist
+        ArrayList<Tile> tileArrayList = new ArrayList<>();
+        tileArrayList.add(firstTile);
+        tileArrayList.add(secondTile);
+
+        Tiles tiles = new Tiles(tileArrayList);
+
+        Tile notExistingTile = tiles.getTileByTileNamesIndex(notContainedIndex);
+
+        assertNull(notExistingTile);
+    }
+
+    //getTileByArrayIndex(int) Tile
+        //keine Tests, da einfacher Getter
+
+
+    //getTileByNameWithRotation(String) Tile
+
+    /**
+     * getTileByNameWithRotation(String) Tile
+     * 1
+     * ob der richtige Spielstein (unrotiert) welcher vorhanden ist zurueckgegeben wird
+     */
+    @Test
+    public void Test_getTileByNameWithRotation_1_ExistingNotRotated(){
+        Tile firstTile = new Tile(TileNames.NNNN, Rotation.R0);
+        Tile secondTile = new Tile(TileNames.GRYR, Rotation.R0);
+        ArrayList<Tile> tileArrayList = new ArrayList<>();
+        tileArrayList.add(firstTile);
+        tileArrayList.add(secondTile);
+
+        Tiles tiles = new Tiles(tileArrayList);
+
+        Tile firstTileByMethod = tiles.getTileByNameWithRotation(firstTile.getTileNameStringWithRotation());
+        Tile secondTileByMethod = tiles.getTileByNameWithRotation(secondTile.getTileNameStringWithRotation());
+
+        assertEquals(firstTile, firstTileByMethod);
+        assertEquals(secondTile, secondTileByMethod);
+    }
+
+    /**
+     * getTileByNameWithRotation(String) Tile
+     * 2
+     * ob der richtige Spielstein (rotiert) welcher vorhanden ist zurueckgegeben wird
+     */
+    @Test
+    public void Test_getTileByNameWithRotation_2_ExistingRotated(){
+        Tile firstTile = new Tile(TileNames.NNNN, Rotation.R2); //2x rotiert (R2)
+        Tile secondTile = new Tile(TileNames.GRYR, Rotation.R3); //3x rotiert (R3)
+        ArrayList<Tile> tileArrayList = new ArrayList<>();
+        tileArrayList.add(firstTile);
+        tileArrayList.add(secondTile);
+
+        Tiles tiles = new Tiles(tileArrayList);
+
+        Tile firstTileByMethod = tiles.getTileByNameWithRotation(firstTile.getTileNameStringWithRotation());
+        Tile secondTileByMethod = tiles.getTileByNameWithRotation(secondTile.getTileNameStringWithRotation());
+
+        assertEquals(firstTile, firstTileByMethod);
+        assertEquals(secondTile, secondTileByMethod);
+    }
+
+    /**
+     * getTileByNameWithRotation(String) Tile
+     * 3
+     * ob der richtige Spielstein (rotiert) welcher vorhanden ist zurueckgegeben wird
+     * dieser ist aber in der falschen Rotation also muss am Ende geschaut werden, dass auch die Rotation stimmt
+     */
+    @Test
+    public void Test_getTileByNameWithRotation_3_ExistingNeedsToBeRotated() {
+        Tile firstTile = new Tile(TileNames.NNNN, Rotation.R2); //2x rotiert (R2)
+        Tile secondTile = new Tile(TileNames.GRYR, Rotation.R3); //3x rotiert (R3)
+        ArrayList<Tile> tileArrayList = new ArrayList<>();
+        tileArrayList.add(firstTile);
+        tileArrayList.add(secondTile);
+
+        Tiles tiles = new Tiles(tileArrayList);
+
+        String secondTile2RotationsString = "YRGR"; //GRYR:   R0: GRYR; R1: RGRY; R2; YRGR; R3: RYRG
+        Tile searchedTileByMethod = tiles.getTileByNameWithRotation(secondTile2RotationsString);
+
+        assertEquals(secondTile, searchedTileByMethod); //wurde gefunden
+        assertEquals(Rotation.R2, searchedTileByMethod.getRotation()); //Rotation wurde durch die Methode gesetzt
+    }
+
+
+    /**
+     * getTileByNameWithRotation(String) Tile
+     * 4
+     * ob null zurueckgegeben wird wenn ein nicht vorhandener Spielstein gesucht wird
+     */
+    @Test
+    public void Test_getTileByNameWithRotation_4_NotExisting() {
+        Tile firstTile = new Tile(TileNames.NNNN); //2x rotiert (R2)
+        Tile secondTile = new Tile(TileNames.GRYR); //3x rotiert (R3)
+        ArrayList<Tile> tileArrayList = new ArrayList<>();
+        tileArrayList.add(firstTile);
+        tileArrayList.add(secondTile);
+
+        Tiles tiles = new Tiles(tileArrayList);
+
+        Tile notContainedTile = new Tile(TileNames.GGGG);
+        Tile notContainedTileByMethod = tiles.getTileByNameWithRotation(
+                notContainedTile.getTileNameStringWithRotation());
+
+        assertNull(notContainedTileByMethod);
+    }
+
+    /**
+     * getTileByNameWithRotation(String) Tile
+     * 5
+     * ob der richtige Spielstein nicht vorhanden von der Rotation zurueckgesetzt wird
+     */
+    @Test
+    public void Test_getTileByNameWithRotation_5_ExistingNeedsToBeRotated() {
+        Tile firstTile = new Tile(TileNames.NNNN, Rotation.R2); //2x rotiert (R2)
+        Tile secondTile = new Tile(TileNames.GRYR, Rotation.R3); //3x rotiert (R3)
+        ArrayList<Tile> tileArrayList = new ArrayList<>();
+        tileArrayList.add(firstTile);
+        tileArrayList.add(secondTile);
+
+        Tiles tiles = new Tiles(tileArrayList);
+
+        String searchedTileString = TileNames.RGYG.name(); //nicht in Tiles vorhanden
+        Tile searchedTileByMethod = tiles.getTileByNameWithRotation(searchedTileString);
+
+        assertNull(searchedTileByMethod);
+        assertEquals(Rotation.R2, firstTile.getRotation());
+        assertEquals(Rotation.R3, secondTile.getRotation());
+    }
+
+
+    //containsTile() boolean
+
+
+    //addTile(Tile) void
 
     /**
      * addTile(Tile) void
-     * 3.1
+     * 1
      * zwei Spielsteine der leeren Tiles Klasse hinzufuegen
      */
     @Test
-    public void Test_3_1_addTile_EmtpyTilesClass(){
+    public void Test_addTile_1_EmtpyTilesClass(){
         //ArrayList manuell leer befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tiles tiles = new Tiles(tileArrayList);
@@ -140,11 +315,11 @@ public class TilesTest {
 
     /**
      * addTile(Tile) void
-     * 3.2
+     * 2
      * zwei Spielstein der nicht leeren Tiles Klasse hinzufuegen
      */
     @Test
-    public void Test_3_2_addTile_NotEmptyTilesClass(){
+    public void Test_addTile_2_NotEmptyTilesClass(){
         //ArrayList manuell mit GGGG Tile befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tile intialTilesTile = new Tile(TileNames.GGGG);
@@ -165,11 +340,11 @@ public class TilesTest {
 
     /**
      * addTile(Tile) void
-     * 3.3
+     * 3
      * denselben Spielstein der Tiles Klasse mehrfach hinzufuegen
      */
     @Test
-    public void Test_3_3_addTile_SameTileMultipleTimesAdded(){
+    public void Test_addTile_3_SameTileMultipleTimesAdded(){
         //ArrayList manuell mit GGGG befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tile intialTilesTile = new Tile(TileNames.GGGG);
@@ -185,15 +360,15 @@ public class TilesTest {
     }
 
 
-    //4 removeTile(Tile) void
+    //removeTile(Tile) void
 
     /**
      * removeTile(Tile) void
-     * 4.1
+     * 1
      * einen Spielstein der leeren Tiles Klasse loeschen
      */
     @Test
-    public void Test_4_1_removeTile_EmtpyTilesClass(){
+    public void Test_removeTile_1_EmtpyTilesClass(){
         //ArrayList manuell leer befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tiles tiles = new Tiles(tileArrayList);
@@ -207,11 +382,11 @@ public class TilesTest {
 
     /**
      * removeTile(Tile) void
-     * 4.2
+     * 2
      * einen Spielstein der Tiles Klasse loeschen, schauen ob der anderen Spielstein noch vorhanden ist
      */
     @Test
-    public void Test_4_2_removeTile_NotEmptyTilesClassTileContained(){
+    public void Test_removeTile_2_NotEmptyTilesClassTileContained(){
         //ArrayList manuell mit GGGG und GRYR Tile befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tile firstTile = new Tile(TileNames.GGGG);
@@ -230,11 +405,11 @@ public class TilesTest {
 
     /**
      * removeTile(Tile) void
-     * 4.3
+     * 3
      * einen Spielstein der Tiles Klasse mehrfach loeschen
      */
     @Test
-    public void Test_4_3_removeTile_SameTileMultipleTimes(){
+    public void Test_removeTile_3_SameTileMultipleTimes(){
         //ArrayList manuell mit GGGG und GRYR Tile befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tile firstTile = new Tile(TileNames.GGGG);
@@ -252,4 +427,48 @@ public class TilesTest {
         assertTrue(tiles.containsTile(secondTile));
     }
 
+
+    //cloneTiles()
+
+    /**
+     * cloneTiles() void
+     * 1
+     * ob die Refferenzen der Spielsteine der geklonten Tiles Klasse richtig von denen der originalen abweicht
+     */
+    @Test
+    public void Test_cloneTiles_1_AllTileDifferentInstance(){
+        Tiles originalTiles = new Tiles();
+        Tiles clonedTiles = originalTiles.cloneTiles();
+
+        boolean status = true;
+        for(int i = 0; i < originalTiles.getTileCount(); i++){
+            Tile originalInstanceTile = originalTiles.getTileByArrayIndex(i);
+            Tile clonedInstanceTile = clonedTiles.getTileByArrayIndex(i);
+
+            if(originalInstanceTile.equals(clonedInstanceTile)) status = false;
+        }
+        assertTrue(status);
+    }
+
+    /**
+     * cloneTiles() void
+     * 1
+     * ob die Nutzlasten der Spielsteine der geklonten Tiles Klasse von denen der originalen abweicht
+     */
+    @Test
+    public void Test_cloneTiles_2_AllTilePayloadSame(){
+        Tiles originalTiles = new Tiles();
+        Tiles clonedTiles = originalTiles.cloneTiles();
+
+        boolean status = true;
+        for(int i = 0; i < originalTiles.getTileCount(); i++){ //jedes Tile Element (Spielstein) durchlaufen
+            Tile originalInstanceTile = originalTiles.getTileByArrayIndex(i);
+            Tile clonedInstanceTile = clonedTiles.getTileByArrayIndex(i);
+
+            //Nutzlasten des originalen und geklonten Spielstein vergleichen
+            if(!(originalInstanceTile.getTileName().equals(clonedInstanceTile.getTileName()) &&
+                    originalInstanceTile.getRotation().equals(clonedInstanceTile.getRotation()))) status = false;
+        }
+        assertTrue(status);
+    }
 }

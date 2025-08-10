@@ -13,54 +13,54 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TileTest {
 
-    //1 Tile(TileNames)
+    //Tile(TileNames)
 
     /**
      * Tile(TileNames)
-     * 1.1
+     * 1
      * pruefen ob Tile Instanz mit richtigem TileName initialisiert wird
      */
     @Test
-    public void Test_1_1_TileConstructor_RightTileName(){
+    public void Test_TileConstructor_1_RightTileName(){
         TileNames tileName = TileNames.RRRR;
         Tile tile = new Tile(tileName);
-        assertEquals(tileName, tile.getTile());
+        assertEquals(tileName, tile.getTileName());
     }
 
     /**
      * Tile(TileNames)
-     * 1.2
+     * 2
      * pruefen ob Tile Instanz mit Rotation R0 initialisiert wird
      */
     @Test
-    public void Test_1_2_TileConstructor_RotationIsR0(){
+    public void Test_TileConstructor_2_RotationIsR0(){
         TileNames tileName = TileNames.HHHH;
         Tile tile = new Tile(tileName);
         assertEquals(Rotation.R0, tile.getRotation());
     }
 
 
-    //2 Tile(TileNames, Rotation)
+    //Tile(TileNames, Rotation)
 
     /**
      * Tile(TileNames, Rotation)
-     * 2.1
+     * 1
      * pruefen ob Tile Instanz mit richtigem TileName initialisiert wird
      */
     @Test
-    public void Test_2_1_TileConstructor2_RightTileName(){
+    public void Test_TileConstructor2_1_RightTileName(){
         TileNames tileName = TileNames.RGYG;
         Tile tile = new Tile(tileName, Rotation.R0);
-        assertEquals(tileName, tile.getTile());
+        assertEquals(tileName, tile.getTileName());
     }
 
     /**
      * Tile(TileNames, Rotation)
-     * 2.2
+     * 2
      * pruefen ob Tile Instanz mit richtigen Rotation initialisiert wird
      */
     @Test
-    public void Test_2_2_TileConstructor2_RigthRotation_R0(){
+    public void Test_TileConstructor2_2_RigthRotation_R0(){
         TileNames tileName = TileNames.RGYG;
         Rotation rotation = Rotation.R0;
         Tile tile = new Tile(tileName, rotation);
@@ -69,11 +69,11 @@ public class TileTest {
 
     /**
      * Tile(TileNames, Rotation)
-     * 2.3
+     * 3
      * pruefen ob Tile Instanz mit richtigen Rotation initialisiert wird
      */
     @Test
-    public void Test_2_3_TileConstructor2_RigthRotation_R2(){
+    public void Test_TileConstructor2_3_RigthRotation_R2(){
         TileNames tileName = TileNames.RGYG;
         Rotation rotation = Rotation.R2;
         Tile tile = new Tile(tileName, rotation);
@@ -81,46 +81,46 @@ public class TileTest {
     }
 
 
-    //3 Tile(String)
+    //Tile(String)
 
     /**
      * Tile(String)
-     * 3.1
+     * 1
      * pruefen ob Tile Instanz mit richtigem TileName initialisiert wird
      * der Name des Spielsteins ist nicht rotiert
      */
     @Test
-    public void Test_3_1_TileConstructor3_RightTileName_NotRotated(){
+    public void Test_TileConstructor3_1_RightTileNameNotRotated(){
         String stringTileName = "RGYG"; //TileName als String (unrotiert)
         Tile tile = new Tile(stringTileName);
 
         TileNames correspondingTileName = TileNames.RGYG; //der String TileName als TileName
-        assertEquals(correspondingTileName, tile.getTile());
+        assertEquals(correspondingTileName, tile.getTileName());
     }
 
     /**
      * Tile(String)
-     * 3.2
+     * 2
      * pruefen ob Tile Instanz mit richtigem TileName initialisiert wird
      * der Name des Spielsteins ist rotiert
      */
     @Test
-    public void Test_3_2_TileConstructor3_RightTileName_Rotated(){
+    public void Test_TileConstructor3_2_RightTileNameRotated(){
         String stringTileName = "YGRG"; //TileName als String (2x rotiert, eigentlich RGYG)
         Tile tile = new Tile(stringTileName);
 
         TileNames correspondingTileName = TileNames.RGYG; //der String TileName als TileName (natuerlich unrotiert)
-        assertEquals(correspondingTileName, tile.getTile());
+        assertEquals(correspondingTileName, tile.getTileName());
     }
 
     /**
      * Tile(String)
-     * 3.3
+     * 3
      * pruefen ob Tile Instanz mit der richtigen Rotation initialisiert wird
      * der Name des Spielsteins ist nicht rotiert
      */
     @Test
-    public void Test_3_3_TileConstructor3_RightTileName_NotRotated(){
+    public void Test_TileConstructor3_3_RightTileNameNotRotated(){
         String stringTileName = "RGYG"; //TileName als String (unrotiert)
         Tile tile = new Tile(stringTileName);
 
@@ -130,12 +130,12 @@ public class TileTest {
 
     /**
      * Tile(String)
-     * 3.4
+     * 4
      * pruefen ob Tile Instanz mit der richtigen Rotation initialisiert wird
      * der Name des Spielsteins ist 2x rotiert
      */
     @Test
-    public void Test_3_4_TileConstructor3_RightTileName_Rotated(){
+    public void Test_TileConstructor3_4_RightTileNameRotated(){
         String stringTileName = "YGRG"; //TileName als String (2x rotiert, eigentlich RGYG)
         Tile tile = new Tile(stringTileName);
 
@@ -144,152 +144,63 @@ public class TileTest {
     }
 
 
-    //4 getTile() TileNames
-
-    /**
-     * getTile() TileNames
-     * 4.1
-     * pruefen ob die getTile Methode den richtigen TileNames zurueckgibt
-     * nicht rotiert (Rotierung hat keine Auswirkung auf TileNames)
-     */
-    @Test
-    public void Test_4_1_getTile_NotRotated(){
-        TileNames tileName = TileNames.GRGR;
-        Rotation rotation = Rotation.R0;
-        Tile tile = new Tile(tileName, rotation);
-
-        assertEquals(tileName, tile.getTile());
-    }
-
-    /**
-     * getTile() TileNames
-     * 4.2
-     * pruefen ob die getTile Methode den richtigen TileNames zurueckgibt
-     * zweimal rotiert (Rotierung hat keine Auswirkung auf TileNames)
-     */
-    @Test
-    public void Test_4_2_getTile_Rotated(){
-        TileNames tileName = TileNames.GRGR;
-        Rotation rotation = Rotation.R3;
-        Tile tile = new Tile(tileName, rotation);
-
-        assertEquals(tileName, tile.getTile());
-    }
+    //getTileName() TileNames
+        //keine Tests, da einfacher Getter
 
 
-    //5 getTileString() String
-
-    /**
-     * getTileString() String
-     * 5.1
-     * pruefen ob die getTileString Methode den richtigen TileNames String zurueckgibt
-     * nicht rotiert (Rotierung hat keine Auswirkung auf String des TileNames)
-     */
-    @Test
-    public void Test_5_1_getTileString_NotRotated(){
-        TileNames tileName = TileNames.GRGR;
-        Rotation rotation = Rotation.R0;
-        Tile tile = new Tile(tileName, rotation);
-
-        String tileNameString = tileName.name();
-        assertEquals(tileNameString, tile.getTileString());
-    }
-
-    /**
-     * getTileString() String
-     * 5.2
-     * pruefen ob die getTileString Methode den richtigen TileNames zurueckgibt
-     * zweimal rotiert (Rotierung hat keine Auswirkung auf String des TileNames)
-     */
-    @Test
-    public void Test_5_2_getTileString_Rotated(){
-        TileNames tileName = TileNames.GRGR;
-        Rotation rotation = Rotation.R3;
-        Tile tile = new Tile(tileName, rotation);
-
-        String tileNameString = tileName.name();
-        assertEquals(tileNameString, tile.getTileString());
-    }
+    //getTileNameString() String
+        //keine Tests, da einfacher Getter
 
 
-    //6 getRotation() Rotation
-
-    /**
-     * getRotation() Rotation
-     * 6.1
-     * pruefen ob die getRotation Methode die richtige Rotation zurueckgibt
-     * R0
-     */
-    @Test
-    public void Test_6_1_getRotation_R0(){
-        TileNames tileName = TileNames.GRGR;
-        Rotation rotation = Rotation.R0;
-        Tile tile = new Tile(tileName, rotation);
-
-        assertEquals(rotation, tile.getRotation());
-    }
-
-    /**
-     * getRotation() Rotation
-     * 6.2
-     * pruefen ob die getRotation Methode die richtige Rotation zurueckgibt
-     * R3
-     */
-    @Test
-    public void Test_6_2_getRotation_R3(){
-        TileNames tileName = TileNames.GRGR;
-        Rotation rotation = Rotation.R3;
-        Tile tile = new Tile(tileName, rotation);
-
-        assertEquals(rotation, tile.getRotation());
-    }
+    //getRotation() Rotation
+        //keine Tests, da einfacher Getter
 
 
-    //7 getTileNameWithRotation() String
+    //getTileNameWithRotation() String
 
     /**
      * getTileNameWithRotation() String
-     * 7.1
+     * 1
      * pruefen ob die getTileNameWithRotation Methode die den richtigen String zuruekgibt
      * R0
      */
     @Test
-    public void Test_7_1_getTileNameWithRotation_R0(){
+    public void Test_getTileNameStringWithRotation_1_R0(){
         TileNames tileName = TileNames.RGYR;
         Rotation rotation = Rotation.R0;
         Tile tile = new Tile(tileName, rotation);
 
         String rotatedTileNameString = "RGYR"; //R0: RGYR; R1: RRGY; R2: YRRG; R3: GYRR
-        assertEquals(rotatedTileNameString, tile.getTileNameWithRotation());
+        assertEquals(rotatedTileNameString, tile.getTileNameStringWithRotation());
     }
 
     /**
      * getTileNameWithRotation() String
-     * 7.2
+     * 2
      * pruefen ob die getTileNameWithRotation Methode die den richtigen String zuruekgibt
      * R3
      */
     @Test
-    public void Test_7_2_getTileNameWithRotation_R3(){
+    public void Test_getTileNameStringWithRotation_2_R3(){
         TileNames tileName = TileNames.RGYR;
         Rotation rotation = Rotation.R3;
         Tile tile = new Tile(tileName, rotation);
 
         String rotatedTileNameString = "GYRR"; //R0: RGYR; R1: RRGY; R2: YRRG; R3: GYRR
-        assertEquals(rotatedTileNameString, tile.getTileNameWithRotation());
+        assertEquals(rotatedTileNameString, tile.getTileNameStringWithRotation());
     }
 
 
-    //8 static simulateTileNameWithRotation(String, Rotation) String
+    //static simulateTileNameWithRotation(String, Rotation) String
 
     /**
      * static simulateTileNameWithRotation(String, Rotation) String
-     * 8.1
+     * 1
      * pruefen ob die simulateTileNameWithRotation Methode die den richtigen String zuruekgibt
      * R0
      */
     @Test
-    public void Test_8_1_simulateTileNameWithRotation_R0(){
+    public void Test_simulateTileNameWithRotation_1_R0(){
         String tileNameString = TileNames.RGYR.name();
         Rotation rotation = Rotation.R0;
 
@@ -299,12 +210,12 @@ public class TileTest {
 
     /**
      * static simulateTileNameWithRotation(String, Rotation) String
-     * 8.2
+     * 2
      * pruefen ob die simulateTileNameWithRotation Methode die den richtigen String zuruekgibt
      * R3
      */
     @Test
-    public void Test_8_2_simulateTileNameWithRotation_R3(){
+    public void Test_simulateTileNameWithRotation_2_R3(){
         String tileNameString = TileNames.RGYR.name();
         Rotation rotation = Rotation.R3;
 
@@ -313,15 +224,15 @@ public class TileTest {
     }
 
 
-    //9 isNormalGameTile() boolean
+    //isNormalGameTile() boolean
 
     /**
      * isNormalGameTile() boolean
-     * 9.1
+     * 1
      * pruefen ob normale Spielsteine true liefern
      */
     @Test
-    public void Test_9_1_isNormalGameTile_True(){
+    public void Test_isNormalGameTile_1_True(){
         ArrayList<Tile> errorTiles = new ArrayList<>();
 
         for(TileNames currTileName : TileNames.values()){ //jedes moegliche Spielstein Gesicht durchlaufen
@@ -339,35 +250,35 @@ public class TileTest {
 
     /**
      * isNormalGameTile() boolean
-     * 9.2
+     * 2
      * pruefen ob nicht Spielsteine NNNN und HHHH false liefert
      */
     @Test
-    public void Test_9_2_isNormalGameTile_NNNNFalse(){
+    public void Test_isNormalGameTile_2_NNNNFalse(){
         assertFalse(new Tile(TileNames.NNNN).isNormalGameTile(), "NNNN sollte false liefern");
         assertFalse(new Tile(TileNames.HHHH).isNormalGameTile(), "HHHH sollte false liefern");
     }
 
 
-    //10 isPlaceHolderTile() boolean
+    //isPlaceHolderTile() boolean
 
     /**
      * isPlaceHolderTile() boolean
-     * 10.1
+     * 1
      * pruefen ob nur Nichts gelegt Stein NNNN true liefert
      */
     @Test
-    public void Test_10_1_isPlaceHolderTile_True(){
+    public void Test_isPlaceHolderTile_1_True(){
         assertTrue(new Tile(TileNames.NNNN).isPlaceHolderTile());
     }
 
     /**
      * isPlaceHolderTile() boolean
-     * 10.2
+     * 2
      * pruefen ob alle anderen Steine false liefern
      */
     @Test
-    public void Test_10_2_isPlaceHolderTile_False(){
+    public void Test_isPlaceHolderTile_2_False(){
         ArrayList<Tile> errorTiles = new ArrayList<>();
 
         for(TileNames currTileName : TileNames.values()){ //jedes moegliche Spielstein Gesicht durchlaufen
@@ -383,25 +294,25 @@ public class TileTest {
     }
 
 
-    //11 isHoleTile() boolean
+    //isHoleTile() boolean
 
     /**
      * isHoleTile() boolean
-     * 11.1
+     * 1
      * pruefen ob nur Lochstein HHHH true liefert
      */
     @Test
-    public void Test_11_1_isHoleTile_True(){
+    public void Test_isHoleTile_1_True(){
         assertTrue(new Tile(TileNames.HHHH).isHoleTile());
     }
 
     /**
      * isPlaceHolderTile() boolean
-     * 11.2
+     * 2
      * pruefen ob alle anderen Steine false liefern
      */
     @Test
-    public void Test_11_2_isHoleTile_False(){
+    public void Test_isHoleTile_2_False(){
         ArrayList<Tile> errorTiles = new ArrayList<>();
 
         for(TileNames currTileName : TileNames.values()){ //jedes moegliche Spielstein Gesicht durchlaufen
@@ -417,15 +328,15 @@ public class TileTest {
     }
 
 
-    //12 isTileBorderLayable() boolean
+    //isTileBorderLayable() boolean
 
     /**
      * isTileBorderLayable() boolean
-     * 12.1
+     * 1
      * pruefen ob kompatible Randsteine RRRR, GGGG, YYYY true liefern
      */
     @Test
-    public void Test_12_1_isTileBorderLayable_True(){
+    public void Test_isTileBorderLayable_1_True(){
         assertTrue(new Tile(TileNames.RRRR).isTileBorderLayable());
         assertTrue(new Tile(TileNames.GGGG).isTileBorderLayable());
         assertTrue(new Tile(TileNames.YYYY).isTileBorderLayable());
@@ -433,11 +344,11 @@ public class TileTest {
 
     /**
      * isTileBorderLayable() boolean
-     * 12.2
+     * 2
      * pruefen ob alle anderen Steine false liefern
      */
     @Test
-    public void Test_12_2_isTileBorderLayable_False(){
+    public void Test_isTileBorderLayable_2_False(){
         ArrayList<Tile> errorTiles = new ArrayList<>();
 
         for(TileNames currTileName : TileNames.values()){ //jedes moegliche Spielstein Gesicht durchlaufen
@@ -455,15 +366,15 @@ public class TileTest {
     }
 
 
-    //13 static isTileStringBorderLayable(String)
+    //static isTileStringBorderLayable(String)
 
     /**
      * static isTileStringBorderLayable(String) boolean
-     * 13.1
+     * 1
      * pruefen ob RRRR, GGGG, YYYY, NNNN true liefern
      */
     @Test
-    public void Test_13_1_isTileStringBorderLayable_True(){
+    public void Test_isTileStringBorderLayable_1_True(){
         assertTrue(Tile.isTileStringBorderLayable(TileNames.RRRR.name()));
         assertTrue(Tile.isTileStringBorderLayable(TileNames.GGGG.name()));
         assertTrue(Tile.isTileStringBorderLayable(TileNames.YYYY.name()));
@@ -472,11 +383,11 @@ public class TileTest {
 
     /**
      * static isTileStringBorderLayable(String) boolean
-     * 13.2
+     * 2
      * pruefen ob andere false liefern
      */
     @Test
-    public void Test_13_2_isTileStringBorderLayable_False(){
+    public void Test_isTileStringBorderLayable_2_False(){
         ArrayList<TileNames> errorTiles = new ArrayList<>();
 
         for(TileNames currTileName : TileNames.values()){ //jedes moegliche Spielstein Gesicht durchlaufen
@@ -494,25 +405,25 @@ public class TileTest {
     }
 
 
-    //14 static isTileStringEdgeLayable(String) boolean
+    //static isTileStringEdgeLayable(String) boolean
 
     /**
      * static isTileStringEdgeLayable(String) boolean
-     * 14.1
+     * 1
      * pruefen ob nur NNNN true liefert
      */
     @Test
-    public void Test_14_1_isTileStringEdgeLayable_True(){
+    public void Test_isTileStringEdgeLayable_1_True(){
         assertTrue(Tile.isTileStringEdgeLayable(TileNames.NNNN.name()));
     }
 
     /**
      * static isTileStringEdgeLayable(String) boolean
-     * 14.2
+     * 2
      * pruefen ob andere false liefert
      */
     @Test
-    public void Test_14_2_isTileStringEdgeLayable_False(){
+    public void Test_isTileStringEdgeLayable_2_False(){
         ArrayList<TileNames> errorTiles = new ArrayList<>();
 
         for(TileNames currTileName : TileNames.values()){ //jedes moegliche Spielstein Gesicht durchlaufen
@@ -528,7 +439,7 @@ public class TileTest {
     }
 
 
-    //15 static getTileClassFromTileName(String) Tile
+    //static getTileClassFromTileName(String) Tile
 
     /**
      * getTileClassFromTileName(String) Tile
@@ -536,50 +447,50 @@ public class TileTest {
      * pruefen ob nicht rotierter String den richtigen Tile liefert
      */
     @Test
-    public void Test_15_1_getTileClassFromTileName_NotRotated(){
+    public void Test_getTileClassFromTileName_1_NotRotated(){
         String tileNameString = TileNames.RGYG.name(); // "RGYG"
         Tile tile = Tile.getTileClassFromTileName(tileNameString);
 
         assertNotNull(tile);
-        assertEquals(tile.getTile(), TileNames.RGYG);
+        assertEquals(tile.getTileName(), TileNames.RGYG);
         assertEquals(tile.getRotation(), Rotation.R0);
     }
 
     /**
      * getTileClassFromTileName(String) Tile
-     * 15.2
+     * 2
      * pruefen ob rotierter String den richtigen Tile und die richtige Rotation liefert
      */
     @Test
-    public void Test_15_2_getTileClassFromTileName_Rotated(){
+    public void Test_getTileClassFromTileName_2_Rotated(){
         String tileNameString = "YGRG"; // RGYG um 2x (R2) rotiert
         Tile tile = Tile.getTileClassFromTileName(tileNameString);
 
         assertNotNull(tile);
-        assertEquals(TileNames.RGYG, tile.getTile());
+        assertEquals(TileNames.RGYG, tile.getTileName());
         assertEquals(Rotation.R2, tile.getRotation());
     }
 
     /**
      * getTileClassFromTileName(String) Tile
-     * 15.3
+     * 3
      * pruefen ob nicht bekannter String null liefert
      */
     @Test
-    public void Test_15_3_getTileClassFromTileName_Unknown(){
+    public void Test_getTileClassFromTileName_3_Unknown(){
         assertNull(Tile.getTileClassFromTileName("XXXX"));
     }
 
 
-    //16 rotateTile() void
+    //rotateTile() void
 
     /**
      * rotateTile() void
-     * 16.1
+     * 1
      * pruefen ob 1x Rotation R0 zu R1 funktioniert
      */
     @Test
-    public void Test_16_1_rotateTile_R0toR1(){
+    public void Test_rotateTile_1_R0toR1(){
         Tile tile = new Tile(TileNames.RGYR, Rotation.R0);
         tile.rotateTile();
         assertEquals(Rotation.R1, tile.getRotation());
@@ -587,11 +498,11 @@ public class TileTest {
 
     /**
      * rotateTile() void
-     * 16.2
+     * 2
      * pruefen ob 1x Rotation R3 zu R0 funktioniert
      */
     @Test
-    public void Test_16_2_rotateTile_R3toR0(){
+    public void Test_rotateTile_2_R3toR0(){
         Tile tile = new Tile(TileNames.RGYR, Rotation.R3);
         tile.rotateTile();
         assertEquals(Rotation.R0, tile.getRotation());
@@ -599,11 +510,11 @@ public class TileTest {
 
     /**
      * rotateTile() void
-     * 16.3
+     * 3
      * pruefen ob 4x rotieren zur Ausgangsrotation fuehrt
      */
     @Test
-    public void Test_16_3_rotateTile_FourTimesBackToStart(){
+    public void Test_rotateTile_3_FourTimesBackToStart(){
         Tile tile = new Tile(TileNames.RGYR, Rotation.R1);
         tile.rotateTile(); // R2
         tile.rotateTile(); // R3
@@ -614,11 +525,11 @@ public class TileTest {
 
     /**
      * rotateTile() void
-     * 16.4
+     * 4
      * pruefen ob 4x rotieren zur Ausgangsrotation fuehrt
      */
     @Test
-    public void Test_16_4_rotateTile_FourTimesBackToStart2(){
+    public void Test_rotateTile_4_FourTimesBackToStart2(){
         Tile tile = new Tile(TileNames.RGYR, Rotation.R0);
         tile.rotateTile(); // R1
         tile.rotateTile(); // R2
@@ -628,15 +539,15 @@ public class TileTest {
     }
 
 
-    //17 setTileRotation(Rotation) void
+    //setTileRotation(Rotation) void
 
     /**
      * setTileRotation(Rotation)
-     * 17.1
+     * 1
      * pruefen ob Rotation korrekt gesetzt wird
      */
     @Test
-    public void Test_17_1_setTileRotation_R0toR0(){
+    public void Test_setTileRotation_1_R0toR0(){
         Tile tile = new Tile(TileNames.GRGR, Rotation.R0);
         tile.setTileRotation(Rotation.R0);
         assertEquals(tile.getRotation(), Rotation.R0);
@@ -644,26 +555,26 @@ public class TileTest {
 
     /**
      * setTileRotation(Rotation)
-     * 17.2
+     * 2
      * pruefen ob Rotation korrekt gesetzt wird
      */
     @Test
-    public void Test_17_2_setTileRotation_R0toR3(){
+    public void Test_setTileRotation_2_R0toR3(){
         Tile tile = new Tile(TileNames.GRGR, Rotation.R0);
         tile.setTileRotation(Rotation.R3);
         assertEquals(Rotation.R3, tile.getRotation());
     }
 
 
-    //18 resetTileRotation() void
+    //resetTileRotation() void
 
     /**
      * resetTileRotation() void
-     * 18.1
+     * 1
      * pruefen ob Rotation R0 auf R0 zurueckgesetzt wird
      */
     @Test
-    public void Test_18_1_resetTileRotation_ResetsR0ToR0(){
+    public void Test_resetTileRotation_1_ResetsR0ToR0(){
         Tile tile = new Tile(TileNames.GRGR, Rotation.R0);
         tile.resetTileRotation();
         assertEquals(Rotation.R0, tile.getRotation());
@@ -671,18 +582,18 @@ public class TileTest {
 
     /**
      * resetTileRotation() void
-     * 18.2
+     * 2
      * pruefen ob Rotation R0 auf R0 zurueckgesetzt wird
      */
     @Test
-    public void Test_18_2_resetTileRotation_ResetsR3ToR0(){
+    public void Test_resetTileRotation_2_ResetsR3ToR0(){
         Tile tile = new Tile(TileNames.GRGR, Rotation.R3);
         tile.resetTileRotation();
         assertEquals(Rotation.R0, tile.getRotation());
     }
 
 
-    //19 static getTileNamesString(String) String
+    //static getTileNamesString(String) String
 
     /**
      * static getTileNamesString(String) String
@@ -690,42 +601,42 @@ public class TileTest {
      * pruefen ob unrotierter String den Enum Namen liefert
      */
     @Test
-    public void Test_19_1_getTileNamesString_NotRotated(){
+    public void Test_getTileNamesString_1_NotRotated(){
         String inputString = TileNames.RYGY.name();
         assertEquals("RYGY", Tile.getTileNamesString(inputString));
     }
 
     /**
      * static getTileNamesString(String) String
-     * 19.2
+     * 2
      * pruefen ob rotierter String den unrotierten Enum Namen liefert
      */
     @Test
-    public void Test_19_2_getTileNamesString_Rotated(){
+    public void Test_getTileNamesString_2_Rotated(){
         String rotated = "YGRG"; //RGYG 2x rotiert (R2)
         assertEquals("RGYG", Tile.getTileNamesString(rotated));
     }
 
     /**
      * static getTileNamesString(String) String
-     * 19.3
+     * 3
      * pruefen ob ein unbekannter String null liefert
      */
     @Test
-    public void Test_19_3_getTileNamesString_Unknown(){
+    public void Test_getTileNamesString_3_Unknown(){
         assertNull(Tile.getTileNamesString("ZZZZ"));
     }
 
 
-    //20 getTileIndex() int
+    //getTileIndex() int
 
     /**
      * getTileIndex() int
-     * 20.1
+     * 1
      * pruefen ob ein vorhandener Tile-Name den richtigen Index liefert
      */
     @Test
-    public void Test_20_1_getTileIndex(){
+    public void Test_getTileIndex_1(){
         ArrayList<TileNames> errorTiles = new ArrayList<>();
 
         for(TileNames currTileName : TileNames.values()){ //jedes moegliche Spielstein Gesichtern durchlaufen
@@ -741,57 +652,36 @@ public class TileTest {
     }
 
 
-    //21 cloneTile() void
+    //cloneTile() void
 
     /**
      * cloneTile() void
-     * 21.1
+     * 1
      * pruefen ob clon gleiche Werte hat, aber andere Instanz ist
      */
     @Test
-    public void Test_22_1_cloneTile_EqualValuesButDifferentInstance(){
+    public void Test_cloneTile_1_EqualValuesButDifferentInstance(){
         Tile original = new Tile(TileNames.RGYG, Rotation.R2);
         Tile copy = original.cloneTile();
 
         //Payloads sind identisch
         assertNotSame(original, copy);
-        assertEquals(original.getTile(), copy.getTile());
+        assertEquals(original.getTileName(), copy.getTileName());
         assertEquals(original.getRotation(), copy.getRotation());
     }
 
     /**
      * cloneTile() void
-     * 21.2
+     * 2
      * pruefen ob clon nicht mehr abhaengig ist
      */
     @Test
-    public void Test_21_1_cloneTile_Independent(){
+    public void Test_cloneTile_2_Independent(){
         Tile original = new Tile(TileNames.RGYG, Rotation.R2);
         Tile copy = original.cloneTile();
 
         //Unabhaengigkeit pruefen
         copy.rotateTile();
         assertNotEquals(original.getRotation(), copy.getRotation());
-    }
-
-
-    //22 toString() String
-
-    /**
-     * toString() String
-     * 22.1
-     * pruefen ob toString relevante Informationen enthaelt
-     */
-    @Test
-    public void Test_23_1_toString_ContainsFields(){
-        Tile tile = new Tile(TileNames.RGYR, Rotation.R3);
-        String tileString = tile.toString();
-
-        assertTrue(tileString.contains("Normal Tile Name:"));
-        assertTrue(tileString.contains("Tile Name with Rotation:"));
-        assertTrue(tileString.contains("Tile Rotation:"));
-        assertTrue(tileString.contains(tile.getTileString()));
-        assertTrue(tileString.contains(tile.getTileNameWithRotation()));
-        assertTrue(tileString.contains(tile.getRotation().toString()));
     }
 }

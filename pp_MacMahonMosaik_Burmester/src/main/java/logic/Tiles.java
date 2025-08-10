@@ -31,39 +31,19 @@ public class Tiles {
     }
 
     /**
-     * Methode welche einen bestimmten Spielstein dem Array hinzufuegt
-     * @param addedTile der hinzuzufuegende Spielstein
+     * Methode welche eine ArrayList der hier enthaltenen Tile zurueckgibt
+     * @return die freien Spielsteine
      */
-    void addTile(Tile addedTile){
-        this.tiles.add(addedTile);
-    }
-
-    /**
-     * Methode welche einen bestimmten Spielstein aus dem Array entfernt
-     * @param removedTile der zu entfernende Spielstein
-     */
-    void removeTile(Tile removedTile){
-        this.tiles.remove(removedTile);
-    }
-
-    /**
-     * Methode welche diese Instanz klont als DeepCopy
-     * @return eine DeepCopy dieser Instanz
-     */
-    Tiles cloneGameTiles(){
-        ArrayList<Tile> clonedTiles = new ArrayList<>();
-        for(Tile currTile: this.tiles){ //jeder Spielstein
-            clonedTiles.add(currTile.cloneTile()); //Spielstein kopieren und nicht die refferenz
-        }
-        return(new Tiles(clonedTiles));
-    }
-
-    /**
-     * Public getter um die Private Nutzlast des Arrays der Mosaiksteine zu bekommen
-     * @return alle Mosaiksteine die in der Menge sind
-     */
-    public ArrayList<Tile> getTiles(){
+    ArrayList<Tile> getTiles(){
         return(this.tiles);
+    }
+
+    /**
+     * Methode welche die Anzahl der Spielsteine welche aktuell in dem tiles Array gespeichert sind zurueckgibt.
+     * @return die Anzahl der hier gespeicherten Spielsteine
+     */
+    public int getTileCount(){
+        return(this.tiles.size());
     }
 
     /**
@@ -75,10 +55,19 @@ public class Tiles {
     Tile getTileByTileNamesIndex(int index){
         TileNames searchedTileName = TileNames.values()[index];
         for(Tile currTile : this.tiles){ //jeder Spielstein
-            if(currTile.getTile().equals(searchedTileName)) return(currTile); //wenn TileName des Spielsteins dem
+            if(currTile.getTileName().equals(searchedTileName)) return(currTile); //wenn TileName des Spielsteins dem
             // TileName am index gleicht
         }
         return(null);
+    }
+
+    /**
+     * methode welche einen Spielstein an dem Index zurueckgibt
+     * @param index der index des Spielsteins (Index entspricht der Position des Spielsteins im ArrayI
+     * @return der gesuchte Spielstein
+     */
+    public Tile getTileByArrayIndex(int index){
+        return(this.tiles.get(index));
     }
 
     /**
@@ -90,8 +79,8 @@ public class Tiles {
     Tile getTileByNameWithRotation(String tileName){
         for(Tile currTile : this.tiles){ //jeden Spielstein durchlaufen
             Rotation originalRotation = currTile.getRotation(); //um die Rotation nach den versuchen zurueckzusetzen
-            for(Rotation currRotation : Rotation.values()){ //jede Rotation durchlaufen
-                if(currTile.getTileNameWithRotation().equals(tileName)){ //wenn der Spielstein mit Rotation
+            for(Rotation ignored : Rotation.values()){ //jede Rotation durchlaufen
+                if(currTile.getTileNameStringWithRotation().equals(tileName)){ //wenn der Spielstein mit Rotation
                     // dem uebergebenen Namen gleicht
                     return(currTile);
                 } else { //wenn der Spielstein nicht dem Namen gleicht
@@ -115,6 +104,34 @@ public class Tiles {
     }
 
     /**
+     * Methode welche einen bestimmten Spielstein dem Array hinzufuegt
+     * @param addedTile der hinzuzufuegende Spielstein
+     */
+    void addTile(Tile addedTile){
+        this.tiles.add(addedTile);
+    }
+
+    /**
+     * Methode welche einen bestimmten Spielstein aus dem Array entfernt
+     * @param removedTile der zu entfernende Spielstein
+     */
+    void removeTile(Tile removedTile){
+        this.tiles.remove(removedTile);
+    }
+
+    /**
+     * Methode welche diese Instanz klont als DeepCopy
+     * @return eine DeepCopy dieser Instanz
+     */
+    Tiles cloneTiles(){
+        ArrayList<Tile> clonedTiles = new ArrayList<>();
+        for(Tile currTile: this.tiles){ //jeder Spielstein
+            clonedTiles.add(currTile.cloneTile()); //Spielstein kopieren und nicht die refferenz
+        }
+        return(new Tiles(clonedTiles));
+    }
+
+    /**
      * gibt alle Mosaiksteine aus die in der Menge vorhanden sind
      * @return alle Mosaiksteine als String
      */
@@ -122,7 +139,7 @@ public class Tiles {
     public String toString(){
         StringBuilder sb = new StringBuilder("Tiles: ").append("\n");
         for(Tile tile : this.tiles){
-            sb.append(tile == null ? "null" : tile.getTileString()).append("\n");
+            sb.append(tile.getTileNameString()).append("\n");
         }
         return(sb.toString());
     }

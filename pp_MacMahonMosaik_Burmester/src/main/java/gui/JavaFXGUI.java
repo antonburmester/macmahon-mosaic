@@ -99,10 +99,10 @@ public class JavaFXGUI implements GUIConnector {
      */
     public void displayGameFieldTiles(GameField gameField) {
         this.removeAllPiecesAndColouringsButLeaveSlots(this.gridPane); //die Slots der GridPane von
-        System.out.println();
+
         // ImageViews (Spielsteine) und StackPanes (Loecher) bereinigen
-        for (int y = 0; y < gameField.getGameField().length; y++) { //jedes Feld bezueglich Hoehe
-            for (int x = 0; x < gameField.getGameField()[y].length; x++) { //jedes Feld bezueglich Breite
+        for (int y = 0; y < gameField.getGameFieldHeight(); y++) { //jedes Feld bezueglich Hoehe
+            for (int x = 0; x < gameField.getGameFieldWidth(); x++) { //jedes Feld bezueglich Breite
                 Tile currTile = gameField.getTile(x, y);
                 StackPane slotStackPane = this.getGridPaneCell(x, y, this.gridPane); //der Slot des jeweiligen Feldes
 
@@ -113,7 +113,7 @@ public class JavaFXGUI implements GUIConnector {
                 // und unten
 
                 if(gameField.isFieldMiddleGamefield(x, y)) { //mittleres Spielfeld ohne Rand
-                    if (currTile.getTile().equals(TileNames.HHHH)) { //ein Loch
+                    if (currTile.getTileName().equals(TileNames.HHHH)) { //ein Loch
                         // Zuerst explizit alle holeStackPanes vom Parent trennen
                         for (StackPane currStackPane : this.holeStackPanes) { //durchlaeuft jede holeStackPane
                             if (currStackPane.getParent() == null) { //wenn holeStackPane nirgendwo gelegt wurde
@@ -122,8 +122,10 @@ public class JavaFXGUI implements GUIConnector {
                                 break; //schleife beenden, da Spielstein gefunden wurde
                             }
                         }
-                    } else if(!currTile.getTile().equals(TileNames.NNNN)) { //ein Bild da es kein Loch und kein NNNN ist
-                        int tileEnumIndex = TileNames.valueOf(currTile.getTileString()).ordinal();//der Index des Bilds
+                    } else if(!currTile.getTileName().equals(TileNames.NNNN)) { //ein Bild da es kein Loch und kein
+                        // NNNN ist
+                        int tileEnumIndex = TileNames.valueOf(currTile.getTileNameString()).ordinal();//der Index des
+                        // Bilds
                         ImageView imageView = this.imageViews[tileEnumIndex]; //das Bild als ImageView
                         //Bild von seinem vorherigen Ort (Parent) loesen falls es gebunden ist
                         StackPane parent = (StackPane) imageView.getParent();
@@ -139,7 +141,7 @@ public class JavaFXGUI implements GUIConnector {
                     //initiales Setzen des Randes (falls ein bestehendes Spiel geladen wurde)
                     if(!gameField.isFieldEdge(x, y)) { //kein Eckstueck
                         //switch Statement welches je nach Randstein den Rand faerbt
-                        String initialCellStyle = switch (currTile.getTile()) {
+                        String initialCellStyle = switch (currTile.getTileName()) {
                             case TileNames.GGGG ->
                                     "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
                                             "; -fx-background-color: " + COLOR_HEX_CODE_GREEN + ";"; //Gruen
@@ -150,7 +152,8 @@ public class JavaFXGUI implements GUIConnector {
                                     "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
                                             "; -fx-background-color: " + COLOR_HEX_CODE_RED + ";"; //rot
                             //leere Zelle am Rand
-                            default -> "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";";
+                            default -> "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL
+                                    + ";";
                         };
                         slotStackPane.setStyle(initialCellStyle);
                     }
@@ -172,17 +175,18 @@ public class JavaFXGUI implements GUIConnector {
 
         int col, row; //aktuelle Spalte und Reihe der Auswahl der Spielsteine
 
-        for (Tile currTile : tiles.getTiles()) { //durchlaeuft jeden Spielstein
+        for(int i = 0; i < tiles.getTileCount(); i++){ //durchlaeuft jeden Spielstein der Tiles Klasse
+            Tile currTile = tiles.getTileByArrayIndex(i);
 
             //da NNNN und HHHH nicht legbar sind, sollen sie auch nicht in der Auswahl auftauchen
-            if(!(currTile.getTile() == TileNames.NNNN || currTile.getTile() == TileNames.HHHH)) {
+            if(!(currTile.getTileName() == TileNames.NNNN || currTile.getTileName() == TileNames.HHHH)) {
 
                 //einheitliche Reihenfolge durch TileNames
-                col = currTile.getTile().ordinal() % 3; //Modulo 3 da es 3 Spalten gibt und so die richtige erkannt wird
-                row = currTile.getTile().ordinal() / 3; //DIV 3 da in jede Spalte 3 Steine passen und mann so in die
+                col = currTile.getTileName().ordinal() % 3; //Modulo 3 da es 3 Spalten gibt und so die richtige erkannt wird
+                row = currTile.getTileName().ordinal() / 3; //DIV 3 da in jede Spalte 3 Steine passen und mann so in die
                 // richtige Spalte kommt.
 
-                String tileName = currTile.getTileString();
+                String tileName = currTile.getTileNameString();
                 if (currTile.isNormalGameTile()) { //wenn nicht NNNN und HHHH da diese kein Bild haben
                     int tileEnumIndex = TileNames.valueOf(tileName).ordinal();
                     ImageView imageView = this.imageViews[tileEnumIndex]; //das ImageView des aktuellen Spielsteins

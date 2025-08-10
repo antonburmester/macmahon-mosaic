@@ -43,12 +43,17 @@ public class Game {
     public Game(GUIConnector gui, int heigth, int width){
         this.gui = gui;
         this.gameField = new GameField(heigth, width, true);
+        System.out.println("lol");
 
+        System.out.println("is Playable: " + this.isGameFieldPlayable());
+        System.out.println("GameField: " + gameField.toString());
         if(this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
+            System.out.println("Trying");
             // Spielbar ist ohne die liegenden Spielsteine
             this.setIsGameActive(true, true);
             if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
         } else { //nicht spielbar deshalb EditorMode aktivieren
+            System.out.println("not");
             this.setIsGameActive(false, true);
             if(!isEditorMode()) this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
         }
@@ -64,6 +69,7 @@ public class Game {
      */
     public Game(GUIConnector gui, int heigth, int width, GameField oldGameField){
         this(gui, heigth, width);
+        System.out.println("OKOKOK");
         this.gameField.setBorderFromGameField(oldGameField);
 
 
@@ -228,7 +234,7 @@ public class Game {
      * @return die Instanz der Klasse aller Spielsteine
      */
     private Tiles getTilesCopy(){
-        return(this.gameField.getTiles().cloneGameTiles());
+        return(this.gameField.getTiles().cloneTiles());
     }
 
     /**
@@ -289,7 +295,7 @@ public class Game {
         Tile tile = gameField.getTiles().getTileByTileNamesIndex(tileIndex);
         boolean status = true;
         //Feld ist frei und es handelt sich um das mittlere Spielfeld
-        if (this.gameField.isFieldFieldFree(x, y) && this.gameField.isFieldMiddleGamefield(x, y)) {
+        if (this.gameField.isFieldFree(x, y) && this.gameField.isFieldMiddleGamefield(x, y)) {
             this.gameField.layTile(x, y, tile); //Spielstein auf das Spielfeld legen
 
             this.gui.moveTileSelectionToGameField(x, y, tileIndex); //Zug visuell anzeigen
@@ -318,7 +324,7 @@ public class Game {
         //ob der Spielstein gefunden wurde und entweder ein normaler Stein ist oder der EditorMode aktiv und Loch Stein
         if(tile != null && (tile.isNormalGameTile() || (this.isEditorMode() && tile.isHoleTile()))){
             if(this.gameField.isFieldMiddleGamefield(xTarget, yTarget) &&
-                    this.gameField.isFieldFieldFree(xTarget, yTarget)){
+                    this.gameField.isFieldFree(xTarget, yTarget)){
                 this.gameField.layTile(xTarget, yTarget, tile); //Spielstein auf die neue Position des Spielfelds legen
                 this.gameField.resetTile(xStart, yStart); //Spielstein von der alten Position
                 // des Spielfelds loeschen
@@ -350,7 +356,7 @@ public class Game {
         if(tile != null && (tile.isNormalGameTile() || (this.isEditorMode() && tile.isHoleTile()))){
             this.gameField.resetTile(x, y); //Spielstein von der alten Position
 
-            this.gui.moveTileGameFieldToSelection(tile.getTile().ordinal()); //das Graphische Bewegen des Spielsteins
+            this.gui.moveTileGameFieldToSelection(tile.getTileName().ordinal()); //das Graphische Bewegen des Spielsteins
             // in die Spielsteinauswahl
 
             this.highlightTileIfWrongPlaced();
@@ -376,14 +382,14 @@ public class Game {
             //wenn es sich aktuell um nicht um ein Randstueck handelt (noch nichts gelegt) oder die letzte Randfarbe
             // liegt
 
-            if(!currTile.isTileBorderLayable() || currTile.getTile().equals(TileNames.YYYY)) {
+            if(!currTile.isTileBorderLayable() || currTile.getTileName().equals(TileNames.YYYY)) {
                 newBorderTile = new Tile(TileNames.RRRR); //wieder auf Rot schalten (erste Farbe)
             } else { //bei allen anderen Randfarben
-                newBorderTile = new Tile(TileNames.values()[currTile.getTile().ordinal() + 1]); //die naechste Randfarbe
+                newBorderTile = new Tile(TileNames.values()[currTile.getTileName().ordinal() + 1]); //die naechste Randfarbe
             }
 
             this.gameField.layTile(x, y, newBorderTile);
-            this.gui.setBorderColor(x, y, newBorderTile.getTile()); //die Farbaenderung visuell sichtbar machen
+            this.gui.setBorderColor(x, y, newBorderTile.getTileName()); //die Farbaenderung visuell sichtbar machen
 
             System.out.println(this.gameField);
             status = true;
@@ -442,14 +448,14 @@ public class Game {
             // Spielfeld an der Stelle wo im Original Spielfeld das erste Feld noch nicht geloest wurde
 
             Tile hintTileOriginal = gameField.getTiles().getTileByNameWithRotation(
-                    hintTileCopy.getTileNameWithRotation()); //der Kopie Spielstein als Original Spielstein
+                    hintTileCopy.getTileNameStringWithRotation()); //der Kopie Spielstein als Original Spielstein
 
             this.moveTileFromNotLaidTilesToGameField(pos.getX(), pos.getY(),
-                    hintTileOriginal.getTile().ordinal()); //Spielstein legen
+                    hintTileOriginal.getTileName().ordinal()); //Spielstein legen
 
             //Graphisch den gefundenen Spielstein anzeigen
-            this.gui.moveTileSelectionToGameField(pos.getX(), pos.getY(), hintTileOriginal.getTile().ordinal());
-            this.gui.rotateTile(hintTileOriginal.getTile().ordinal(),
+            this.gui.moveTileSelectionToGameField(pos.getX(), pos.getY(), hintTileOriginal.getTileName().ordinal());
+            this.gui.rotateTile(hintTileOriginal.getTileName().ordinal(),
                     Rotation.rotationToDegrees(hintTileOriginal.getRotation()));
             return(true);
         } else { //Spielfeld wurde nicht geloest

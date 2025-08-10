@@ -104,8 +104,8 @@ public class UserInterfaceController {
                 this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
         this.game = new Game(this.gui); //erstaufruf welcher das beispielspiel initialisiert
         Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
-            this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length,
-                    this.game.getGameFieldCopy().getGameField().length);
+            this.setupGUI(this.game.getGameFieldCopy().getGameFieldWidth(),
+                    this.game.getGameFieldCopy().getGameFieldHeight());
             this.game.setIsGameActive(true, true); //TODO move to Game class
         });
     }
@@ -124,8 +124,8 @@ public class UserInterfaceController {
         File file = openFileChooser(true);
         if (file != null) {
             this.game = new Game(this.gui, file);
-            this.setupGUI(this.game.getGameFieldCopy().getGameField()[0].length,
-                    this.game.getGameFieldCopy().getGameField().length);
+            this.setupGUI(this.game.getGameFieldCopy().getGameFieldWidth(),
+                    this.game.getGameFieldCopy().getGameFieldHeight());
             this.game.setIsGameActive(true, true); //TODO move to game class
         } else {
             ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_FILE));
