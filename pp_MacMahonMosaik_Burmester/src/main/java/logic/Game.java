@@ -404,7 +404,7 @@ public class Game {
     public void rotateGameTile(int tileIndex){
         Tile tile = gameField.getTiles().getTileByTileNamesIndex(tileIndex); //Stein in der Spielsteinauswahl suchen
         if(tile == null){ //Stein nicht in der Spielsteinauswahl -> liegt auf dem Spielfeld
-            tile = this.gameField.getTileByTileNamesIndex(tileIndex); //Stein im Spielfeld suchen
+            tile = this.gameField.getTileByTileNamesIndexFromGameField(tileIndex); //Stein im Spielfeld suchen
         }
         tile.rotateTile();
         this.gui.rotateTile(tileIndex, Rotation.rotationToDegrees(tile.getRotation())); //die Rotation graphisch
@@ -469,7 +469,7 @@ public class Game {
      * (entfernt alle Spielsteine aus dem Spielfeld, laesst aber den Rand und die Lochsteine)
      */
     public void removeGameFieldTiles(){
-        this.gameField.removeGameFieldTiles();
+        this.gameField.removeLayableMiddleGameFieldTiles();
         this.highlightTileIfWrongPlaced(); //falls es falsche Felder gab die Markierung wieder wegnehmen
     }
 

@@ -584,8 +584,10 @@ public class GameField {
     public void resetTile(int xIndex, int yIndex){
         if(this.isFieldGamefield(xIndex, yIndex)){
             Tile tile = this.getTile(xIndex, yIndex);
-            this.gameField[yIndex][xIndex] = new Tile(TileNames.NNNN);
-            this.tiles.addTile(tile); //Stein der Spielsteinauswahl hinzufuegen, da nicht mehr im Spielfeld gelegt
+            if(!tile.getTileName().equals(TileNames.NNNN)) {
+                this.gameField[yIndex][xIndex] = new Tile(TileNames.NNNN);
+                this.tiles.addTile(tile); //Stein der Spielsteinauswahl hinzufuegen, da nicht mehr im Spielfeld gelegt
+            }
         }
     }
 
@@ -596,20 +598,27 @@ public class GameField {
     public GameField cloneGameField(){
         int width = this.gameField[0].length;
         int heigth = this.gameField.length;
-        GameField copy = new GameField(heigth - 2, width - 2, false); //neue Instanz eines neuen Spielfelds
-        // -2 da beim Spielfeld die groesse ohne Rand angegeben wird
+        GameField copy = new GameField(heigth - 2, width - 2, false); //neue Instanz eines neuen
+        // Spielfelds -2 da beim Spielfeld die groesse ohne Rand angegeben wird
 
         Tile currNotCopyTile;
         Tile copyTile;
         for(int y = 0; y < heigth; y++){ //Hoehenindex
             for(int x = 0; x < width; x++){ //Breitenindex
-                currNotCopyTile = this.getTile(x, y); //der aktuelle Stein welcher in das neue Spielfeld kopiert werden
-                // soll
+                currNotCopyTile = this.getTile(x, y); //der aktuelle Stein welcher in das neue Spielfeld kopiert
+                // werden soll
 
-                //aktuellen Stein klonen
-                copyTile = currNotCopyTile.cloneTile();
-                if(copyTile != null) {
-                    copy.layTile(x, y, copyTile); //den Stein in das neue Spielfeld legen
+                if(this.isFieldBorder(x, y)){ //Feld ist Rand
+                    copy.layTile(x, y, currNotCopyTile.cloneTile()); //einfach klonen, da beim Rand die Refferenz egal
+                } else { //Feld ist mittleres Spielfeld
+                    //geklonten Stein bekommen
+                    if(currNotCopyTile.isNormalGameTile()) {
+                        copyTile = copy.tiles.getTileByNameWithRotation(currNotCopyTile.getTileNameStringWithRotation());
+                        copy.layTile(x, y, copyTile); //den Stein in das neue Spielfeld legen
+                    } else {
+                        copy.layTile(x, y, currNotCopyTile.cloneTile()); //einfach klonen, da bei NNNN und HHHH
+                        // die Refferenz egal
+                    }
                 }
             }
         }
@@ -655,7 +664,7 @@ public class GameField {
             }
 
             if(nextFieldThere || lastTileBeforeGoingBack != null){ //es gibt ein naechstes Spielfeld
-                Tile nextMatchingTile = this.findNextMatchingTile(clonedGameField, clonedTiles, pos,
+                Tile nextMatchingTile = this.findNextMatchingTile(clonedGameField, pos,
                         lastTileBeforeGoingBack);
                 if(nextMatchingTile != null){ //es gibt einen passenden Spielstein
 
@@ -782,16 +791,15 @@ public class GameField {
     /**
      * Methode welche fuer ein Spielfeld an einer bestimmten Position das passende Spielteil sucht.
      * @param inputGameField das Spielfeld
-     * @param inputTiles die Spielstein Klasse
      * @param pos die aktuelle Position als Refferenz
-     * @param lastTileBeforeGoingBack der Spielstein des Felds von dem es nicht weiter geht und deshalb Backtracking
+     * @param startTile der Spielstein des Felds von dem es nicht weiter geht und deshalb Backtracking
      *  genutzt wird, der Stein wird uebergeben, damit diese Methode weiß von wo sie nach neuen Spielsteinen suchen
      *  muss; null falls es kein Aufruf nach Backtracking war sondern ein ganz normaler
      * @return der gefundene Spielstein oder null falls keiner gefunden wurde
      */
-    Tile findNextMatchingTile(GameField inputGameField, Tiles inputTiles, Position pos,
-                                      Tile lastTileBeforeGoingBack){
-        Tile tile = lastTileBeforeGoingBack;
+    Tile findNextMatchingTile(GameField inputGameField, Position pos,
+                                      Tile startTile){
+        Tile tile = startTile;
         int startIndex = tile != null  && !tile.getTileName().equals(TileNames.NNNN) ?
                 TileNames.valueOf(tile.getTileNameString()).ordinal(): 0; //der Index zum Start des aktuell dort liegenden
         // Spielsteins nach der TileNames Reihenfolge oder 0 falls es ein Aufruf fuer ein leeres Feld ist
@@ -804,7 +812,8 @@ public class GameField {
         for(int tileIndex = startIndex; tileIndex < Game.TILE_AMOUNT_NO_HOLE_NO_EMPTY; tileIndex++){ //jeden Spielstein
             // in TileNames Reihenfole
 
-            tile = inputTiles.getTileByTileNamesIndex(tileIndex); //der Spielstein an der TileNames Index stelle
+            tile = inputGameField.getTiles().getTileByTileNamesIndex(tileIndex); //der Spielstein an der TileNames
+            // Index stelle
 
             if (tile == null) continue; //wenn Spielstein nicht verfuegbar da gelegt zum naechsten gehen
             if (startRotation != Rotation.R3) { //nur Rotationen durchlaufen sofern der Spielstein nicht schon die
@@ -843,7 +852,7 @@ public class GameField {
      * @param index der Index nach TileNames Reihenfolge
      * @return der gesuchte Spielstein oder null falls nicht vorhanden
      */
-    Tile getTileByTileNamesIndex(int index){
+    Tile getTileByTileNamesIndexFromGameField(int index){
         for(int y = 1; y < this.getGameFieldHeight() - 1; y++){ //ohne oberen und unteren Rand
             for(int x = 1; x < this.getGameFieldHeight() - 1; x++){ //ohne linken und rechten Rand
                 Tile currTile = this.getTile(x, y);
@@ -861,7 +870,7 @@ public class GameField {
      */
     boolean checkIfPlainGameFieldSolvable(){
         GameField gameFieldCopy = this.cloneGameField();
-        gameFieldCopy.removeGameFieldTiles();
+        gameFieldCopy.removeLayableMiddleGameFieldTiles();
         return(gameFieldCopy.solveGameFieldAsCopy() != null);
     }
 
@@ -878,14 +887,12 @@ public class GameField {
     /**
      * Methode welche alle Spielfeldsteine vom Spielfeld entfernt
      */
-    void removeGameFieldTiles() {
-        for (int y = 0; y < this.getGameFieldHeight(); y++) {
-            for (int x = 0; x < this.getGameFieldWidth(); x++) {
-                if (!this.isFieldBorder(x, y)) { //kein Randstueck
-                    Tile currTile = this.getTile(x, y);
-                    if (currTile.isNormalGameTile()) { //kein Loch und nicht leer
-                        this.resetTile(x, y);
-                    }
+    void removeLayableMiddleGameFieldTiles() {
+        for (int y = 1; y < this.getGameFieldHeight() - 1; y++) {
+            for (int x = 1; x < this.getGameFieldWidth() - 1; x++) {
+                Tile currTile = this.getTile(x, y);
+                if (currTile.isNormalGameTile()) { //kein Loch und nicht leer
+                    this.resetTile(x, y);
                 }
             }
         }
