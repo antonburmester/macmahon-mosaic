@@ -2264,4 +2264,48 @@ public class GameFieldTest {
         }
         assertTrue(status);
     }
+
+
+    //getLayableFieldsAmount() int
+
+    /**
+     * getLayableFieldsAmount() int
+     * 1
+     * Methode welche zaehlt wieviele freie Felder es noch im mittleren Spielfeld gibt
+     */
+    @Test
+    void test_getLayableFieldsAmount_1_onlyFreeFiels() {
+        String[][] gameFieldInput = {
+                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "NNNN"},
+                {"RRRR", "GGYY", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "NNNN"}
+        };
+        GameField gameField = new GameField(gameFieldInput);
+
+        assertEquals(19, gameField.getLayableFieldsAmount(true));
+    }
+
+    /**
+     * getLayableFieldsAmount() int
+     * 2
+     * Methode welche zaehlt wieviele freie Felder es noch im mittleren Spielfeld gibt
+     */
+    @Test
+    void test_getLayableFieldsAmount_2_allFields() {
+        String[][] gameFieldInput = {
+                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "NNNN"},
+                {"RRRR", "GGYY", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "NNNN"}
+        };
+        GameField gameField = new GameField(gameFieldInput);
+
+        assertEquals(20, gameField.getLayableFieldsAmount(false));
+    }
+
 }

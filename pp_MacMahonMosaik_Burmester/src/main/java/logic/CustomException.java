@@ -11,15 +11,17 @@ public class CustomException extends Exception {
     public static final int MESSAGE_GAMEFIELD_SOLVABLE = 10;
     public static final int MESSAGE_GAMEFIELD_NOT_SOLVABLE = 11;
     public static final int MESSAGE_NO_HINT_GAMEFIELD_NOT_SOLVABLE = 21;
+    public static final int MESSAGE_MORE_THAN_18_FREE_FIELDS_SOLVABLE_NOT_CHECKED = 31;
 
     //die Fehler Codes
     public static final int ERROR_WINDOW_OPEN = 101;
     public static final int ERROR_INVALID_FILE = 201;
     public static final int ERROR_FILE_READ_FAILED = 202;
     public static final int ERROR_INVALID_JSON_STRUCTURE = 301;
-    public static final int ERROR_INVALID_JSON_NO_FIELD = 302;
+    public static final int ERROR_INVALID_JSON_NO_OR_WRONG_NAMED_FIELD = 302;
     public static final int ERROR_INVALID_JSON_WRONG_FIELD_TYPE = 303;
     public static final int ERROR_INVALID_JSON_GAME_SIZE = 304;
+    public static final int ERROR_JSON_EMPTY = 305;
     public static final int ERROR_INVALID_TILENAMES = 401;
     public static final int ERROR_INVALID_TILENAMES_BORDER = 402;
     public static final int ERROR_INVALID_TILENAMES_EDGE = 403;

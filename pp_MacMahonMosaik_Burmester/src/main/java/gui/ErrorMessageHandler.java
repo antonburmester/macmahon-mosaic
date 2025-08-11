@@ -28,6 +28,9 @@ public class ErrorMessageHandler {
             case CustomException.MESSAGE_NO_HINT_GAMEFIELD_NOT_SOLVABLE -> "Mitteilung: " +
                     exception.getErrorOrMessageCode() +
                     " Kann keinen naechsten Spielstein als Hilfe legen, da Spielfeld nicht loesbar!";
+            case CustomException.MESSAGE_MORE_THAN_18_FREE_FIELDS_SOLVABLE_NOT_CHECKED -> "Mitteilung: " +
+                    exception.getErrorOrMessageCode() +
+                    " Da mehr als 18 Felder noch frei sind, wird die Loesbarkeit nicht geprueft!";
 
             case CustomException.ERROR_WINDOW_OPEN ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Fenster konnte nicht geladen/ geoeffnet werden!"
@@ -39,6 +42,8 @@ public class ErrorMessageHandler {
             case CustomException.ERROR_INVALID_JSON_STRUCTURE ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Der Inhalt der Datei entspricht nicht der " +
                             "notwendigen Json Struktur!";
+            case CustomException.ERROR_JSON_EMPTY ->
+                    "Fehler " + exception.getErrorOrMessageCode() + " : Der Inhalt der .json Datei ist leer";
             case CustomException.ERROR_INVALID_TILENAMES ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Mindestens ein Feld der Datei entspricht " +
                             "nicht den Spielstein Namen!";
@@ -58,7 +63,7 @@ public class ErrorMessageHandler {
             case CustomException.ERROR_INVALID_JSON_WRONG_FIELD_TYPE ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : JSON field Attribut vorhanden aber nicht vom " +
                             "Typ Array!";
-            case CustomException.ERROR_INVALID_JSON_NO_FIELD ->
+            case CustomException.ERROR_INVALID_JSON_NO_OR_WRONG_NAMED_FIELD ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : JSON field Attribut nicht vorhanden!";
             case CustomException.ERROR_INVALID_GAME_SIZE ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Falsche Spielfeldgroeße! 2x2 - 6x6";

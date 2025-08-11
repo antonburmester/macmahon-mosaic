@@ -104,14 +104,6 @@ public class GameField {
     }
 
     /**
-     * oeffentlicher Getter um das Private gameFiled an außerhalb dieser Klasse geben zu koennen
-     * @return das Spielfeld
-     */
-    Tile[][] getGameField() {
-        return this.gameField;
-    }
-
-    /**
      * Methode welche die Klasse eines Spielsteins zurueckgibt
      * @param x die Breitenkoordinate des Spielsteins
      * @param y die Hoehenkoordinate des Spielsteins
@@ -542,8 +534,15 @@ public class GameField {
                 this.tiles.removeTile(tile); //Stein aus Spielsteinauswahl loeschen, da gelegt
                 status = true;
             }
-        } else if(this.isFieldBorder(xIndex, yIndex) && !this.isFieldEdge(xIndex, yIndex)){ //Rand Feld des Spielfelds
-            if(tile.isTileBorderLayable()){ //ob der uebergebene Spielstein gueltig fuer den Rand ist
+        } else if(this.isFieldEdge(xIndex, yIndex)){
+            if(tile.isPlaceHolderTile()){ //ob der uebergebene Spielstein gueltig fuer den Rand ist
+                this.gameField[yIndex][xIndex] = tile;
+                //Stein aus Spielsteinauswahl nicht loeschen, da dieser kein Unikat ist und die Refferenz egal ist
+                status = true;
+            }
+        } else if(this.isFieldBorder(xIndex, yIndex)) { //Rand Feld des Spielfelds
+            if (tile.isTileBorderLayable() || tile.isPlaceHolderTile()) { //ob der uebergebene Spielstein gueltig fuer
+                // den Rand ist
                 this.gameField[yIndex][xIndex] = tile;
                 //Stein aus Spielsteinauswahl nicht loeschen, da dieser kein Unikat ist und die Refferenz egal ist
                 status = true;
@@ -874,6 +873,30 @@ public class GameField {
                 }
             }
         }
+    }
+
+    /**
+     * Methode welche zaehlt wieviele freie mittlere Felder es gibt
+     * @param onlyFreeFields ob nur wirklich freie Felder NNNN gezaehlt werden sollen
+     * @return wieviele noch freie Felder es gibt
+     */
+    int getLayableFieldsAmount(boolean onlyFreeFields) {
+        int count = 0;
+        for (int y = 1; y < this.getGameFieldHeight() - 1; y++) {
+            for (int x = 1; x < this.getGameFieldWidth() - 1; x++) {
+                Tile currTile = this.getTile(x, y);
+                if(onlyFreeFields) {
+                    if (currTile.isPlaceHolderTile()) { //kein Loch und nicht leer
+                        count++;
+                    }
+                } else {
+                    if(!currTile.isHoleTile() && isFieldMiddleGamefield(x,y)){
+                        count++;
+                    }
+                }
+            }
+        }
+        return(count);
     }
 
     /**

@@ -41,8 +41,6 @@ public class Game {
     public Game(GUIConnector gui, int heigth, int width){
         this.gui = gui;
         this.gameField = new GameField(heigth, width, true);
-
-        this.initializeGameState();
     }
 
     /**
@@ -56,8 +54,6 @@ public class Game {
     public Game(GUIConnector gui, int heigth, int width, GameField oldGameField){
         this(gui, heigth, width);
         this.gameField.setBorderFromGameField(oldGameField);
-
-        this.initializeGameState();
     }
 
     /**
@@ -67,8 +63,6 @@ public class Game {
      */
     public Game(GUIConnector gui) {
         this(gui, Game.DEFAULT_GAME);
-
-        this.initializeGameState();
     }
 
     /**
@@ -92,8 +86,6 @@ public class Game {
         }
 
         this.gameField = gameField;
-
-        this.initializeGameState();
     }
 
     /**
@@ -115,29 +107,27 @@ public class Game {
         }
 
         this.gameField = gameField;
-
-        this.initializeGameState();
     }
 
     /**
      * Methode welche je nachdem ob ein spielfeld loesbar ist oder nicht den Editor Mode aktiviert oder nicht
      */
-    private void initializeGameState(){
+    public void initializeGameState(){
         if(this.gameField.isGameFieldBorderSetted() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld
             // komplett bezueglich Rand ist und Spielbar ohne die liegenden Spielsteine ist
 
             this.setIsGameActive(true, true);
-            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist und er
-            // vorher aktiv war
+            if(isEditorMode()) this.toggleEditorMode(false); //editor Mode deaktivieren, da Spielfeld spielbar ist
+            // und er vorher aktiv war
 
         } else { //nicht spielbar deshalb EditorMode aktivieren
 
             this.setIsGameActive(false, true);
             if(!isEditorMode()) {
-                this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
+                this.toggleEditorMode(false); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
             } else { //nochmal entfernen, da Spiel geladen wird und editor schon aktiv ist
                 // (Spielsteine falls da sollen weg)
-                this.removeGameFieldTiles();
+                this.removeGameFieldTiles(false);
             }
 
         }
@@ -148,7 +138,7 @@ public class Game {
      */
     public void restartGame(){
         if(!this.isEditorMode()) {
-            this.removeGameFieldTiles();
+            this.removeGameFieldTiles(true);
             this.updateTiles();
             this.setIsGameActive(true, true);
         } else {
@@ -190,12 +180,15 @@ public class Game {
     /**
      * Methode welche den EditorMode aktiviert wenn deaktiviert und deaktiviert wenn aktiviert.
      * Zeigt dies auch visuell an
+     * @param initial ob Initial bei einem neuen Spielfeld aufgerufen
      */
-    public void toggleEditorMode(){
+    public void toggleEditorMode(boolean initial){
         boolean toggledEditorMode = !this.isEditorMode();
         this.gui.displayEditorControls(toggledEditorMode); //Editor Elemente anzeigen wenn nicht angezeigt und andersrum
         if(toggledEditorMode){ //wenn nun aktiviert
-            this.removeGameFieldTiles(); //alle Steine die nicht Rand sind vom Spielfeld entfernen
+            if(initial)
+                this.removeGameFieldTiles(true); //alle Steine die nicht Rand sind vom Spielfeld
+            // entfernen
             this.updateTiles();
             this.gui.setDisableTileSelection(true); //Spielfeldauswahl deaktivieren
         }
@@ -249,6 +242,8 @@ public class Game {
      */
     public void updateTiles(){
         //Bilder, Loecher und Faerbungen anzeigen
+        System.out.println(this.gameField);
+        System.out.println(this.getGameFieldCopy());
         this.gui.displayGameFieldTiles(this.getGameFieldCopy());
         this.gui.displaySelectionTiles(this.getTilesCopy());
         this.highlightTileIfWrongPlaced();
@@ -457,10 +452,13 @@ public class Game {
     /**
      * Methode welche ein bestehendes Spiel neustartet.
      * (entfernt alle Spielsteine aus dem Spielfeld, laesst aber den Rand und die Lochsteine)
+     * @param highlightWrongPlaced ob die Hervorhebung der Spielsteine falls falsch gelegt oder vorher falsch und nun
+     *                             richtig aktualisiert werden soll
      */
-    public void removeGameFieldTiles(){
+    public void removeGameFieldTiles(boolean highlightWrongPlaced){
         this.gameField.removeLayableMiddleGameFieldTiles();
-        this.highlightTileIfWrongPlaced(); //falls es falsche Felder gab die Markierung wieder wegnehmen
+        if(highlightWrongPlaced)
+            this.highlightTileIfWrongPlaced(); //falls es falsche Felder gab die Markierung wieder wegnehmen
     }
 
     /**

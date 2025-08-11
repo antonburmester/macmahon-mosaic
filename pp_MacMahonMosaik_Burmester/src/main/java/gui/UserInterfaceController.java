@@ -14,10 +14,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import logic.CustomException;
-import logic.Game;
-import logic.GameField;
-import logic.TileNames;
+import logic.*;
 
 import java.io.File;
 import java.util.Objects;
@@ -108,8 +105,10 @@ public class UserInterfaceController {
         Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
             this.setupGUI(this.game.getGameFieldCopy().getGameFieldWidth(),
                     this.game.getGameFieldCopy().getGameFieldHeight());
-            this.game.setIsGameActive(true, true); //TODO move to Game class
+            this.game.setIsGameActive(true, true);
         });
+
+        this.game.initializeGameState(); //Spiel Zustand setzen
     }
 
     /**
@@ -117,10 +116,6 @@ public class UserInterfaceController {
      */
     public void restartGame(){
         this.game.restartGame();
-    }
-
-    private void showErrorMessage(CustomException customException){
-
     }
 
     /**
@@ -132,7 +127,9 @@ public class UserInterfaceController {
             this.game = new Game(this.gui, file);
             this.setupGUI(this.game.getGameFieldCopy().getGameFieldWidth(),
                     this.game.getGameFieldCopy().getGameFieldHeight());
-            this.game.setIsGameActive(true, true); //TODO move to game class
+
+            this.game.setIsGameActive(true, true);
+            this.game.initializeGameState(); //Spiel Zustand setzen
         } else {
             gui.showCustomException(new CustomException(CustomException.ERROR_INVALID_FILE));
         }
@@ -146,7 +143,7 @@ public class UserInterfaceController {
             File file = openFileChooser(false);
             if(file != null) {
                 logic.GameData.saveGame(this.game.getGameFieldString(), file);
-                this.game.setIsGameActive(false, false); //TODO move to Game class
+                this.game.setIsGameActive(false, false);
             }
         } catch (CustomException e) {
             gui.showCustomException(e);
@@ -165,7 +162,7 @@ public class UserInterfaceController {
      * wenn vorher aus
      */
     public void toggleEditorMode(){
-        this.game.toggleEditorMode();
+        this.game.toggleEditorMode(true);
     }
 
     /**
@@ -180,6 +177,8 @@ public class UserInterfaceController {
             this.game = new Game(this.gui, height, width, this.game.getGameFieldCopy()); //neues Spielfeld mit altem
             // Rand
             this.setupGUI(width + 2, height + 2);
+
+            this.game.initializeGameState(); //Spiel Zustand setzen
         } else {
             gui.showCustomException(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
         }
@@ -226,15 +225,7 @@ public class UserInterfaceController {
     public File openFileChooser(boolean selectFile) {
         FileChooser fileChooser = new FileChooser();
 
-        //Startverzeichnis je nach Betriebssystem setzen. Getestet auf Windows, deshalb koennte man bei den anderen
-        // Betriebssystemen im Standardverzeichniss landen und nicht im gewuenschten
-        File initialDirectory = null;
-        String betriebssystemName = System.getProperty("os.name").toLowerCase();
-        if (betriebssystemName.contains("win")) { //Windows
-            initialDirectory = new File("pp_MacMahonMosaik_Burmester/src/main/resources/savedGames/");
-        } else if(betriebssystemName.contains("mac")) { //Mac
-            initialDirectory = new File("src/main/resources/savedGames/");
-        }
+        File initialDirectory = GameData.getSavedGamesDirectory();
 
         if (initialDirectory != null && initialDirectory.exists() && initialDirectory.isDirectory()) {
             fileChooser.setInitialDirectory(initialDirectory);
