@@ -51,40 +51,31 @@ public class GameField {
         String[][] inputCompatible = GameField.translateFromSpielstandsdatei(stringGameField); //den Input aber Logik
         // Kompatibel machen
         this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
-        this.placeGameFieldEmptyBorderRed(false); //Spielfeld mit leeren feldern fuellen aber Rand nicht faerben,
-        // da der Spieler selber die nicht eingefaerbten Felder faerben soll
+        this.placeGameFieldEmptyBorderRed(false); //Spielfeld mit leeren feldern fuellen aber Rand nicht
+        // faerben, da der Spieler selber die nicht eingefaerbten Felder faerben soll
 
-        if(GameField.isInputStringGameFieldValid(stringGameField)) {
-
-            for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchlaeuft jede Hoehe des Felds
-                for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchlaeuft jede Breite des Felds
-
-                    String laidTileName = inputCompatible[heigthIndex][widthIndex];
-                    Tile targetTile;
-                    if (laidTileName.equals(TileNames.HHHH.name())) { //ein Loch gelegt
-                        targetTile = new Tile(TileNames.HHHH);
-
-                    } else if (laidTileName.equals(TileNames.NNNN.name())) { //nichts gelegt
-                        targetTile = new Tile(TileNames.NNNN);
-
-                    } else { //ein Spielstein gelegt
-
-                        if (!this.isFieldBorder(widthIndex, heigthIndex)) { //wenn es sich um ein
-                            // Spielfeldstueck handelt
-                            targetTile = this.tiles.getTileByNameWithRotation(laidTileName);
-                        } else { //wenn es sich um ein Randstueck handelt
-                            targetTile = new Tile(laidTileName);
-                        }
+        for (int heigthIndex = 0; heigthIndex < height; heigthIndex++) { //durchlaeuft jede Hoehe des Felds
+            for (int widthIndex = 0; widthIndex < width; widthIndex++) { //durchlaeuft jede Breite des Felds
+                String laidTileName = inputCompatible[heigthIndex][widthIndex];
+                Tile targetTile;
+                if (laidTileName.equals(TileNames.HHHH.name())) { //ein Loch gelegt
+                    targetTile = new Tile(TileNames.HHHH);
+                } else if (laidTileName.equals(TileNames.NNNN.name())) { //nichts gelegt
+                    targetTile = new Tile(TileNames.NNNN);
+                } else { //ein Spielstein gelegt
+                    if (!this.isFieldBorder(widthIndex, heigthIndex)) { //wenn es sich um ein
+                        // Spielfeldstueck handelt
+                        targetTile = this.tiles.getTileByNameWithRotation(laidTileName);
+                    } else { //wenn es sich um ein Randstueck handelt
+                        targetTile = new Tile(laidTileName);
                     }
-                    this.layTile(widthIndex, heigthIndex, targetTile); //Stein legen auf das Spielfeld
-                    //wenn mittleres Spielfeld und nicht NNNN
-                    if(!this.isFieldBorder(widthIndex, heigthIndex) &&
-                            !targetTile.getTileName().equals(TileNames.NNNN)){
-
-                        this.tiles.removeTile(targetTile); //Spielstein aus Spielsteinauswahl loeschen, da dieser
-                        // hiervor mit layTile() ins Spielfeld gelegt wird
-                    }
-
+                }
+                this.layTile(widthIndex, heigthIndex, targetTile); //Stein legen auf das Spielfeld
+                //wenn mittleres Spielfeld und nicht NNNN
+                if(!this.isFieldBorder(widthIndex, heigthIndex) &&
+                        !targetTile.getTileName().equals(TileNames.NNNN)){
+                    this.tiles.removeTile(targetTile); //Spielstein aus Spielsteinauswahl loeschen, da dieser
+                    // hiervor mit layTile() ins Spielfeld gelegt wird
                 }
             }
         }

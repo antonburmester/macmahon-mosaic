@@ -298,7 +298,7 @@ public class TilesTest {
      * zwei Spielsteine der leeren Tiles Klasse hinzufuegen
      */
     @Test
-    public void Test_addTile_1_EmtpyTilesClass(){
+    public void test_addTile_1_EmtpyTilesClass(){
         //ArrayList manuell leer befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tiles tiles = new Tiles(tileArrayList);
@@ -319,7 +319,7 @@ public class TilesTest {
      * zwei Spielstein der nicht leeren Tiles Klasse hinzufuegen
      */
     @Test
-    public void Test_addTile_2_NotEmptyTilesClass(){
+    public void test_addTile_2_NotEmptyTilesClass(){
         //ArrayList manuell mit GGGG Tile befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tile intialTilesTile = new Tile(TileNames.GGGG);
@@ -344,7 +344,7 @@ public class TilesTest {
      * denselben Spielstein der Tiles Klasse mehrfach hinzufuegen
      */
     @Test
-    public void Test_addTile_3_SameTileMultipleTimesAdded(){
+    public void test_addTile_3_SameTileMultipleTimesAdded(){
         //ArrayList manuell mit GGGG befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tile intialTilesTile = new Tile(TileNames.GGGG);
@@ -368,7 +368,7 @@ public class TilesTest {
      * einen Spielstein der leeren Tiles Klasse loeschen
      */
     @Test
-    public void Test_removeTile_1_EmtpyTilesClass(){
+    public void test_removeTile_1_EmtpyTilesClass(){
         //ArrayList manuell leer befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tiles tiles = new Tiles(tileArrayList);
@@ -386,7 +386,7 @@ public class TilesTest {
      * einen Spielstein der Tiles Klasse loeschen, schauen ob der anderen Spielstein noch vorhanden ist
      */
     @Test
-    public void Test_removeTile_2_NotEmptyTilesClassTileContained(){
+    public void test_removeTile_2_NotEmptyTilesClassTileContained(){
         //ArrayList manuell mit GGGG und GRYR Tile befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tile firstTile = new Tile(TileNames.GGGG);
@@ -409,7 +409,7 @@ public class TilesTest {
      * einen Spielstein der Tiles Klasse mehrfach loeschen
      */
     @Test
-    public void Test_removeTile_3_SameTileMultipleTimes(){
+    public void test_removeTile_3_SameTileMultipleTimes(){
         //ArrayList manuell mit GGGG und GRYR Tile befuellen
         ArrayList<Tile> tileArrayList = new ArrayList<>();
         Tile firstTile = new Tile(TileNames.GGGG);
@@ -436,7 +436,7 @@ public class TilesTest {
      * ob die Refferenzen der Spielsteine der geklonten Tiles Klasse richtig von denen der originalen abweicht
      */
     @Test
-    public void Test_cloneTiles_1_AllTileDifferentInstance(){
+    public void test_cloneTiles_1_AllTileDifferentInstance(){
         Tiles originalTiles = new Tiles();
         Tiles clonedTiles = originalTiles.cloneTiles();
 
@@ -456,7 +456,7 @@ public class TilesTest {
      * ob die Nutzlasten der Spielsteine der geklonten Tiles Klasse von denen der originalen abweicht
      */
     @Test
-    public void Test_cloneTiles_2_AllTilePayloadSame(){
+    public void test_cloneTiles_2_AllTilePayloadSame(){
         Tiles originalTiles = new Tiles();
         Tiles clonedTiles = originalTiles.cloneTiles();
 

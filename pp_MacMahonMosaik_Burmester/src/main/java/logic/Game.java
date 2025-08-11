@@ -101,20 +101,26 @@ public class Game {
     Game(GUIConnector gui, String[][] inputGameField){
         this.gui = gui;
 
-        this.gameField = new GameField(inputGameField);
+        if(GameField.isInputStringGameFieldValid(inputGameField)) {
+            this.gameField = new GameField(inputGameField);
 
-        if(this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
-            // Spielbar ist ohne die liegenden Spielsteine
-            this.setIsGameActive(true, true);
-            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
-        } else { //nicht spielbar deshalb EditorMode aktivieren
-            this.setIsGameActive(false, true);
-            if(!isEditorMode()) {
-                this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
-            } else { //nochmal entfernen, da Spiel geladen wird und editor schon aktiv ist
-                // (Spielsteine falls da sollen weg)
-                this.removeGameFieldTiles();
+            if (this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
+                // Spielbar ist ohne die liegenden Spielsteine
+                this.setIsGameActive(true, true);
+                if (isEditorMode())
+                    this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
+            } else { //nicht spielbar deshalb EditorMode aktivieren
+                this.setIsGameActive(false, true);
+                if (!isEditorMode()) {
+                    this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
+                } else { //nochmal entfernen, da Spiel geladen wird und editor schon aktiv ist
+                    // (Spielsteine falls da sollen weg)
+                    this.removeGameFieldTiles();
+                }
             }
+        } else {
+            //ErrorMessageHandler.showError(new CustomException(Cu)); TODO
+            this.gameField = new GameField(2,2);
         }
     }
 

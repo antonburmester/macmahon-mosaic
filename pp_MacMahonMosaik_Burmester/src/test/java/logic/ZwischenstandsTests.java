@@ -379,7 +379,7 @@ public class ZwischenstandsTests {
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "NNNN"}};
         GameField gameField = new GameField(gameFieldInput);
         boolean status = gameField.isGameFieldSolvable();
-        assertTrue(status);
+        assertFalse(status);
     }
 
     /**
@@ -397,7 +397,7 @@ public class ZwischenstandsTests {
         // wieviele Lochsteine es gibt, in diesem Fall sollte es 0 geben aber es ist trotzdem einer drin.
         // Es wird somit versucht einen Lochstein zu platzieren welcher gar nicht existent ist TODO fragen ob so gewollt
         boolean status = gameField.isGameFieldSolvable();
-        assertTrue(status);
+        assertFalse(status);
     }
 
 }
