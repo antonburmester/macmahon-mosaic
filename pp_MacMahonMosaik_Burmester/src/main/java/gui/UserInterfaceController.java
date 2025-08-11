@@ -261,6 +261,7 @@ public class UserInterfaceController {
      * @param ySize die y groeße des Spielfelds
      */
     public void addSlotsAndListenerEmptyFields(boolean middleGridPane, int xSize, int ySize){
+        this.addDropListenerRightGridPane(this.rightGridPane); //Listener dem Slot anfuegen
         for(int y = 0; y < ySize; y++) { //Hoehe durchlaufen
             for (int x = 0; x < xSize; x++) { //Breite durchlaufen
                 StackPane slotStackPane =
@@ -285,7 +286,11 @@ public class UserInterfaceController {
                         this.gridPane.add(slotStackPane, x, y); //der mittleren GridPane den Slot hinzuefuegen
 
                     } else { //rechte GridPane (Spielsteinauswahl)
-                        this.addDropListenerRightGridPane(slotStackPane); //Listener dem Slot anfuegen
+                        //this.addDropListenerRightGridPane(slotStackPane); //Listener dem Slot anfuegen
+                        // rechte GridPane braucht bezueglich ihrer Platzhalter eine groeße, da sonst sollte eine
+                        // ganze reihe frei sein, diese sich in ihrer Hoehe und oder Breite zusammenzieht
+                        slotStackPane.setPrefSize(JavaFXGUI.NOT_LAID_TILE_SIZE, JavaFXGUI.NOT_LAID_TILE_SIZE);
+                        slotStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";");
                         slotStackPane.setUserData(JavaFXGUI.ID_PIECE);
                         this.rightGridPane.add(slotStackPane, x, y); //der rechten GridPane den Slot hinzuefuegen
                     }
@@ -447,86 +452,79 @@ public class UserInterfaceController {
     }
 
     /**
-     * Methode welche einem Slot (StackPane) einen Listener gibt
-     * Nur fuer die rechte GridPane
-     * @param inputStackPane der Slot welcher die Listener bekommen soll
+     * Methode welche der rightGridPane Listener gibt, damit diese Spielsteine empfangen kann.
+     * @param gridPane die GridPane welche die Listener bekommen soll
      */
-    private void addDropListenerRightGridPane(StackPane inputStackPane){
-        // rechte GridPane braucht bezueglich ihrer Platzhalter eine groeße, da sonst sollte eine
-        // ganze reihe frei sein, diese sich in ihrer Hoehe und oder Breite zusammenzieht
-        inputStackPane.setPrefSize(JavaFXGUI.NOT_LAID_TILE_SIZE, JavaFXGUI.NOT_LAID_TILE_SIZE);
-        inputStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";");
+    private void addDropListenerRightGridPane(GridPane gridPane) {
 
-        //wenn ein Objekt vom Typ StackPane Spielstein ueber den Slot gezogen wird
-        inputStackPane.setOnDragEntered(event -> {
+        //wenn ein Objekt vom Typ StackPane (Loch oder Spielstein) ueber die GridPane gezogen wird
+        gridPane.setOnDragEntered(event -> {
             Dragboard dragboard = event.getDragboard(); //der Inhalt der verschoben wird
-            if (event.getGestureSource() != inputStackPane && dragboard.hasString()) {
-                if(inputStackPane.getChildren().isEmpty()) { //wenn das Feld NNNN ist also keine Kinder hat
 
-                    //Drop wird nur akzeptiert wenn es sich um ein Bild handelt im nicht EditorMode
-                    if(!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)){
-                        //hintergrund faerben und Rand setzen
-                        inputStackPane.setStyle("-fx-background-color: pink; " +
-                                "-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL + ";");
-                    }
+            ImageView draggedImageView = (ImageView) event.getGestureSource(); //das verschobene Objekt
+            StackPane imageViewSourceStackPane = (StackPane) draggedImageView.getParent(); //der Slot von welchem es
+            // kommt
+            GridPane sourceGridPane = (GridPane) imageViewSourceStackPane.getParent(); //die GridPane welche den Slot
+            // enthaelt
+
+            if (sourceGridPane != gridPane && dragboard.hasString()) { //pruefen, das die GridPane aus welcher der
+                // Spielstein kommt nicht diese ist und somit der Spielstein beim Drag diese GridPane faerbt
+
+                //Drop wird nur akzeptiert wenn es sich um ein Spielstein handelt im nicht Editormode oder ein Loch
+                // oder Randstein im EditorMode
+                if(!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)){ //Spielstein und
+                    // nicht EditorMode
+                    //Hintergrund faerben und Rand setzen
+                    gridPane.setStyle("-fx-background-color: pink;");
                 }
             }
         });
 
-        //wenn ein Objekt vom Typ StackPane (Spielstein) ueber dem Slot war und wieder weggezogen wird
-        inputStackPane.setOnDragExited(event -> {
-            //Hintergrund entfernen und Rand setzen
-            inputStackPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
-                    ";");
+        //wenn ein Objekt ueber der GridPane war und wieder weggezogen wird
+        gridPane.setOnDragExited(event -> {
+            //Hintergrund Farbe entfernen und Rand setzen
+            gridPane.setStyle("");
         });
 
-        //wenn ein Objekt vom Typ StackPane (Spielstein) ueber diesen Slot gezogen wird
-        inputStackPane.setOnDragOver(event -> {
-            Dragboard dragboard = event.getDragboard(); //der Inhalt der verschoben wird
-            if (event.getGestureSource() != inputStackPane && dragboard.hasString()) {
-                if(inputStackPane.getChildren().isEmpty()) { //wenn das Feld NNNN ist also keine Kinder hat
-
-                    //Drag wird nur akzeptiert wenn es sich um ein Bild handelt im nicht EditorMode
-                    if (!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)){
-                        event.acceptTransferModes(TransferMode.MOVE); //Bild bewegung registrieren
-                    }
+        //wenn ein Objekt ueber die GridPane gezogen wird, die Bewegung registrieren
+        gridPane.setOnDragOver(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (event.getGestureSource() != gridPane && dragboard.hasString()) {
+                if (!game.isEditorMode() && dragboard.getString().startsWith(JavaFXGUI.ID_PIECE)) {
+                    event.acceptTransferModes(TransferMode.MOVE);
                 }
             }
             event.consume();
         });
 
-        //wenn ein Objekt vom Typ StackPane (Spielstein) auf den Slot gedropped wird
-        inputStackPane.setOnDragDropped(event -> {
+        gridPane.setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             if (db.hasString()) {
-
                 Object droppedObject = event.getGestureSource(); //das gedroppte Objekt (Spielstein als ImageView)
                 ImageView droppedImageView = (ImageView) droppedObject; //das gedroppte Objekt als Node
                 StackPane droppedImageViewParent = (StackPane) droppedImageView.getParent(); //die StackPane auf
                 // welcher das gedroppte Objekt liegt
-                GridPane droppedImageViewSourceGridPane = (GridPane) droppedImageViewParent.getParent(); //die
-                // GridPane aus welcher das Objekt kommt (Spielfeld oder Spielsteinauswahl)
-                GridPane droppedImageViewTargetGridPane = (GridPane) inputStackPane.getParent(); //woher das Objekt
-                // kommt (Spielfeld GridPane oder Spielsteinauswahl GridPane)
 
                 // getColumnIndex einen child der ersten Ebene braucht
                 int sourceX = GridPane.getColumnIndex(droppedImageViewParent);
                 int sourceY = GridPane.getRowIndex(droppedImageViewParent);
 
-                if(droppedImageViewSourceGridPane == this.gridPane){ //Objekt kommt vom Spielfeld
-                    if(droppedImageViewTargetGridPane == this.rightGridPane) { //Objekt soll zurueck in die Auswahl
+                //Objekt kommt vom Spielfeld
+                //Objekt soll zurueck in die Auswahl
                         //Methode der Game Klasse fuehrt Zug aus und aktualisiert falls noetig GUI
-                        if(this.game.moveTileFromGamefieldToNotLaidTileSelection(sourceX, sourceY))
-                            event.setDropCompleted(true);
-                    }
+                if(this.game.moveTileFromGamefieldToNotLaidTileSelection(sourceX, sourceY)) {
+                    event.setDropCompleted(true);
+                } else {
+                    event.setDropCompleted(false);
                 }
-                event.setDropCompleted(false);
             } else {
                 event.setDropCompleted(false);
             }
             event.consume();
         });
     }
+
+
 
     /**
      * Methode welche die Ecken der mittleren GridPane unsichtbar und nicht klickbar macht
