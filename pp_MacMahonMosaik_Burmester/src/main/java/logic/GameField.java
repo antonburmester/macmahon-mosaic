@@ -1,7 +1,5 @@
 package logic;
 
-import gui.ErrorMessageHandler;
-
 /**
  * Klasse welche das Spielfeld als Zweidimensionales Array enthaelt
  *
@@ -129,9 +127,8 @@ public class GameField {
      * Mittleres Spielfeld ist nur mit Spielfeldsteinen gefuellt die Maximal 1x vorkommen
      * Mittleres Spielfeld weist die richtige Anzahl an Lochsteinen auf
      * @param stringGameField das Spielfeld
-     * @return ob das Spielfeld valide ist
      */
-    static boolean isInputStringGameFieldValid(String[][] stringGameField){
+    static void inputStringGameFieldValid(String[][] stringGameField) throws CustomException{
         String[][] inputCompatible = GameField.translateFromSpielstandsdatei(stringGameField); //den
         // Input Logik Kompatibel machen bezeuglich Rand Namen
         int[] tileCountArray = new int[Game.TILE_AMOUNT_COMPLETE];
@@ -141,20 +138,15 @@ public class GameField {
             for(int x = 0; x < width; x++){
                 String tileName = Tile.getTileNamesString(inputCompatible[y][x]);
                 if(tileName == null){ //Spielstein konnte nicht gefunden werden (falsch)
-                    ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_TILENAMES));
-                    return(false);
+                    throw new CustomException(CustomException.ERROR_INVALID_TILENAMES);
                 } else {
                     if(GameField.isFieldEdge(x, y, width, height)) { //Ecken
                         if (!Tile.isTileStringEdgeLayable(tileName)) { //kein Randkompatibler Stein
-                            ErrorMessageHandler.showError(new CustomException(
-                                    CustomException.ERROR_INVALID_TILENAMES_EDGE));
-                            return (false);
+                            throw new CustomException(CustomException.ERROR_INVALID_TILENAMES_EDGE);
                         }
                     } else if(GameField.isFieldBorder(x, y, width, height)){ //Rand Position
                         if(!Tile.isTileStringBorderLayable(tileName)) { //kein Randkompatibler Stein oder leer
-                            ErrorMessageHandler.showError(new CustomException(
-                                    CustomException.ERROR_INVALID_TILENAMES_BORDER));
-                            return(false);
+                            throw new CustomException(CustomException.ERROR_INVALID_TILENAMES_BORDER);
                         }
                     } else {
                         tileCountArray[TileNames.valueOf(tileName).ordinal()]++; // Element an der Stelle +1 zaehlen
@@ -167,19 +159,14 @@ public class GameField {
             if(i < Game.TILE_AMOUNT_NO_HOLE_NO_EMPTY){ //Spielsteine ohne Loecher und Nichts gelegt auf Anzahl pruefen
                 // 0-1
                 if(tileCountArray[i] > 1){ //mindestens ein mittlerer Spielfeld Stein liegt mehr als einmal
-                    ErrorMessageHandler.showError(new CustomException(
-                            CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN));
-                    return(false);
+                    throw new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN);
                 }
             } else if(i == TileNames.HHHH.ordinal()){ //Loecher auf Anzahl pruefen
                 if(tileCountArray[i] != GameField.calcNeededHoles(width, height)){ //falsche Anzahl an Loechern
-                    ErrorMessageHandler.showError(new CustomException(
-                            CustomException.ERROR_MIDDLEGAMEFIELD_HOLE));
-                    return(false);
+                    throw new CustomException(CustomException.ERROR_MIDDLEGAMEFIELD_HOLE);
                 }
             } //Leer (NNNN) muss nicht geprueft werden
         }
-        return(true);
     }
 
     /**

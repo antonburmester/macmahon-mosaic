@@ -1,7 +1,5 @@
 package logic;
 
-import gui.ErrorMessageHandler;
-
 import java.io.File;
 
 /**
@@ -43,20 +41,8 @@ public class Game {
     public Game(GUIConnector gui, int heigth, int width){
         this.gui = gui;
         this.gameField = new GameField(heigth, width, true);
-        System.out.println("lol");
 
-        System.out.println("is Playable: " + this.isGameFieldPlayable());
-        System.out.println("GameField: " + gameField.toString());
-        if(this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
-            System.out.println("Trying");
-            // Spielbar ist ohne die liegenden Spielsteine
-            this.setIsGameActive(true, true);
-            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
-        } else { //nicht spielbar deshalb EditorMode aktivieren
-            System.out.println("not");
-            this.setIsGameActive(false, true);
-            if(!isEditorMode()) this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
-        }
+        this.initializeGameState();
     }
 
     /**
@@ -69,18 +55,9 @@ public class Game {
      */
     public Game(GUIConnector gui, int heigth, int width, GameField oldGameField){
         this(gui, heigth, width);
-        System.out.println("OKOKOK");
         this.gameField.setBorderFromGameField(oldGameField);
 
-
-        if(this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
-            // Spielbar ist ohne die liegenden Spielsteine
-            this.setIsGameActive(true, true);
-            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
-        } else { //nicht spielbar deshalb EditorMode aktivieren
-            this.setIsGameActive(false, true);
-            if(!isEditorMode()) this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
-        }
+        this.initializeGameState();
     }
 
     /**
@@ -88,8 +65,10 @@ public class Game {
      * eines StringArrays erstellt
      * (Defaultspiel)
      */
-    public Game(GUIConnector gui){
+    public Game(GUIConnector gui) {
         this(gui, Game.DEFAULT_GAME);
+
+        this.initializeGameState();
     }
 
     /**
@@ -98,30 +77,23 @@ public class Game {
      * @param gui die GUI Instanz mithilfe welcher die Game klasse mit dem graphischen Spielfeld interagiert
      * @param inputGameField das uebergebene Spielfeld als String
      */
-    Game(GUIConnector gui, String[][] inputGameField){
+    Game(GUIConnector gui, String[][] inputGameField) {
         this.gui = gui;
 
-        if(GameField.isInputStringGameFieldValid(inputGameField)) {
-            this.gameField = new GameField(inputGameField);
+        GameField gameField;
 
-            if (this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
-                // Spielbar ist ohne die liegenden Spielsteine
-                this.setIsGameActive(true, true);
-                if (isEditorMode())
-                    this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
-            } else { //nicht spielbar deshalb EditorMode aktivieren
-                this.setIsGameActive(false, true);
-                if (!isEditorMode()) {
-                    this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
-                } else { //nochmal entfernen, da Spiel geladen wird und editor schon aktiv ist
-                    // (Spielsteine falls da sollen weg)
-                    this.removeGameFieldTiles();
-                }
-            }
-        } else {
-            //ErrorMessageHandler.showError(new CustomException(Cu)); TODO
-            this.gameField = new GameField(2,2);
+        try{
+            GameField.inputStringGameFieldValid(inputGameField); //ob Spielfeld Input valide ist
+
+            gameField = new GameField(inputGameField);
+        } catch (CustomException e){
+            this.gui.showCustomException(e);
+            gameField = new GameField(Game.DEFAULT_GAME);
         }
+
+        this.gameField = gameField;
+
+        this.initializeGameState();
     }
 
     /**
@@ -138,17 +110,28 @@ public class Game {
             String[][] inputStringGameField = GameData.loadGame(fileWithPath);
             gameField = new GameField(inputStringGameField);
         } catch (CustomException e) { //Spielfeld konnte nicht aus der Datei geladen werden
-            ErrorMessageHandler.showError(e);
+            this.gui.showCustomException(e);
             gameField = new GameField(Game.DEFAULT_GAME);
         }
 
         this.gameField = gameField;
 
-        if(this.isGameFieldPlayable() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld komplett und
-            // Spielbar ist ohne die liegenden Spielsteine
+        this.initializeGameState();
+    }
+
+    /**
+     * Methode welche je nachdem ob ein spielfeld loesbar ist oder nicht den Editor Mode aktiviert oder nicht
+     */
+    private void initializeGameState(){
+        if(this.gameField.isGameFieldBorderSetted() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld
+            // komplett bezueglich Rand ist und Spielbar ohne die liegenden Spielsteine ist
+
             this.setIsGameActive(true, true);
-            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist
+            if(isEditorMode()) this.toggleEditorMode(); //editor Mode deaktivieren, da Spielfeld spielbar ist und er
+            // vorher aktiv war
+
         } else { //nicht spielbar deshalb EditorMode aktivieren
+
             this.setIsGameActive(false, true);
             if(!isEditorMode()) {
                 this.toggleEditorMode(); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
@@ -156,6 +139,7 @@ public class Game {
                 // (Spielsteine falls da sollen weg)
                 this.removeGameFieldTiles();
             }
+
         }
     }
 
@@ -168,7 +152,7 @@ public class Game {
             this.updateTiles();
             this.setIsGameActive(true, true);
         } else {
-            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
+            this.gui.showCustomException(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
         }
     }
 
@@ -188,9 +172,9 @@ public class Game {
     public void checkSolvability(){
         boolean isGameFieldSolvable = this.gameField.isGameFieldSolvable();
         if(isGameFieldSolvable){
-            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_GAMEFIELD_SOLVABLE));
+            this.gui.showCustomException(new CustomException(CustomException.MESSAGE_GAMEFIELD_SOLVABLE));
         } else {
-            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_GAMEFIELD_NOT_SOLVABLE));
+            this.gui.showCustomException(new CustomException(CustomException.MESSAGE_GAMEFIELD_NOT_SOLVABLE));
         }
     }
 
@@ -199,7 +183,7 @@ public class Game {
      */
     public void layHint(){
         boolean laidHint = this.layHintTile();
-        if(!laidHint) ErrorMessageHandler.showError(new CustomException(CustomException.
+        if(!laidHint) this.gui.showCustomException(new CustomException(CustomException.
                 MESSAGE_NO_HINT_GAMEFIELD_NOT_SOLVABLE));
     }
 
@@ -228,7 +212,7 @@ public class Game {
         } else if (isActive){ //Spiel soll aktiv werden  aber Rand ist nicht komplett gesetzt
             this.gui.setDisableTileSelection(true);
             this.gui.setDisableGameField(false);
-            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
+            this.gui.showCustomException(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
         } else { //Spiel soll nicht aktiv werden
             this.gui.setDisableTileSelection(true);
             //this.gui.setDisableMiddleGridPane(true);
@@ -426,7 +410,7 @@ public class Game {
     private void checkAndHandleWin(){
         boolean win = this.gameField.checkIfGameFieldSolved(false);
         if (win) {
-            ErrorMessageHandler.showError(new CustomException(CustomException.MESSAGE_WIN));
+            this.gui.showCustomException(new CustomException(CustomException.MESSAGE_WIN));
             this.setIsGameActive(false, false);
         }
     }

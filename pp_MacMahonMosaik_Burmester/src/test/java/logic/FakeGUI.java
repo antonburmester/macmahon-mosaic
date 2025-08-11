@@ -161,4 +161,12 @@ public class FakeGUI implements GUIConnector{
     public void updateTiles(Tiles tiles, GameField gameField){
 
     }
+
+    /**
+     * Methode welche Meldungen Graphisch anzeigt
+     * @param customException die Meldung welche ausgegeben werden soll
+     */
+    public void showCustomException(CustomException customException){
+
+    }
 }

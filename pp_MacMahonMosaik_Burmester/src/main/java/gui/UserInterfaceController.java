@@ -102,7 +102,9 @@ public class UserInterfaceController {
                 this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
         this.centerPane.heightProperty().addListener((obs, oldVal, newVal) ->
                 this.adjustMiddleGridPaneSize(this.gridPane, this.centerPane.getWidth(), this.centerPane.getHeight()));
+
         this.game = new Game(this.gui); //erstaufruf welcher das beispielspiel initialisiert
+
         Platform.runLater(() -> { //setupGUI Methode erst nachdem alles im Layout gesetzt wurde aufrufen
             this.setupGUI(this.game.getGameFieldCopy().getGameFieldWidth(),
                     this.game.getGameFieldCopy().getGameFieldHeight());
@@ -117,6 +119,10 @@ public class UserInterfaceController {
         this.game.restartGame();
     }
 
+    private void showErrorMessage(CustomException customException){
+
+    }
+
     /**
      * Methode welche aus dem Menue aufgerufen wird um ein bestehendes Spiel zu laden
      */
@@ -128,7 +134,7 @@ public class UserInterfaceController {
                     this.game.getGameFieldCopy().getGameFieldHeight());
             this.game.setIsGameActive(true, true); //TODO move to game class
         } else {
-            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_FILE));
+            gui.showCustomException(new CustomException(CustomException.ERROR_INVALID_FILE));
         }
     }
 
@@ -143,7 +149,7 @@ public class UserInterfaceController {
                 this.game.setIsGameActive(false, false); //TODO move to Game class
             }
         } catch (CustomException e) {
-            ErrorMessageHandler.showError(e);
+            gui.showCustomException(e);
         }
     }
 
@@ -175,7 +181,7 @@ public class UserInterfaceController {
             // Rand
             this.setupGUI(width + 2, height + 2);
         } else {
-            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
+            gui.showCustomException(new CustomException(CustomException.ERROR_INVALID_GAME_SIZE));
         }
     }
 

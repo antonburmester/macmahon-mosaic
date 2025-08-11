@@ -1,8 +1,6 @@
 package logic;
 
 import com.google.gson.*;
-import gui.ErrorMessageHandler;
-import gui.JavaFXGUI;
 
 import java.io.*;
 
@@ -77,7 +75,7 @@ public class GameData {
      * @param jsonObject das uebergebene jsonObject
      * @return ob das jsonObject valide ist
      */
-    private static boolean isJsonValid(JsonObject jsonObject){
+    private static boolean isJsonValid(JsonObject jsonObject) throws CustomException {
 
         if(jsonObject.has("field")) { //Json Objekt hat ein Member namens field
             if(jsonObject.get("field").isJsonArray()){ //Member field ist vom Typ JsonArray
@@ -86,8 +84,7 @@ public class GameData {
                 if(field.size() < Game.MIN_GAMEFIELD_SIZE_WITH_BORDER ||
                         field.size() > Game.MAX_GAMEFIELD_SIZE_WITH_BORDER){
 
-                    ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE));
-                    return(false);
+                    throw new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE);
                 }
                 for(JsonElement currRowElement : field){ // jede Zeile durchlaufen
                     JsonArray currRow = currRowElement.getAsJsonArray();
@@ -95,17 +92,14 @@ public class GameData {
                     if(currRow.size() < Game.MIN_GAMEFIELD_SIZE_WITH_BORDER ||
                             currRow.size() > Game.MAX_GAMEFIELD_SIZE_WITH_BORDER){
 
-                        ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE));
-                        return(false);
+                        throw new CustomException(CustomException.ERROR_INVALID_JSON_GAME_SIZE);
                     }
                 }
             } else { //kein JsonArray
-                ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_WRONG_FIELD_TYPE));
-                return(false);
+                throw new CustomException(CustomException.ERROR_INVALID_JSON_WRONG_FIELD_TYPE);
             }
         } else { //kein Feld namens field
-            ErrorMessageHandler.showError(new CustomException(CustomException.ERROR_INVALID_JSON_NO_FIELD));
-            return(false);
+            throw new CustomException(CustomException.ERROR_INVALID_JSON_NO_FIELD);
         }
         return(true);
     }

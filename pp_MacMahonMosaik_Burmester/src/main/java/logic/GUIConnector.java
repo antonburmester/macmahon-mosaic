@@ -88,4 +88,10 @@ public interface GUIConnector {
      * @return ob der Editormode aktiv ist
      */
     boolean isEditorMode();
+
+    /**
+     * Methode welche Meldungen Graphisch anzeigt
+     * @param customException die Meldung welche ausgegeben werden soll
+     */
+    void showCustomException(CustomException customException);
 }

@@ -470,6 +470,14 @@ public class JavaFXGUI implements GUIConnector {
     }
 
     /**
+     * Methode welche Meldungen Graphisch anzeigt
+     * @param customException die Meldung welche ausgegeben werden soll
+     */
+    public void showCustomException(CustomException customException){
+        ErrorMessageHandler.showError(customException);
+    }
+
+    /**
      * Methode welche zurueckgibt, ob der EditorMode gerade aktiv ist oder nicht
      * @return ob der Editormode aktiv ist
      */

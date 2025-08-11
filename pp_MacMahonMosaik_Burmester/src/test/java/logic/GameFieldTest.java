@@ -104,7 +104,7 @@ public class GameFieldTest {
      * ob ein valider String Spielfeld Input valide mit der GameField Klasse ist
      */
     @Test
-    void test_isInputStringGameFieldValid_1_Valid(){
+    void test_inputStringGameFieldValid_1_Valid(){
         String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNGN", "NNGN", "NNNN"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NRNN", "NNNN", "NNNN", "YGRY", "NNNN", "GGYY", "NNNR"},
@@ -113,7 +113,8 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
-        assertTrue(GameField.isInputStringGameFieldValid(gameFieldInput));
+        //da die Methode nur bei Fehlern einen Fehler wirft, dies hier pruefen
+        assertDoesNotThrow(() -> GameField.inputStringGameFieldValid(gameFieldInput));
     }
 
     /**
@@ -122,7 +123,7 @@ public class GameFieldTest {
      * ob ein nicht valider String (1,1 nicht existierender Spielstein) Spielfeld Input nicht valide
      */
     @Test
-    void test_isInputStringGameFieldValid_2_TileNotExisting(){
+    void test_inputStringGameFieldValid_2_TileNotExisting(){
         String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNGN", "NNGN", "NNNN"},
                                       {"NGNN", "AWID", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NRNN", "NNNN", "NNNN", "YGRY", "NNNN", "GGYY", "NNNR"},
@@ -131,7 +132,13 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
-        assertFalse(GameField.isInputStringGameFieldValid(gameFieldInput));
+        //da die Methode nur bei Fehlern einen Fehler wirft, dies hier pruefen
+        CustomException thrownException = assertThrows(
+                CustomException.class,
+                () -> GameField.inputStringGameFieldValid(gameFieldInput)
+        );
+
+        assertEquals(CustomException.ERROR_INVALID_TILENAMES, thrownException.getErrorOrMessageCode());
     }
 
     /**
@@ -140,7 +147,7 @@ public class GameFieldTest {
      * ob ein nicht valider String (0,1 falscher Stein auf dem Rand) Spielfeld Input nicht valide
      */
     @Test
-    void test_isInputStringGameFieldValid_3_BorderNotCompatible(){
+    void test_inputStringGameFieldValid_3_BorderNotCompatible(){
         String[][] gameFieldInput =  {{"NNNN", "GGYY", "NNGN", "NNGN", "NNGN", "NNGN", "NNNN"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NRNN", "NNNN", "NNNN", "YGRY", "NNNN", "GGYY", "NNNR"},
@@ -149,7 +156,13 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
-        assertFalse(GameField.isInputStringGameFieldValid(gameFieldInput));
+        //da die Methode nur bei Fehlern einen Fehler wirft, dies hier pruefen
+        CustomException thrownException = assertThrows(
+                CustomException.class,
+                () -> GameField.inputStringGameFieldValid(gameFieldInput)
+        );
+
+        assertEquals(CustomException.ERROR_INVALID_TILENAMES_BORDER, thrownException.getErrorOrMessageCode());
     }
 
     /**
@@ -159,7 +172,7 @@ public class GameFieldTest {
      * Klasse ist
      */
     @Test
-    void test_isInputStringGameFieldValid_4_EdgeNotCompatible(){
+    void test_inputStringGameFieldValid_4_EdgeNotCompatible(){
         String[][] gameFieldInput =  {{"NNGN", "NNGN", "NNGN", "NNGN", "NNGN", "NNGN", "NNNN"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NRNN", "NNNN", "NNNN", "YGRY", "NNNN", "GGYY", "NNNR"},
@@ -168,7 +181,13 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
-        assertFalse(GameField.isInputStringGameFieldValid(gameFieldInput));
+        //da die Methode nur bei Fehlern einen Fehler wirft, dies hier pruefen
+        CustomException thrownException = assertThrows(
+                CustomException.class,
+                () -> GameField.inputStringGameFieldValid(gameFieldInput)
+        );
+
+        assertEquals(CustomException.ERROR_INVALID_TILENAMES_EDGE, thrownException.getErrorOrMessageCode());
     }
 
     /**
@@ -178,7 +197,7 @@ public class GameFieldTest {
      * Spielfeld Input nicht valide
      */
     @Test
-    void test_isInputStringGameFieldValid_5_DuplicateTileInvalid(){
+    void test_inputStringGameFieldValid_5_DuplicateTileInvalid(){
         String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNGN", "NNGN", "NNNN"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NRNN", "NNNN", "NNNN", "YGRY", "NNNN", "GGYY", "NNNR"},
@@ -187,7 +206,13 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
-        assertFalse(GameField.isInputStringGameFieldValid(gameFieldInput));
+        //da die Methode nur bei Fehlern einen Fehler wirft, dies hier pruefen
+        CustomException thrownException = assertThrows(
+                CustomException.class,
+                () -> GameField.inputStringGameFieldValid(gameFieldInput)
+        );
+
+        assertEquals(CustomException.ERROR_MIDDLEGAMEFIELD_TILE_TOO_OFTEN, thrownException.getErrorOrMessageCode());
     }
 
     /**
@@ -196,7 +221,7 @@ public class GameFieldTest {
      * ob ein nicht valider String (25 mittlere Felder braeuchte 1 Loch) Spielfeld Input nicht valide
      */
     @Test
-    void test_isInputStringGameFieldValid_6_MissingHoleTile(){
+    void test_inputStringGameFieldValid_6_MissingHoleTile(){
         String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNGN", "NNGN", "NNNN"},
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NRNN", "NNNN", "NNNN", "YGRY", "NNNN", "GGYY", "NNNR"},
@@ -205,16 +230,22 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
-        assertFalse(GameField.isInputStringGameFieldValid(gameFieldInput));
+        //da die Methode nur bei Fehlern einen Fehler wirft, dies hier pruefen
+        CustomException thrownException = assertThrows(
+                CustomException.class,
+                () -> GameField.inputStringGameFieldValid(gameFieldInput)
+        );
+
+        assertEquals(CustomException.ERROR_MIDDLEGAMEFIELD_HOLE, thrownException.getErrorOrMessageCode());
     }
 
     /**
      * isInputStringGameFieldValid(String[][]) boolean
-     * 6
+     * 7
      * ob ein nicht valider String (25 mittlere Felder braeuchte 1 Loch sind aber 2) Spielfeld Input nicht valide
      */
     @Test
-    void test_isInputStringGameFieldValid_6_TooMuchHoleTile(){
+    void test_inputStringGameFieldValid_7TooMuchHoleTile(){
         String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNGN", "NNGN", "NNNN"},
                                       {"NGNN", "HHHH", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NRNN", "HHHH", "NNNN", "YGRY", "NNNN", "GGYY", "NNNR"},
@@ -223,7 +254,13 @@ public class GameFieldTest {
                                       {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
                                       {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
 
-        assertFalse(GameField.isInputStringGameFieldValid(gameFieldInput));
+        //da die Methode nur bei Fehlern einen Fehler wirft, dies hier pruefen
+        CustomException thrownException = assertThrows(
+                CustomException.class,
+                () -> GameField.inputStringGameFieldValid(gameFieldInput)
+        );
+
+        assertEquals(CustomException.ERROR_MIDDLEGAMEFIELD_HOLE, thrownException.getErrorOrMessageCode());
     }
 
 
