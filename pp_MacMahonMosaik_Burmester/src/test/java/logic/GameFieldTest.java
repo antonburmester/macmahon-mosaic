@@ -717,18 +717,846 @@ public class GameFieldTest {
      * checkIfGameFieldSolved(boolean) boolean
      * 1
      * ob das Spielfeld geloest wurde
+     * True
      */
     @Test
-    public void test_checkIfGameFieldSolved_1_Valid_NNNNTrue() {
-        String[][] gameFieldInput = {{"NNNN", "NNGN", "NNGN", "NNGN", "NNGN", "NNGN", "NNNN"},
-                                     {"NGNN", "GGYG", "RGRG", "NNNN", "NNNN", "NNNN", "NNNG"},
-                                     {"NRNN", "YYYY", "NNNN", "YGRY", "NNNN", "GGYY", "NNNR"},
-                                     {"NGNN", "NNNN", "GGGG", "NNNN", "NNNN", "HHHH", "NNNG"},
-                                     {"NGNN", "YYRY", "NNNN", "NNNN", "RRRR", "NNNN", "NNNG"},
-                                     {"NGNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNG"},
-                                     {"NNNN", "YNNN", "GNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+    public void test_checkIfGameFieldSolved_1_CompletelySolved() {
+        String[][] gameFieldInput = {{"NNNN","NNYN","NNYN","NNGN","NNGN","NNRN","NNRN","NNNN"},
+                                     {"NYNN","YYYY","YRYY","GRGR","GRRR","RRRR","RRYR","NNNR"},
+                                     {"NYNN","YGYY","HHHH","HHHH","HHHH","HHHH","YRYR","NNNR"},
+                                     {"NGNN","YGYG","HHHH","GGGG","GGRG","HHHH","YGGG","NNNG"},
+                                     {"NGNN","YRRG","HHHH","GGYR","RYGG","HHHH","GGRR","NNNG"},
+                                     {"NRNN","RYYR","HHHH","HHHH","HHHH","HHHH","RYRG","NNNY"},
+                                     {"NRNN","YGRR","YYRG","RYGY","YGGY","RGYG","RYYG","NNNY"},
+                                     {"NNNN","RNNN","RNNN","GNNN","GNNN","YNNN","YNNN","NNNN"}};
         GameField gameField = new GameField(gameFieldInput);
+
+        assertTrue(gameField.checkIfGameFieldSolved(false));
+        assertTrue(gameField.checkIfGameFieldSolved(true));
     }
+
+    /**
+     * checkIfGameFieldSolved(boolean) boolean
+     * 2
+     * ob das Spielfeld geloest wurde
+     */
+    @Test
+    public void test_checkIfGameFieldSolved_2_MissingTileSolvable() {
+        String[][] gameFieldInput = {{"NNNN","NNYN","NNYN","NNGN","NNGN","NNRN","NNRN","NNNN"},
+                                     {"NYNN","YYYY","YRYY","GRGR","GRRR","RRRR","RRYR","NNNR"},
+                                     {"NYNN","YGYY","HHHH","HHHH","HHHH","HHHH","YRYR","NNNR"},
+                                     {"NGNN","YGYG","HHHH","GGGG","GGRG","HHHH","YGGG","NNNG"},
+                                     {"NGNN","YRRG","HHHH","GGYR","NNNN","HHHH","GGRR","NNNG"},
+                                     {"NRNN","RYYR","HHHH","HHHH","HHHH","HHHH","RYRG","NNNY"},
+                                     {"NRNN","YGRR","YYRG","RYGY","YGGY","RGYG","RYYG","NNNY"},
+                                     {"NNNN","RNNN","RNNN","GNNN","GNNN","YNNN","YNNN","NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+
+        assertFalse(gameField.checkIfGameFieldSolved(false));
+        assertTrue(gameField.checkIfGameFieldSolved(true));
+    }
+
+    /**
+     * checkIfGameFieldSolved(boolean) boolean
+     * 3
+     * ob das Spielfeld geloest wurde
+     */
+    @Test
+    public void test_checkIfGameFieldSolved_3_MultipleMissingTileSolvable() {
+        String[][] gameFieldInput = {{"NNNN","NNYN","NNYN","NNGN","NNGN","NNRN","NNRN","NNNN"},
+                                     {"NYNN","YYYY","YRYY","GRGR","GRRR","RRRR","RRYR","NNNR"},
+                                     {"NYNN","YGYY","HHHH","HHHH","HHHH","HHHH","YRYR","NNNR"},
+                                     {"NGNN","NNNN","HHHH","NNNN","NNNN","HHHH","YGGG","NNNG"},
+                                     {"NGNN","YRRG","HHHH","NNNN","NNNN","HHHH","GGRR","NNNG"},
+                                     {"NRNN","RYYR","HHHH","HHHH","HHHH","HHHH","RYRG","NNNY"},
+                                     {"NRNN","YGRR","YYRG","RYGY","YGGY","RGYG","RYYG","NNNY"},
+                                     {"NNNN","RNNN","RNNN","GNNN","GNNN","YNNN","YNNN","NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+
+        assertFalse(gameField.checkIfGameFieldSolved(false));
+        assertTrue(gameField.checkIfGameFieldSolved(true));
+    }
+
+    /**
+     * checkIfGameFieldSolved(boolean) boolean
+     * 4
+     * ob das Spielfeld geloest wurde
+     */
+    @Test
+    public void test_checkIfGameFieldSolved_4_MissingTileNotSolvable() {
+        String[][] gameFieldInput = {{"NNNN","NNYN","NNYN","NNGN","NNGN","NNRN","NNRN","NNNN"},
+                                     {"NYNN","YYYY","YRYY","GRGR","GRRR","RRRR","RRYR","NNNR"},
+                                     {"NYNN","YGYY","HHHH","HHHH","HHHH","HHHH","YRYR","NNNR"},
+                                     {"NGNN","NNNN","HHHH","NNNN","NNNN","HHHH","YGGG","NNNG"},
+                                     {"NGNN","YRRG","HHHH","NNNN","NNNN","HHHH","GGRR","NNNG"},
+                                     {"NRNN","RYYR","HHHH","HHHH","HHHH","HHHH","RYRG","NNNY"},
+                                     {"NRNN","YGRR","YYRG","RYGY","YGGY","RGYG","RYYG","NNNY"},
+                                     {"NNNN","RNNN","RNNN","GNNN","GNNN","YNNN","YNNN","NNNN"}};
+        GameField gameField = new GameField(gameFieldInput);
+
+        assertFalse(gameField.checkIfGameFieldSolved(false));
+        assertFalse(gameField.checkIfGameFieldSolved(true));
+    }
+
+
+    //setBorderFromGameField(GameField) void
+
+    /**
+     * setBorderFromGameField(GameField) void
+     * 1
+     * ob der Spielfeldrand vom alten Spielfeld korrekt im neuen Spielfeld gesetzt wird
+     */
+    @Test
+    public void test_setBorderFromGameField_1_bothSameSize(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNRN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
+                                      {"NNNN", "YNNN", "RNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput); //3x3 Spielfeld
+
+        GameField newGameFieldWithOldBorder = new GameField(3, 3, true); //3x3 Spielfeld
+        newGameFieldWithOldBorder.setBorderFromGameField(gameField);
+
+        boolean status = true;
+        //ueberpruefen, ob Rand des alten Spielfelds und des neuen welches den alten uebernommen hat identisch ist
+        for(int y = 0; y < gameField.getGameFieldHeight(); y++){
+            for(int x = 0; x < gameField.getGameFieldWidth(); x++){
+                if(gameField.isFieldBorder(x, y)){
+                    if(!gameField.getTile(x, y).getTileName().equals(
+                            newGameFieldWithOldBorder.getTile(x, y).getTileName())){ //Rand vom neuen und alten
+                        // Spielfeld ist unterschiedlich
+                        status = false;
+                    }
+                }
+            }
+        }
+        assertTrue(status);
+    }
+
+    /**
+     * setBorderFromGameField(GameField) void
+     * 2
+     * ob der Spielfeldrand vom alten Spielfeld korrekt im neuen Spielfeld gesetzt wird
+     */
+    @Test
+    public void test_setBorderFromGameField_2_newBigger(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNRN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
+                                      {"NNNN", "YNNN", "RNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput); //3x3 Spielfeld
+
+        GameField newGameField = new GameField(4, 4, true); //4x4 Spielfeld
+
+        newGameField.setBorderFromGameField(gameField); //den Rand des alten Spielfelds im neuen Spielfeld setzen
+
+        //Explizit jedes Randfeld schauen, da sonst im Test zum ueberpruefen derselbe code der ueberprueften Methode
+        // genutzt werden muesste
+
+        //oberer Rand
+        assertEquals(TileNames.NNNN, newGameField.getTile(0,0).getTileName(), "Error upper left edge");
+        assertEquals(TileNames.YYYY, newGameField.getTile(1,0).getTileName(), "Error upper border");
+        assertEquals(TileNames.YYYY, newGameField.getTile(2,0).getTileName(), "Error upper border");
+        assertEquals(TileNames.RRRR, newGameField.getTile(3,0).getTileName(), "Error upper border");
+        assertEquals(TileNames.RRRR, newGameField.getTile(4,0).getTileName(), "Error upper border");//
+        // dieses RRRR kommt nicht aus dem alten Spielfeld sondern wurde beim erzeugen des Spielfelds gesetzt
+        assertEquals(TileNames.NNNN, newGameField.getTile(5,0).getTileName(), "Error upper right edge");
+
+        //linker Rand
+        assertEquals(TileNames.NNNN, newGameField.getTile(0,0).getTileName(), "Error upper left edge");
+        assertEquals(TileNames.YYYY, newGameField.getTile(0,1).getTileName(), "Error left border");
+        assertEquals(TileNames.YYYY, newGameField.getTile(0,2).getTileName(), "Error left border");
+        assertEquals(TileNames.GGGG, newGameField.getTile(0,3).getTileName(), "Error left border");
+        assertEquals(TileNames.RRRR, newGameField.getTile(0,4).getTileName(), "Error left border");//
+        // dieses RRRR kommt nicht aus dem alten Spielfeld sondern wurde beim erzeugen des Spielfelds gesetzt
+        assertEquals(TileNames.NNNN, newGameField.getTile(0,5).getTileName(), "Error lower left edge");
+
+        //unterer Rand
+        assertEquals(TileNames.NNNN, newGameField.getTile(0,5).getTileName(), "Error lower left edge");
+        assertEquals(TileNames.YYYY, newGameField.getTile(1,5).getTileName(), "Error lower border");
+        assertEquals(TileNames.RRRR, newGameField.getTile(2,5).getTileName(), "Error lower border");
+        assertEquals(TileNames.YYYY, newGameField.getTile(3,5).getTileName(), "Error lower border");
+        assertEquals(TileNames.RRRR, newGameField.getTile(4,5).getTileName(), "Error lower border");//
+        // dieses RRRR kommt nicht aus dem alten Spielfeld sondern wurde beim erzeugen des Spielfelds gesetzt
+        assertEquals(TileNames.NNNN, newGameField.getTile(5,5).getTileName(), "Error lower right edge");
+
+        //rechter Rand
+        assertEquals(TileNames.NNNN, newGameField.getTile(5,0).getTileName(), "Error upper left edge");
+        assertEquals(TileNames.YYYY, newGameField.getTile(5,1).getTileName(), "Error left border");
+        assertEquals(TileNames.YYYY, newGameField.getTile(5,2).getTileName(), "Error left border");
+        assertEquals(TileNames.GGGG, newGameField.getTile(5,3).getTileName(), "Error left border");
+        assertEquals(TileNames.RRRR, newGameField.getTile(5,4).getTileName(), "Error left border");//
+        // dieses RRRR kommt nicht aus dem alten Spielfeld sondern wurde beim erzeugen des Spielfelds gesetzt
+        assertEquals(TileNames.NNNN, newGameField.getTile(5,5).getTileName(), "Error lower left edge");
+    }
+
+    /**
+     * setBorderFromGameField(GameField) void
+     * 3
+     * ob der Spielfeldrand vom alten Spielfeld korrekt im neuen Spielfeld gesetzt wird
+     */
+    @Test
+    public void test_setBorderFromGameField_3_newSmaller(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNRN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
+                                      {"NNNN", "YNNN", "RNNN", "YNNN", "NNNN"}};
+        GameField gameField = new GameField(gameFieldInput); //3x3 Spielfeld
+
+        GameField newGameField = new GameField(2, 2, true); //2x2 Spielfeld
+
+        newGameField.setBorderFromGameField(gameField); //den Rand des alten Spielfelds im neuen Spielfeld setzen
+
+        //Explizit jedes Randfeld schauen, da sonst im Test zum ueberpruefen derselbe code der ueberprueften Methode
+        // genutzt werden muesste
+
+        //oberer Rand
+        assertEquals(TileNames.NNNN, newGameField.getTile(0,0).getTileName(), "Error upper left edge");
+        assertEquals(TileNames.YYYY, newGameField.getTile(1,0).getTileName(), "Error upper border");
+        assertEquals(TileNames.YYYY, newGameField.getTile(2,0).getTileName(), "Error upper border");
+        assertEquals(TileNames.NNNN, newGameField.getTile(3,0).getTileName(), "Error upper right edge");
+
+        //linker Rand
+        assertEquals(TileNames.NNNN, newGameField.getTile(0,0).getTileName(), "Error upper left edge");
+        assertEquals(TileNames.YYYY, newGameField.getTile(0,1).getTileName(), "Error left border");
+        assertEquals(TileNames.YYYY, newGameField.getTile(0,2).getTileName(), "Error left border");
+        assertEquals(TileNames.NNNN, newGameField.getTile(0,3).getTileName(), "Error lower left edge");
+
+        //unterer Rand
+        assertEquals(TileNames.NNNN, newGameField.getTile(0,3).getTileName(), "Error lower left edge");
+        assertEquals(TileNames.YYYY, newGameField.getTile(1,3).getTileName(), "Error lower border");
+        assertEquals(TileNames.RRRR, newGameField.getTile(2,3).getTileName(), "Error lower border");
+        assertEquals(TileNames.NNNN, newGameField.getTile(3,3).getTileName(), "Error lower right edge");
+
+        //rechter Rand
+        assertEquals(TileNames.NNNN, newGameField.getTile(3,0).getTileName(), "Error upper left edge");
+        assertEquals(TileNames.YYYY, newGameField.getTile(3,1).getTileName(), "Error left border");
+        assertEquals(TileNames.YYYY, newGameField.getTile(3,2).getTileName(), "Error left border");
+        assertEquals(TileNames.NNNN, newGameField.getTile(3,3).getTileName(), "Error lower left edge");
+    }
+
+
+    //placeGameFieldEmptyBorderRed(boolean) void
+        //wird schon beim erzeugen eines Spielfelds getestet unabhaengig vom Konstruktor
+
+    /**
+     * placeGameFieldEmptyBorderRed(boolean) void
+     * 1
+     * ob das Spielfeld korrekt mit leeren Spielsteinen und falls true der Rand ohne die Ecken mit Roten Randsteinen
+     * gefuellt wird
+     */
+    @Test
+    public void test_placeGameFieldEmptyBorderRed_1_EverythingNNNN(){
+        GameField gameField = new GameField(5, 5);
+
+        boolean allTilesNull = true;
+        for(int y = 0; y < gameField.getGameFieldHeight(); y++){
+            for(int x = 0; x < gameField.getGameFieldWidth(); x++){
+                if(gameField.getTile(x, y) != null) allTilesNull = false;
+            }
+        }
+        assertTrue(allTilesNull);
+
+        gameField.placeGameFieldEmptyBorderRed(false);
+
+        boolean allTilesNotNullButNNNN = true;
+        for(int y = 0; y < gameField.getGameFieldHeight(); y++){
+            for(int x = 0; x < gameField.getGameFieldWidth(); x++){
+                Tile currTile = gameField.getTile(x, y);
+                if(currTile == null || !currTile.getTileName().equals(TileNames.NNNN)) allTilesNotNullButNNNN = false;
+            }
+        }
+        assertTrue(allTilesNotNullButNNNN);
+    }
+
+    /**
+     * placeGameFieldEmptyBorderRed(boolean) void
+     * 2
+     * ob das Spielfeld korrekt mit leeren Spielsteinen und falls true der Rand ohne die Ecken mit Roten Randsteinen
+     * gefuellt wird
+     */
+    @Test
+    public void test_placeGameFieldEmptyBorderRed_2_GameFieldNNNNBorderRRRR(){
+        GameField gameField = new GameField(5, 5);
+
+        boolean allTilesNull = true;
+        for(int y = 0; y < gameField.getGameFieldHeight(); y++){
+            for(int x = 0; x < gameField.getGameFieldWidth(); x++){
+                if(gameField.getTile(x, y) != null)
+                    allTilesNull = false;
+            }
+        }
+        assertTrue(allTilesNull);
+
+        gameField.placeGameFieldEmptyBorderRed(true); //alle Felder NNNN setzen und Rand RRRR
+
+        boolean allTilesNNNNBorderRRRR = true;
+        for(int y = 0; y < gameField.getGameFieldHeight(); y++){
+            for(int x = 0; x < gameField.getGameFieldWidth(); x++){
+                Tile currTile = gameField.getTile(x, y);
+                if(currTile != null) { //aktueller Spielstein ist nicht null
+                    if (gameField.isFieldEdge(x, y)) { //aktuelle Position ist Ecke
+                        if (!currTile.getTileName().equals(TileNames.NNNN)) //auf der Ecke liegt nicht NNNN
+                            allTilesNNNNBorderRRRR = false;
+                    } else if (gameField.isFieldBorder(x, y)) { //aktuelle Position ist Rand und keine Ecke
+                        if (!currTile.getTileName().equals(TileNames.RRRR)) { //auf dem Rand liegt
+                            allTilesNNNNBorderRRRR = false;
+                        }
+                    } else { //aktuelle Position ist mittleres Spielfeld
+                        if (!currTile.getTileName().equals(TileNames.NNNN)) //im mittleren Spielfeld liegt nicht NNNN
+                            allTilesNNNNBorderRRRR = false;
+                    }
+                } else { //aktueller Spielstein ist null
+                    allTilesNNNNBorderRRRR = false;
+                }
+            }
+        }
+        assertTrue(allTilesNNNNBorderRRRR);
+    }
+
+
+    //String[][] calcNeededHoles(int, int) int
+
+    /**
+     * String[][] calcNeededHoles(int, int) int
+     * 1
+     * ob die richtige Anzahl an benoetigten Lochsteinen errechnet wird
+     */
+    @Test
+    public void test_calcNeededHoles_1_4x4(){
+        int neededHoles = GameField.calcNeededHoles(4, 4);
+
+        assertEquals(0, neededHoles);
+    }
+
+    /**
+     * String[][] calcNeededHoles(int, int) int
+     * 2
+     * ob die richtige Anzahl an benoetigten Lochsteinen errechnet wird
+     */
+    @Test
+    public void test_calcNeededHoles_2_5x5(){
+        int neededHoles = GameField.calcNeededHoles(5, 5);
+
+        assertEquals(1, neededHoles);
+    }
+
+    /**
+     * c calcNeededHoles(int, int) int
+     * 3
+     * ob die richtige Anzahl an benoetigten Lochsteinen errechnet wird
+     */
+    @Test
+    public void test_calcNeededHoles_3_6x5(){
+        int neededHoles = GameField.calcNeededHoles(6, 5);
+
+        assertEquals(6, neededHoles);
+    }
+
+    /**
+     * String[][] calcNeededHoles(int, int) int
+     * 3
+     * ob die richtige Anzahl an benoetigten Lochsteinen errechnet wird
+     */
+    @Test
+    public void test_calcNeededHoles_3_6x6(){
+        int neededHoles = GameField.calcNeededHoles(6, 6);
+
+        assertEquals(12, neededHoles);
+    }
+
+
+    //placeGameFieldHoles() void
+
+    /**
+     * placeGameFieldHoles() void
+     * 1
+     * ob die richtige Anzahl an Lochsteinen an den richtigen Positionen liegt
+     */
+    @Test
+    public void test_placeGameFieldHoles_1_4x4(){
+        GameField gameField = new GameField(4, 4);
+        gameField.placeGameFieldEmptyBorderRed(true); //Rand und Platzhalter setzen
+        assertNotEquals(TileNames.HHHH, gameField.getTile(1, 1).getTileName()); //noch keine Lochsteine
+
+        gameField.placeGameFieldHoles(); //Lochsteine automatisch setzen (keine da Spielfeld zu klein)
+
+        assertNotEquals(TileNames.HHHH, gameField.getTile(1, 1).getTileName()); //hier sollte keiner sein
+    }
+
+    /**
+     * placeGameFieldHoles() void
+     * 2
+     * ob die richtige Anzahl an Lochsteinen an den richtigen Positionen liegt
+     */
+    @Test
+    public void test_placeGameFieldHoles_2_5x5(){
+        GameField gameField = new GameField(5, 5);
+        gameField.placeGameFieldEmptyBorderRed(true); //Rand und Platzhalter setzen
+        assertNotEquals(TileNames.HHHH, gameField.getTile(1, 1).getTileName()); //noch keine Lochsteine
+
+        gameField.placeGameFieldHoles(); //Lochsteine automatisch setzen (einer)
+
+        assertEquals(TileNames.HHHH, gameField.getTile(1, 1).getTileName()); //Lochstein ueberpruefen
+
+        assertNotEquals(TileNames.HHHH, gameField.getTile(2, 1).getTileName()); //hier sollte keiner sein
+    }
+
+    /**
+     * placeGameFieldHoles() void
+     * 2
+     * ob die richtige Anzahl an Lochsteinen an den richtigen Positionen liegt
+     */
+    @Test
+    public void test_placeGameFieldHoles_2_6x5(){
+        GameField gameField = new GameField(6, 5);
+        gameField.placeGameFieldEmptyBorderRed(true); //Rand und Platzhalter setzen
+        assertNotEquals(TileNames.HHHH, gameField.getTile(1, 1).getTileName()); //noch keine Lochsteine
+
+        gameField.placeGameFieldHoles(); //Lochsteine automatisch setzen (einer)
+
+        //Reihe 1
+        assertEquals(TileNames.HHHH, gameField.getTile(1, 1).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(2, 1).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(3, 1).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(4, 1).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(5, 1).getTileName()); //Lochstein ueberpruefen
+
+        //Reihe 2
+        assertEquals(TileNames.HHHH, gameField.getTile(1, 2).getTileName()); //Lochstein ueberpruefen
+
+        assertNotEquals(TileNames.HHHH, gameField.getTile(3, 2).getTileName()); //hier sollte keiner sein
+    }
+
+    /**
+     * placeGameFieldHoles() void
+     * 2
+     * ob die richtige Anzahl an Lochsteinen an den richtigen Positionen liegt
+     */
+    @Test
+    public void test_placeGameFieldHoles_3_6x6(){
+        GameField gameField = new GameField(6, 6);
+        gameField.placeGameFieldEmptyBorderRed(true); //Rand und Platzhalter setzen
+        assertNotEquals(TileNames.HHHH, gameField.getTile(1, 1).getTileName()); //noch keine Lochsteine
+
+        gameField.placeGameFieldHoles(); //Lochsteine automatisch setzen (einer)
+
+        //Reihe 1
+        assertEquals(TileNames.HHHH, gameField.getTile(1, 1).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(2, 1).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(3, 1).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(4, 1).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(5, 1).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(6, 1).getTileName()); //Lochstein ueberpruefen
+
+        //Reihe 2
+        assertEquals(TileNames.HHHH, gameField.getTile(1, 2).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(2, 2).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(3, 2).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(4, 2).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(5, 2).getTileName()); //Lochstein ueberpruefen
+        assertEquals(TileNames.HHHH, gameField.getTile(6, 2).getTileName()); //Lochstein ueberpruefen
+
+        //Reihe 3
+        assertNotEquals(TileNames.HHHH, gameField.getTile(1, 3).getTileName()); //hier sollte keiner mehr sein
+    }
+
+
+    //static translateFromSpielstandsdatei(String[][]) String[][]
+
+    /**
+     * static translateFromSpielstandsdatei(String[][]) String[][]
+     * 1
+     * ob die String Eingabe welche am Rand statt (YYYY, GGGG, RRRR) (Tilenames mit nur einem Buchstaben an der
+     * richtigen Position) richtig uebersetzt wird in YYYY, GGGG, RRRR ...
+     */
+    @Test
+    public void test_translateFromSpielstandsdatei_1(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NNNN", "RNNN", "YNNN", "YNNN", "NNNN"}};
+
+        String[][] translatedGameField = GameField.translateFromSpielstandsdatei(gameFieldInput);
+
+        assertEquals(translatedGameField[0][0], "NNNN"); //linke Ecke
+        assertEquals(translatedGameField[0][1], "YYYY"); //oberen Rand
+        assertEquals(translatedGameField[1][0], "YYYY"); //linker Rand
+        assertEquals(translatedGameField[1][4], "YYYY"); //rechter Rand
+        assertEquals(translatedGameField[4][1], "RRRR"); //unterer Rand
+
+        assertEquals(translatedGameField[2][3], "RYYY"); //Spielstein bleibt richtig
+    }
+
+
+    //translateToSpielstandsdatei() String[][]
+
+    /**
+     * translateToSpielstandsdatei() String[][]
+     * 1
+     * ob der aktuelle Spielstand im richtigen geforderten Format zurueckgegeben wird (Randbeschriftung weicht von
+     * meiner ab)
+     */
+    @Test
+    public void test_translateToSpielstandsdatei_1(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+
+        String[][] gameFieldOutput = gameField.translateToSpielstandsdatei();
+
+        assertArrayEquals(gameFieldInput, gameFieldOutput);
+    }
+
+
+    //layTile(int, int, Tile) boolean
+
+    /**
+     * layTile(int, int, Tile) boolean
+     * 1
+     * ob ein Spielstein korrekt gelegt werden kann
+     */
+    @Test
+    public void test_layTile_1_MiddleGameFieldFree(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+        Tile shouldBeLaidTile = gameField.getTileByTileNamesIndex(TileNames.GGRR.ordinal());
+        boolean status = gameField.layTile(1,1, shouldBeLaidTile);
+
+        assertTrue(status);
+        assertEquals(shouldBeLaidTile, gameField.getTile(1, 1)); //Feld im Spielfeld passt
+        assertFalse(gameField.getTiles().containsTile(shouldBeLaidTile)); //da gelegt Spielstein aus Auswahl geloescht
+    }
+
+    /**
+     * layTile(int, int, Tile) boolean
+     * 2
+     * ob ein Spielstein korrekt gelegt werden kann
+     */
+    @Test
+    public void test_layTile_2_MiddleGameFieldNotFree(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+
+        Tile beforelayTile = gameField.getTile(3,2);
+
+        Tile shouldBeLaidTile = gameField.getTileByTileNamesIndex(TileNames.GGRR.ordinal());
+        boolean status = gameField.layTile(3,2, shouldBeLaidTile); //nicht legbar da Feld nicht frei
+
+        assertFalse(status);
+        assertEquals(beforelayTile, gameField.getTile(3, 2));
+        assertTrue(gameField.getTiles().containsTile(shouldBeLaidTile)); //da nicht gelegt Spielstein aus Auswahl nicht
+        // geloescht
+    }
+
+    /**
+     * layTile(int, int, Tile) boolean
+     * 3
+     * ob ein Spielstein korrekt gelegt werden kann
+     */
+    @Test
+    public void test_layTile_3_BorderCompatible(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+
+        Tile shouldBeLaidTile = new Tile(TileNames.GGGG);
+        boolean status = gameField.layTile(1,0, shouldBeLaidTile); //nicht legbar da Feld nicht frei
+
+        assertTrue(status);
+        assertEquals(shouldBeLaidTile, gameField.getTile(1, 0));
+        //nicht pruefen ob Spielstein auf Tiles geloscht, da die Randsteine nicht aus Tiles kommen und unwichtige
+        // Refferenzen haben
+    }
+
+    /**
+     * layTile(int, int, Tile) boolean
+     * 4
+     * ob ein Spielstein korrekt gelegt werden kann
+     */
+    @Test
+    public void test_layTile_4_NotBorderCompatible(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+
+        Tile beforelayTile = gameField.getTile(1,0);
+
+        Tile shouldBeLaidTile = new Tile(TileNames.RGYG);
+        boolean status = gameField.layTile(1,0, shouldBeLaidTile); //nicht legbar da Feld nicht frei
+
+        assertFalse(status);
+        assertEquals(beforelayTile, gameField.getTile(1, 0));
+        assertTrue(gameField.getTiles().containsTile(shouldBeLaidTile)); //da nicht gelegt Spielstein aus Auswahl nicht
+        // geloescht
+    }
+
+
+    //resetTile(int, int) void
+
+    /**
+     * resetTile(int, int) void
+     * 1
+     * ob ein Feld korrekt zurueckgesetzt wurde
+     */
+    @Test
+    public void test_resetTile_1_AlreadyResetted(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+
+        Tile beforelayTile = gameField.getTile(1,1);
+
+        gameField.resetTile(1,1); //resetted nichts da dort nichts liegt nur NNNN
+
+        assertEquals(beforelayTile, gameField.getTile(1, 1));
+    }
+
+    /**
+     * resetTile(int, int) void
+     * 3
+     * ob ein Spielstein korrekt gelegt werden kann
+     */
+    @Test
+    public void test_resetTile_2_CanBeResetted(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+
+        Tile beforelayTile = gameField.getTile(3,2);
+
+        assertFalse(gameField.getTiles().containsTile(beforelayTile)); //Spielstein nicht hierdrin da auf Spielfeld
+
+        gameField.resetTile(3,2); //resetted nichts da dort nichts liegt nur NNNN
+
+        assertNotEquals(beforelayTile, gameField.getTile(3, 2)); //alter Spielstein liegt dort nichtmehr
+        assertEquals(TileNames.NNNN, gameField.getTile(3, 2).getTileName()); //resetted steht dort NNNN
+        assertTrue(gameField.getTiles().containsTile(beforelayTile)); //Spielstein hier drin da nicht mehr auf Spielfeld
+    }
+
+    /**
+     * resetTile(int, int) void
+     * 3
+     * ob ein Spielstein korrekt gelegt werden kann
+     */
+    @Test
+    public void test_resetTile_3_BorderNotResettable(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                                      {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                                      {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+
+        Tile beforelayTile = gameField.getTile(0,1);
+
+        gameField.resetTile(0,1); //resetted Rand zu nichts gelegt
+
+        assertNotEquals(beforelayTile, gameField.getTile(0, 1)); //alter Spielstein liegt nicht da Rand nicht
+        // resetted wird
+        assertEquals(TileNames.NNNN, gameField.getTile(0,1).getTileName()); //wurde zu NNNN resetted
+    }
+
+
+
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 5x5 Feld
+     * False
+     */
+    @Test
+    public void testGameFieldSolvable5x5TrueOnlyYellow(){
+        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
+                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
+                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+        assertTrue(gameField.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 5x5 Feld
+     * True
+     */
+    @Test
+    public void testGameFieldSolvable5x5True(){
+        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
+                {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
+                {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
+                {"NGNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+        assertTrue(gameField.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 5x5 Feld
+     * True
+     */
+    @Test
+    public void testGameFieldSolvable5x5True2() {
+        String[][] gameFieldInput = {{"NNNN", "NNYN", "NNYN", "NNGN", "NNNN"},
+                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
+                {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
+
+        GameField gameField = new GameField(gameFieldInput);
+        assertTrue(gameField.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 8x8 Feld
+     * True
+     */
+    @Test
+    public void testGameFieldSolvable8x8True() {
+        String[][] gameFieldInput = {
+                {"NNNN", "YYYY", "YYYY", "GGGG", "GGGG", "RRRR", "RRRR", "NNNN"},
+                {"YYYY", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"YYYY", "NNNN", "HHHH", "HHHH", "HHHH", "HHHH", "NNNN", "RRRR"},
+                {"GGGG", "NNNN", "HHHH", "NNNN", "NNNN", "HHHH", "NNNN", "GGGG"},
+                {"GGGG", "NNNN", "HHHH", "NNNN", "NNNN", "HHHH", "NNNN", "GGGG"},
+                {"RRRR", "NNNN", "HHHH", "HHHH", "HHHH", "HHHH", "NNNN", "YYYY"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "YYYY"},
+                {"NNNN", "RRRR", "RRRR", "GGGG", "GGGG", "YYYY", "YYYY", "NNNN"}
+        };
+
+        GameField gameField = new GameField(gameFieldInput);
+        assertTrue(gameField.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 8x8 Feld
+     * True
+     */
+    @Test
+    public void testGameFieldSolvable8x8_Second_True() {
+        String[][] gameFieldInput = {
+                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"},
+                {"GGGG", "HHHH", "NNNN", "NNNN", "HHHH", "NNNN", "HHHH", "RRRR"},
+                {"RRRR", "HHHH", "NNNN", "HHHH", "HHHH", "NNNN", "HHHH", "RRRR"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"GGGG", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "NNNN", "GGGG"},
+                {"RRRR", "NNNN", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "RRRR"},
+                {"GGGG", "HHHH", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "RRRR", "NNNN"}
+        };
+
+        GameField gameField = new GameField(gameFieldInput);
+        assertTrue(gameField.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 8x8 Feld
+     * True
+     */
+    @Test
+    public void testGameFieldSolvable8x8SomeAlreadySolvedTrue() {
+        String[][] gameFieldInput = {
+                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"},
+                {"GGGG", "HHHH", "GRGR", "RRRR", "HHHH", "NNNN", "HHHH", "RRRR"},
+                {"RRRR", "HHHH", "NNNN", "HHHH", "HHHH", "GGYR", "HHHH", "RRRR"},
+                {"RRRR", "GGGR", "NNNN", "YYYY", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"GGGG", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "GGGY", "GGGG"},
+                {"RRRR", "NNNN", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "RRRR"},
+                {"GGGG", "HHHH", "NNNN", "NNNN", "YRGY", "NNNN", "RGRY", "GGGG"},
+                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "RRRR", "NNNN"}
+        };
+
+        GameField gameField = new GameField(gameFieldInput);
+        assertTrue(gameField.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 7x6 Feld
+     * False
+     */
+    @Test
+    public void testGameFieldSolvable7x6AlreadyLaidFalse() {
+        String[][] gameFieldInput = {
+                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "NNNN"},
+                {"RRRR", "GGYY", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
+                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "NNNN"}
+        };
+
+        GameField gameField = new GameField(gameFieldInput);
+        assertFalse(gameField.isGameFieldSolvable());
+    }
+
+    /**
+     * ob die isGameFieldSolvable Methode funktioniert
+     * 7x6 Feld
+     * False
+     */
+    @Test
+    public void testGameFieldSolvable7x6AlreadyLaidFalse2() {
+        String[][] gameFieldInput = {
+                {"NNNN", "RRRR", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"},
+                {"RRRR", "GGRR", "RGYG", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
+                {"NNNN", "RRRR", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"}
+        };
+
+        GameField gameField = new GameField(gameFieldInput);
+        assertFalse(gameField.isGameFieldSolvable());
+    }
+
+
+
+
+
+
 
     /**
      * ob das Feld in der richtigen Groeße initialisiert wird
@@ -966,165 +1794,5 @@ public class GameFieldTest {
         }
 
         assertTrue(status);
-    }
-
-
-    //isGameFieldSolvable() boolean
-
-    /**
-     * ob die isGameFieldSolvable Methode funktioniert
-     * 5x5 Feld
-     * False
-     */
-    @Test
-    public void testGameFieldSolvable5x5TrueOnlyYellow(){
-        String[][] gameFieldInput =  {{"NNNN", "NNYN", "NNYN", "NNYN", "NNNN"},
-                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
-                {"NYNN", "NNNN", "NNNN", "RYYY", "NNNY"},
-                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
-                {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
-
-        GameField gameField = new GameField(gameFieldInput);
-        assertTrue(gameField.isGameFieldSolvable());
-    }
-
-    /**
-     * ob die isGameFieldSolvable Methode funktioniert
-     * 5x5 Feld
-     * True
-     */
-    @Test
-    public void testGameFieldSolvable5x5True(){
-        String[][] gameFieldInput =  {{"NNNN", "NNGN", "NNGN", "NNGN", "NNNN"},
-                {"NGNN", "NNNN", "NNNN", "NNNN", "NNNG"},
-                {"NRNN", "NNNN", "NNNN", "NNNN", "NNNR"},
-                {"NGNN", "NNNN", "NNNN", "NNNN", "NNNY"},
-                {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
-
-        GameField gameField = new GameField(gameFieldInput);
-        assertTrue(gameField.isGameFieldSolvable());
-    }
-
-    /**
-     * ob die isGameFieldSolvable Methode funktioniert
-     * 5x5 Feld
-     * True
-     */
-    @Test
-    public void testGameFieldSolvable5x5True2() {
-        String[][] gameFieldInput = {{"NNNN", "NNYN", "NNYN", "NNGN", "NNNN"},
-                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
-                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
-                {"NYNN", "NNNN", "NNNN", "NNNN", "NNNY"},
-                {"NNNN", "YNNN", "YNNN", "YNNN", "NNNN"}};
-
-        GameField gameField = new GameField(gameFieldInput);
-        assertTrue(gameField.isGameFieldSolvable());
-    }
-
-    /**
-     * ob die isGameFieldSolvable Methode funktioniert
-     * 8x8 Feld
-     * True
-     */
-    @Test
-    public void testGameFieldSolvable8x8True() {
-        String[][] gameFieldInput = {
-                {"NNNN", "YYYY", "YYYY", "GGGG", "GGGG", "RRRR", "RRRR", "NNNN"},
-                {"YYYY", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
-                {"YYYY", "NNNN", "HHHH", "HHHH", "HHHH", "HHHH", "NNNN", "RRRR"},
-                {"GGGG", "NNNN", "HHHH", "NNNN", "NNNN", "HHHH", "NNNN", "GGGG"},
-                {"GGGG", "NNNN", "HHHH", "NNNN", "NNNN", "HHHH", "NNNN", "GGGG"},
-                {"RRRR", "NNNN", "HHHH", "HHHH", "HHHH", "HHHH", "NNNN", "YYYY"},
-                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "YYYY"},
-                {"NNNN", "RRRR", "RRRR", "GGGG", "GGGG", "YYYY", "YYYY", "NNNN"}
-        };
-
-        GameField gameField = new GameField(gameFieldInput);
-        assertTrue(gameField.isGameFieldSolvable());
-    }
-
-    /**
-     * ob die isGameFieldSolvable Methode funktioniert
-     * 8x8 Feld
-     * True
-     */
-    @Test
-    public void testGameFieldSolvable8x8_Second_True() {
-        String[][] gameFieldInput = {
-                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"},
-                {"GGGG", "HHHH", "NNNN", "NNNN", "HHHH", "NNNN", "HHHH", "RRRR"},
-                {"RRRR", "HHHH", "NNNN", "HHHH", "HHHH", "NNNN", "HHHH", "RRRR"},
-                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
-                {"GGGG", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "NNNN", "GGGG"},
-                {"RRRR", "NNNN", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "RRRR"},
-                {"GGGG", "HHHH", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
-                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "RRRR", "NNNN"}
-        };
-
-        GameField gameField = new GameField(gameFieldInput);
-        assertTrue(gameField.isGameFieldSolvable());
-    }
-
-    /**
-     * ob die isGameFieldSolvable Methode funktioniert
-     * 8x8 Feld
-     * True
-     */
-    @Test
-    public void testGameFieldSolvable8x8SomeAlreadySolvedTrue() {
-        String[][] gameFieldInput = {
-                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"},
-                {"GGGG", "HHHH", "GRGR", "RRRR", "HHHH", "NNNN", "HHHH", "RRRR"},
-                {"RRRR", "HHHH", "NNNN", "HHHH", "HHHH", "GGYR", "HHHH", "RRRR"},
-                {"RRRR", "GGGR", "NNNN", "YYYY", "NNNN", "NNNN", "NNNN", "GGGG"},
-                {"GGGG", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "GGGY", "GGGG"},
-                {"RRRR", "NNNN", "NNNN", "HHHH", "NNNN", "HHHH", "NNNN", "RRRR"},
-                {"GGGG", "HHHH", "NNNN", "NNNN", "YRGY", "NNNN", "RGRY", "GGGG"},
-                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "RRRR", "NNNN"}
-        };
-
-        GameField gameField = new GameField(gameFieldInput);
-        assertTrue(gameField.isGameFieldSolvable());
-    }
-
-    /**
-     * ob die isGameFieldSolvable Methode funktioniert
-     * 7x6 Feld
-     * False
-     */
-    @Test
-    public void testGameFieldSolvable7x6AlreadyLaidFalse() {
-        String[][] gameFieldInput = {
-                {"NNNN", "GGGG", "GGGG", "RRRR", "RRRR", "RRRR", "NNNN"},
-                {"RRRR", "GGYY", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
-                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
-                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
-                {"GGGG", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "GGGG"},
-                {"NNNN", "GGGG", "GGGG", "RRRR", "GGGG", "GGGG", "NNNN"}
-        };
-
-        GameField gameField = new GameField(gameFieldInput);
-        assertFalse(gameField.isGameFieldSolvable());
-    }
-
-    /**
-     * ob die isGameFieldSolvable Methode funktioniert
-     * 7x6 Feld
-     * False
-     */
-    @Test
-    public void testGameFieldSolvable7x6AlreadyLaidFalse2() {
-        String[][] gameFieldInput = {
-                {"NNNN", "RRRR", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"},
-                {"RRRR", "GGRR", "RGYG", "NNNN", "NNNN", "NNNN", "RRRR"},
-                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
-                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
-                {"RRRR", "NNNN", "NNNN", "NNNN", "NNNN", "NNNN", "RRRR"},
-                {"NNNN", "RRRR", "RRRR", "RRRR", "RRRR", "RRRR", "NNNN"}
-        };
-
-        GameField gameField = new GameField(gameFieldInput);
-        assertFalse(gameField.isGameFieldSolvable());
     }
 }

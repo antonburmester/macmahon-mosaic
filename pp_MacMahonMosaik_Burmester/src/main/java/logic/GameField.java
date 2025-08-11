@@ -13,6 +13,18 @@ public class GameField {
     private final Tiles tiles; //Nutzlast der Spielstein Instanz
 
     /**
+     * Konstruktor welcher ein Spielfeld ohne Steine und komplett ohne Platzhalter initialisiert
+     * eigentlich Testkonstruktor aber durch Konstruktoren verkettung vom Konstruktor GameField(int, int, boolean)
+     * genutzt
+     * @param height die Hoehe des neuen Spielfeldes
+     * @param width die Breite des neuen Spielfeldes
+     */
+    GameField(int height, int width){
+        this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
+        this.tiles = new Tiles();
+    }
+
+    /**
      * Konstruktor welcher ein Spielfeld ohne Steine initialisiert
      * @param height die Hoehe des neuen Spielfeldes
      * @param width die Breite des neuen Spielfeldes
@@ -20,9 +32,8 @@ public class GameField {
      *                   der Kopie schon die Standorte der Loecher vorhanden sind)
      */
     GameField(int height, int width, boolean placeHoles){
-        this.gameField = new Tile[height + 2][width + 2]; //Hoehe+2 und Breite+2 wegen der Raender
-        this.tiles = new Tiles();
-        this.placeGameFieldEmpty(true);
+        this(height, width); //Konstruktoren verkettung
+        this.placeGameFieldEmptyBorderRed(true);
         if(placeHoles)
             this.placeGameFieldHoles();
     }
@@ -40,7 +51,7 @@ public class GameField {
         String[][] inputCompatible = GameField.translateFromSpielstandsdatei(stringGameField); //den Input aber Logik
         // Kompatibel machen
         this.gameField = new Tile[height][width]; //Erste Dimension Hoehe, Zweite Dimension Breite
-        this.placeGameFieldEmpty(false); //Spielfeld mit leeren feldern fuellen aber Rand nicht faerben,
+        this.placeGameFieldEmptyBorderRed(false); //Spielfeld mit leeren feldern fuellen aber Rand nicht faerben,
         // da der Spieler selber die nicht eingefaerbten Felder faerben soll
 
         if(GameField.isInputStringGameFieldValid(stringGameField)) {
@@ -420,7 +431,7 @@ public class GameField {
      *
      * @param colorBorderRed ob der Rand initial rot gefaerbt werden soll
      */
-    void placeGameFieldEmpty(boolean colorBorderRed){
+    void placeGameFieldEmptyBorderRed(boolean colorBorderRed){
         Tile tile;
         for(int y = 0; y < this.gameField.length; y++){
             for(int x = 0; x < this.gameField[y].length; x++){
@@ -433,6 +444,19 @@ public class GameField {
                 this.gameField[y][x] = tile;
             }
         }
+    }
+
+    /**
+     * Methode welche die benoetigte Anzahl an Loechern berechnet
+     * ((Spielfelder ohne Rand) - (Anzahl Spielsteine ohne Loch und ohne Leer)
+     * @param xSize die Spielfeldbreite
+     * @param ySize die Spielfeldhoehe
+     * @return die Anzahl der benoetigten Felder (min 0)
+     */
+    static int calcNeededHoles(int xSize, int ySize){
+        int neededHoles = (xSize - 2) * (ySize - 2) - (TileNames.values().length - 2); //-2 da der Rand nicht mitzaehlt
+        // und -2 bei TileNames da NNNN und HHHH nicht mitzaehlen
+        return(Math.max(neededHoles, 0));
     }
 
     /**
@@ -452,19 +476,6 @@ public class GameField {
                 }
             }
         }
-    }
-
-    /**
-     * Methode welche die benoetigte Anzahl an Loechern berechnet
-     * ((Spielfelder ohne Rand) - (Anzahl Spielsteine ohne Loch und ohne Leer)
-     * @param xSize die Spielfeldbreite
-     * @param ySize die Spielfeldhoehe
-     * @return die Anzahl der benoetigten Felder (min 0)
-     */
-    public static int calcNeededHoles(int xSize, int ySize){
-        int neededHoles = (xSize - 2) * (ySize - 2) - (TileNames.values().length - 2); //-2 da der Rand nicht mitzaehlt
-        // und -2 bei TileNames da NNNN und HHHH nicht mitzaehlen
-        return(Math.max(neededHoles, 0));
     }
 
     /**
@@ -553,7 +564,7 @@ public class GameField {
                 this.tiles.removeTile(tile); //Stein aus Spielsteinauswahl loeschen, da gelegt
                 status = true;
             }
-        } else if(this.isFieldBorder(xIndex, yIndex)){ //Rand Feld des Spielfelds
+        } else if(this.isFieldBorder(xIndex, yIndex) && !this.isFieldEdge(xIndex, yIndex)){ //Rand Feld des Spielfelds
             if(tile.isTileBorderLayable()){ //ob der uebergebene Spielstein gueltig fuer den Rand ist
                 this.gameField[yIndex][xIndex] = tile;
                 //Stein aus Spielsteinauswahl nicht loeschen, da dieser kein Unikat ist und die Refferenz egal ist
