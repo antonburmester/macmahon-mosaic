@@ -200,7 +200,11 @@ public class Game {
      * Methode welche das Spiel beendet
      */
     public void endGame(){
-        this.setGameFlow(true, true);
+        if(!this.isEditorMode()) {
+            this.setGameFlow(true, true);
+        } else {
+            this.gui.showCustomException(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
+        }
     }
 
     /**
@@ -456,6 +460,10 @@ public class Game {
      * @return ob das Spielfeld loesbar ist und somit ein naechster Spielstein gelegt werden konnte
      */
     private boolean layHintTile(){
+        if(this.isEditorMode()) {
+            this.gui.showCustomException(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
+        }
+
         GameField solvedGameFieldCopy = this.gameField.solveGameFieldAsCopy(); //das geloeste Spielfeld oder
         // null falls nicht
         if(solvedGameFieldCopy != null) { //Spielfeld wurde geloest
