@@ -10,5 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 public class GameTest {
-
+    //GameTest buendelt nur Methoden der Logik und greift auf die GUI zu
+    //Da die Logik klassen schon systematisch getestet werden, muss Game nicht mehr getestet werden
 }

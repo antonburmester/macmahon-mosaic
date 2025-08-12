@@ -16,10 +16,6 @@ public class JavaFXGUI implements GUIConnector {
 
     private final GridPane gridPane;
 
-    private final Pane centerPane;
-
-    private final BorderPane borderPane;
-
     private final GridPane rightGridPane;
 
     private final VBox editorControls; //Nutzlast der Flaeche der Spielfeld groessen Bedienung
@@ -46,18 +42,14 @@ public class JavaFXGUI implements GUIConnector {
 
     /**
      * Konstruktor welcher diese Klasse initialisiert
-     * @param borderPane der Gesamte Hintergrund des Fensters in welchem alle Elemente sind
-     * @param centerPane der hintergrund der GridPane (Spielfeld) in der Mitte
      * @param gridPane das mittlere Spielfeld
      * @param rightGridPane die rechte GridPane in welcher die noch nicht gelegten Spielsteine sind
      * @param editorControls Flaeche der Spielfeld groessen Bedienung
      * @param imageViews die Bilder mit Listenern initialisiert in der UserInterfaceController Klasse
      * @param holeStackPanes die Loecher Stackpanes mit Listenern initialisiert in der UserInterfaceController Klasse
      */
-    public JavaFXGUI(BorderPane borderPane, Pane centerPane, GridPane gridPane, GridPane rightGridPane,
+    public JavaFXGUI(GridPane gridPane, GridPane rightGridPane,
                      VBox editorControls, ImageView[] imageViews, StackPane[] holeStackPanes){
-        this.borderPane = borderPane;
-        this.centerPane = centerPane;
         this.gridPane = gridPane;
         this.rightGridPane = rightGridPane;
         this.editorControls = editorControls;
@@ -202,15 +194,6 @@ public class JavaFXGUI implements GUIConnector {
                     StackPane slotStackPane = this.getGridPaneCell(col, row, this.rightGridPane); //Slot des Feldes
                     slotStackPane.getChildren().add(imageView);
                 }
-                /*
-                //Verwaltung fuer Reihen und Spalten
-                col++; //nach jedem durchlauf in die naechste Zeile
-                if (col == 3) { // Nach 3 Spalten neue Zeile beginnen
-                    col = 0; // wieder in der obersten Reihe beginnen
-                    row++;
-                }
-
-                 */
             }
         }
     }
@@ -451,22 +434,6 @@ public class JavaFXGUI implements GUIConnector {
 
         targetPane.setStyle("-fx-border-color: black; -fx-border-width: " + JavaFXGUI.BORDER_SIZE_GRAPHICAL +
                 "; -fx-background-color: " + stringColor + ";");
-    }
-
-    /**
-     * Methode welche das naechste freie Feld einer GridPane ausgibt.
-     * Im Aufbau hier bedeutet frei, das die StackPane (Hintergrund) eines Feldes keine children hat
-     * @param gridPane die GridPane in welcher gesucht werden soll
-     * @return das Feld oder null falls es keins mehr gibt
-     */
-    private StackPane getGridPaneNextAvailabeField(GridPane gridPane){
-        for(int y = 0; y < gridPane.getRowCount(); y++){ //jede Hoehenkoordinate durchlaufen
-            for(int x = 0; x < gridPane.getColumnCount(); x++){ //jede Breitenkoordinate durchlaufen
-                StackPane currFieldSlot = this.getGridPaneCell(x, y, gridPane); //der aktuelle Slot (Background)
-                if(currFieldSlot.getChildren().isEmpty()) return(currFieldSlot); //wenn Slot leer diesen zurueckgeben
-            }
-        }
-        return(null);
     }
 
     /**

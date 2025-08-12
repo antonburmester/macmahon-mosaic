@@ -90,7 +90,7 @@ public class UserInterfaceController {
                 Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER, Game.MAX_GAMEFIELD_SIZE_WITHOUT_BORDER,
                 Game.MIN_GAMEFIELD_SIZE_WITHOUT_BORDER));
 
-        this.gui = new JavaFXGUI(this.borderPane, this.centerPane, this.gridPane, this.rightGridPane,
+        this.gui = new JavaFXGUI(this.gridPane, this.rightGridPane,
                 this.editorControls, this.loadImages(), this.loadHolesStackPanes());
 
         // ChangeListener hinzufuegen, damit sich die GridPane durch die Pane an die
@@ -506,11 +506,7 @@ public class UserInterfaceController {
                 //Objekt kommt vom Spielfeld
                 //Objekt soll zurueck in die Auswahl
                         //Methode der Game Klasse fuehrt Zug aus und aktualisiert falls noetig GUI
-                if(this.game.moveTileFromGamefieldToNotLaidTileSelection(sourceX, sourceY)) {
-                    event.setDropCompleted(true);
-                } else {
-                    event.setDropCompleted(false);
-                }
+                event.setDropCompleted(this.game.moveTileFromGamefieldToNotLaidTileSelection(sourceX, sourceY));
             } else {
                 event.setDropCompleted(false);
             }

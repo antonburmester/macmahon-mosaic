@@ -154,7 +154,7 @@ public class Tile {
         Tile currTile;
         for(TileNames currTileName : TileNames.values()) { //durchlaeuft jeden Spielstein
             currTile = new Tile(currTileName); //initialisiert mit diesem Motiv eine Klasse des Spielsteins
-            for(Rotation currRotation : Rotation.values()){ //durchlauft jede Rotation
+            for(Rotation ignored : Rotation.values()){ //durchlauft jede Rotation
                 if(currTile.getTileNameStringWithRotation().equals(inputTileName)){ //prueft ob das Motiv des aktuellen
                     // Spielsteins inklusive seiner Drehungen dem uebergebenen Spielstein gleicht
                     return(currTile);

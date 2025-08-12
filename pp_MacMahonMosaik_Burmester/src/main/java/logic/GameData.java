@@ -52,7 +52,7 @@ public class GameData {
             throw new CustomException(CustomException.ERROR_JSON_EMPTY);
         }
 
-        String[][] stringGameField = null;
+        String[][] stringGameField;
         //Instanz der Gson Klasse mit welcher auf die Inhalte der gameFile zugegriffen wird
         Gson gson = new GsonBuilder().create();
         try (FileReader fileReader = new FileReader(targetFile)){

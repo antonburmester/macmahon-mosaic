@@ -298,29 +298,9 @@ public class Game {
      */
     public void updateTiles(){
         //Bilder, Loecher und Faerbungen anzeigen
-        System.out.println(this.gameField);
-        System.out.println(this.getGameFieldCopy());
         this.gui.displayGameFieldTiles(this.getGameFieldCopy());
         this.gui.displaySelectionTiles(this.getTilesCopy());
         this.highlightTileIfWrongPlaced();
-    }
-
-    /**
-     * Methode welche prueft ob das Spielfeld spielbar ist also ob der Rand voll mit Randstuecken gefuellt ist.
-     * @return ob das Spielfeld spielbar ist
-     */
-    public boolean isGameFieldPlayable(){
-        return(this.gameField.isGameFieldBorderSetted());
-    }
-
-    /**
-     * Methode welche zurueckgibt ob das Feld der angegebenen Koordinaten zum mittleren Spielfeld gehoert
-     * @param x Breitenkoordinate
-     * @param y Hoehenkoordinate
-     * @return ob das Feld zum mittleren Spielfeld gehoert (sonst Rand)
-     */
-    public boolean isFieldMiddleField(int x, int y){
-        return(this.gameField.isFieldMiddleGamefield(x, y));
     }
 
     /**
@@ -347,7 +327,6 @@ public class Game {
         } else {
             status = false;
         }
-        System.out.println(this.gameField);
         return(status);
     }
 
@@ -380,7 +359,6 @@ public class Game {
         } else {
             status = false;
         }
-        System.out.println(this.gameField);
         return(status);
     }
 
@@ -404,7 +382,6 @@ public class Game {
         } else {
             status = false;
         }
-        System.out.println(this.gameField);
         return(status);
     }
 
@@ -413,10 +390,8 @@ public class Game {
      * schaltet bei jedem Aufruf zur jeweils naechsten Farbe
      * @param x die Spalte des Randes
      * @param y die Reihe des Randes
-     * @return ob der gewuenschte Ort richtig gefaerbt werden konnte
      */
-    public boolean toggleBorderColor(int x, int y){
-        boolean status = false;
+    public void  toggleBorderColor(int x, int y){
         if(this.gameField.isFieldBorder(x, y)){
             Tile currTile = this.gameField.getTile(x, y); //die aktuelle Farbe
             Tile newBorderTile; //die naechste Farbe
@@ -432,10 +407,7 @@ public class Game {
             this.gameField.layTile(x, y, newBorderTile);
             this.gui.setBorderColor(x, y, newBorderTile.getTileName()); //die Farbaenderung visuell sichtbar machen
 
-            System.out.println(this.gameField);
-            status = true;
         }
-        return(status);
     }
 
     /**
