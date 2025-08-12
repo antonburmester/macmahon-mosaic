@@ -30,7 +30,7 @@ public class ErrorMessageHandler {
                     " Kann keinen naechsten Spielstein als Hilfe legen, da Spielfeld nicht loesbar!";
             case CustomException.MESSAGE_MORE_THAN_18_FREE_FIELDS_SOLVABLE_NOT_CHECKED -> "Mitteilung: " +
                     exception.getErrorOrMessageCode() +
-                    " Da mehr als 18 Felder noch frei sind, wird die Loesbarkeit nicht geprueft!";
+                    "Mehr als 18 Felder Feld: Keine Loesbarkeitspruefung und keine Tipps";
 
             case CustomException.ERROR_WINDOW_OPEN ->
                     "Fehler " + exception.getErrorOrMessageCode() + " : Fenster konnte nicht geladen/ geoeffnet werden!"

@@ -25,6 +25,9 @@ public class Game {
     public static final int MIN_GAMEFIELD_SIZE_WITHOUT_BORDER = 2;
     public static final int MAX_GAMEFIELD_SIZE_WITHOUT_BORDER = 6;
 
+    public static final int MAX_FREE_TILES_SOLVABLE_CHECK = 18; //wieviele Spielsteine maximal im Feld frei sein dürfen,
+    // beim laden eines neuen Spielfelds geprueft wird ob dieses Spielbar ist
+
     private static final String[][] DEFAULT_GAME =  {{"NNNN", "NNGN", "NNGN", "NNNN"},
                                                      {"NGNN", "NNNN", "NNNN", "NNNG"},
                                                      {"NRNN", "NNNN", "NNNN", "NNNR"},
@@ -40,7 +43,7 @@ public class Game {
      */
     public Game(GUIConnector gui, int heigth, int width){
         this.gui = gui;
-        this.gameField = new GameField(heigth, width, true);
+        this.gameField = new GameField(heigth, width, true, true);
     }
 
     /**
@@ -111,24 +114,71 @@ public class Game {
 
     /**
      * Methode welche je nachdem ob ein spielfeld loesbar ist oder nicht den Editor Mode aktiviert oder nicht
+     * und Spielsteine entfernt oder nicht.
+     * Gibt dem Spieler auch Rückmeldung
+     * @param initialGameField ob der Aufruf fuer das initiale Spielfeld ist damit keine Ausgabe kommt, da das Spiel
+     *                         garantiert gueltig ist
+     *
      */
-    public void initializeGameState(){
-        if(this.gameField.isGameFieldBorderSetted() && this.gameField.checkIfPlainGameFieldSolvable()) { //ob Spielfeld
-            // komplett bezueglich Rand ist und Spielbar ohne die liegenden Spielsteine ist
+    public void initializeGameState(boolean initialGameField){
+        if(this.gameField.isGameFieldBorderSetted()) { //ob Spielfeld von dem Rand her komplett Spielbar ist
 
-            this.setIsGameActive(true, true);
-            if(isEditorMode()) this.toggleEditorMode(false); //editor Mode deaktivieren, da Spielfeld spielbar ist
-            // und er vorher aktiv war
+            if(this.gameField.getLayableFieldsAmount(false) > Game.MAX_FREE_TILES_SOLVABLE_CHECK){ //mehr
+                // freie Felder als Anzahl die maximal ueberprueft werden soll -> nicht loesbarkeit pruefen
 
-        } else { //nicht spielbar deshalb EditorMode aktivieren
+                this.setGameFlow(true, true);
+                if (isEditorMode()) this.toggleEditorMode(false); //editor Mode deaktivieren, da Spielfeld
+                // spielbar ist und er vorher aktiv war
 
-            this.setIsGameActive(false, true);
+                this.setGameFlow(false, false); //Spielfeld aktiviert, Auswahl aktiviert
+
+                this.gui.showCustomException(new CustomException(
+                        CustomException.MESSAGE_MORE_THAN_18_FREE_FIELDS_SOLVABLE_NOT_CHECKED));
+
+            } else { //weniger als die maximale Anzahl welche ueberprueft wird -> loesbarkeit ueberpruefen
+
+                if(this.gameField.checkIfPlainGameFieldSolvable()) { //Spielfeld ist vom Rand loesbar
+
+                    this.setGameFlow(true, true);
+                    if (isEditorMode()) this.toggleEditorMode(false); //editor Mode deaktivieren, da Spielfeld
+                    // spielbar ist und er vorher aktiv war
+
+                    this.setGameFlow(false, false); //Spielfeld aktiviert,
+                    // Auswahl deaktiviert
+
+                    if(!initialGameField) //da initialer Aufruf und Spiel garantiert gueltig dies nicht ausgeben
+                        this.gui.showCustomException(new CustomException(CustomException.MESSAGE_GAMEFIELD_SOLVABLE));
+
+                } else { //Spielfeld ist vom Rand nicht loesbar
+
+                    this.setGameFlow(false, true);
+                    if (!isEditorMode()) {
+                        this.toggleEditorMode(false); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
+                    } else { //nochmal entfernen, da Spiel geladen wird und editor schon aktiv ist
+                        // (Spielsteine falls da sollen weg)
+                        this.removeGameFieldTiles(false);
+                    }
+
+                    this.setGameFlow(false, true); //Spielfeld aktiviert,
+                    // Auswahl deaktiviert
+
+                    this.gui.showCustomException(new CustomException(CustomException.MESSAGE_GAMEFIELD_NOT_SOLVABLE));
+
+                }
+            }
+        } else { //nicht spielbar da Rand nicht komplett gesetzt deshalb EditorMode aktivieren
+
+            this.setGameFlow(false, true);
             if(!isEditorMode()) {
                 this.toggleEditorMode(false); //editor Mode aktivieren, da Spielfeld nicht spielbar ist
             } else { //nochmal entfernen, da Spiel geladen wird und editor schon aktiv ist
                 // (Spielsteine falls da sollen weg)
                 this.removeGameFieldTiles(false);
             }
+
+            this.setGameFlow(false, true); //Spielfeld aktiviert, Auswahl deaktiviert
+
+            this.gui.showCustomException(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
 
         }
     }
@@ -140,7 +190,7 @@ public class Game {
         if(!this.isEditorMode()) {
             this.removeGameFieldTiles(true);
             this.updateTiles();
-            this.setIsGameActive(true, true);
+            this.setGameFlow(false, false); //Spielfeld und Spielsteinauswahl aktivieren
         } else {
             this.gui.showCustomException(new CustomException(CustomException.ERROR_EDITOR_MODE_ON));
         }
@@ -150,21 +200,30 @@ public class Game {
      * Methode welche das Spiel beendet
      */
     public void endGame(){
-        this.setIsGameActive(false, false);
+        this.setGameFlow(false, false);
     }
 
     /**
      * Methode welche aus dem Menue durch die UserInterfaceController Klasse aufgerufen wird um zu pruefen, ob das
      * bestehende Feld im aktuellen Zustand geloest werden kann.
      * nutzt dafür die isGameFieldSolvable Methode der Game Klasse
-     * TODO der kommentar ueberpruefen
+     * @param checkPlainField ob das leere Feld also nur der Rand geprueft werden soll oder aber das ganze Feld
      */
-    public void checkSolvability(){
-        boolean isGameFieldSolvable = this.gameField.isGameFieldSolvable();
-        if(isGameFieldSolvable){
-            this.gui.showCustomException(new CustomException(CustomException.MESSAGE_GAMEFIELD_SOLVABLE));
+    public void checkSolvability(boolean checkPlainField){
+        GameField checkedGameField = checkPlainField ? this.gameField.cloneGameField() : this.gameField;
+
+        if(this.gameField.getLayableFieldsAmount(false) <= Game.MAX_FREE_TILES_SOLVABLE_CHECK) {
+
+            boolean isGameFieldSolvable = checkedGameField.isGameFieldSolvable();
+            if (isGameFieldSolvable) {
+                this.gui.showCustomException(new CustomException(CustomException.MESSAGE_GAMEFIELD_SOLVABLE));
+            } else {
+                this.gui.showCustomException(new CustomException(CustomException.MESSAGE_GAMEFIELD_NOT_SOLVABLE));
+            }
+
         } else {
-            this.gui.showCustomException(new CustomException(CustomException.MESSAGE_GAMEFIELD_NOT_SOLVABLE));
+            this.gui.showCustomException(new CustomException(
+                    CustomException.MESSAGE_MORE_THAN_18_FREE_FIELDS_SOLVABLE_NOT_CHECKED));
         }
     }
 
@@ -172,9 +231,14 @@ public class Game {
      * Methode welche einen Hinweis legt
      */
     public void layHint(){
-        boolean laidHint = this.layHintTile();
-        if(!laidHint) this.gui.showCustomException(new CustomException(CustomException.
-                MESSAGE_NO_HINT_GAMEFIELD_NOT_SOLVABLE));
+        if(this.gameField.getLayableFieldsAmount(false) <= Game.MAX_FREE_TILES_SOLVABLE_CHECK) {
+            boolean laidHint = this.layHintTile();
+            if (!laidHint) this.gui.showCustomException(new CustomException(CustomException.
+                    MESSAGE_NO_HINT_GAMEFIELD_NOT_SOLVABLE));
+        } else {
+            this.gui.showCustomException(new CustomException(
+                    CustomException.MESSAGE_MORE_THAN_18_FREE_FIELDS_SOLVABLE_NOT_CHECKED));
+        }
     }
 
     /**
@@ -190,26 +254,18 @@ public class Game {
                 this.removeGameFieldTiles(true); //alle Steine die nicht Rand sind vom Spielfeld
             // entfernen
             this.updateTiles();
-            this.gui.setDisableTileSelection(true); //Spielfeldauswahl deaktivieren
+            this.setGameFlow(false, true); //Spielfeldauswahl deaktivieren
         }
     }
 
     /**
-     * Methode welche den Wahrheitswert ob ein Spiel aktiv ist setzt
-     * @param isActive ob das Spiel aktiv ist
+     * Methode welche den das Spielfeld und die Spielsteinauswahl unabhaengig voneinander aktiviert und deaktiviert
+     * @param disableGameField ob das Spielfeld deaktiviert werden soll
+     * @param disableSelection ob die Spielsteinauswahl deaktiviert werden soll
      */
-    public void setIsGameActive(boolean isActive, boolean setUpGame){
-        if(isActive && this.gameField.isGameFieldBorderSetted()) { //Spiel soll aktiv werden und Rand ist gesetzt
-            this.gui.setDisableTileSelection(false);
-            this.gui.setDisableGameField(false);
-        } else if (isActive){ //Spiel soll aktiv werden  aber Rand ist nicht komplett gesetzt
-            this.gui.setDisableTileSelection(true);
-            this.gui.setDisableGameField(false);
-            this.gui.showCustomException(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
-        } else { //Spiel soll nicht aktiv werden
-            this.gui.setDisableTileSelection(true);
-            //this.gui.setDisableMiddleGridPane(true);
-        }
+    public void setGameFlow(boolean disableGameField, boolean disableSelection){
+            this.gui.setDisableTileSelection(disableSelection);
+            this.gui.setDisableGameField(disableGameField);
     }
 
     /**
@@ -406,7 +462,7 @@ public class Game {
         boolean win = this.gameField.checkIfGameFieldSolved(false);
         if (win) {
             this.gui.showCustomException(new CustomException(CustomException.MESSAGE_WIN));
-            this.setIsGameActive(false, false);
+            this.setGameFlow(false, false);
         }
     }
 

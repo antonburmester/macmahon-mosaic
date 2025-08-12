@@ -123,7 +123,7 @@ public class GameData {
         File initialDirectory = null;
         String betriebssystemName = System.getProperty("os.name").toLowerCase();
         if (betriebssystemName.contains("win")) { //Windows
-            initialDirectory = new File("pp_MacMahonMosaik_Burmester/src/main/resources/savedGames/");
+            initialDirectory = new File("src/main/resources/savedGames/");
         } else if(betriebssystemName.contains("mac")) { //Mac
             initialDirectory = new File("src/main/resources/savedGames/");
         }

@@ -41,7 +41,7 @@ public class GameFieldTest {
     @Test
     void test_Constructor2_1_5x6() {
         int height = 3, width = 4;
-        GameField gameField = new GameField(height, width, false);
+        GameField gameField = new GameField(height, width, false, false);
 
         assertEquals(Game.TILE_AMOUNT_NO_HOLE_NO_EMPTY, gameField.getTiles().getTileCount());
         assertEquals(height, gameField.getGameFieldHeight() -2);
@@ -865,7 +865,8 @@ public class GameFieldTest {
                                       {"NNNN", "YNNN", "RNNN", "YNNN", "NNNN"}};
         GameField gameField = new GameField(gameFieldInput); //3x3 Spielfeld
 
-        GameField newGameFieldWithOldBorder = new GameField(3, 3, true); //3x3 Spielfeld
+        GameField newGameFieldWithOldBorder = new GameField(3, 3, true, true); //3x3
+        // colourBorder hat keine Auswirkungen da Felder gleich gross
         newGameFieldWithOldBorder.setBorderFromGameField(gameField);
 
         boolean status = true;
@@ -898,7 +899,8 @@ public class GameFieldTest {
                                       {"NNNN", "YNNN", "RNNN", "YNNN", "NNNN"}};
         GameField gameField = new GameField(gameFieldInput); //3x3 Spielfeld
 
-        GameField newGameField = new GameField(4, 4, true); //4x4 Spielfeld
+        GameField newGameField = new GameField(4, 4, true, true); //4x4 Spielfeld und
+        // AnfangsRandfarbe ist Rot da colourBorder = true (bleibt bei allen die groesser als das Startfeld sind)
 
         newGameField.setBorderFromGameField(gameField); //den Rand des alten Spielfelds im neuen Spielfeld setzen
 
@@ -956,7 +958,8 @@ public class GameFieldTest {
                                       {"NNNN", "YNNN", "RNNN", "YNNN", "NNNN"}};
         GameField gameField = new GameField(gameFieldInput); //3x3 Spielfeld
 
-        GameField newGameField = new GameField(2, 2, true); //2x2 Spielfeld
+        GameField newGameField = new GameField(2, 2, true, true); //2x2 Spielfeld
+        // colourBorder hat keine Auswirkungen da neues Feld kleiner
 
         newGameField.setBorderFromGameField(gameField); //den Rand des alten Spielfelds im neuen Spielfeld setzen
 

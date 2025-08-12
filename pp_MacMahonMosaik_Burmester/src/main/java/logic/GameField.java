@@ -28,10 +28,11 @@ public class GameField {
      * @param width die Breite des neuen Spielfeldes
      * @param placeHoles ob die Loecher automatisch im Spielfeld gesetzt werden sollen (nur false bei copy, da hier in
      *                   der Kopie schon die Standorte der Loecher vorhanden sind)
+     * @param colourBorder ob der Rand initial rot eingefaerbt werden soll
      */
-    GameField(int height, int width, boolean placeHoles){
+    GameField(int height, int width, boolean placeHoles, boolean colourBorder){
         this(height, width); //Konstruktoren verkettung
-        this.placeGameFieldEmptyBorderRed(true);
+        this.placeGameFieldEmptyBorderRed(colourBorder);
         if(placeHoles)
             this.placeGameFieldHoles();
     }
@@ -370,10 +371,10 @@ public class GameField {
     void setBorderFromGameField(GameField oldField){
 
         //alten Rand setzen links und oben
-        int smallerWidth = Math.min(this.getGameFieldWidth() - 1, oldField.getGameFieldWidth()); //-1 damit die Ecke
+        int smallerWidth = Math.min(this.getGameFieldWidth() - 1, oldField.getGameFieldWidth() - 1); //-1 damit die Ecke
         // rechte obere Ecke im neuen Spielfeld frei bleibt
-        int smallerHeight = Math.min(this.getGameFieldHeight() - 1, oldField.getGameFieldHeight()); //-1 damit die Ecke
-        // linke untere Ecke im neuen Spielfeld frei bleibt
+        int smallerHeight = Math.min(this.getGameFieldHeight() - 1, oldField.getGameFieldHeight() - 1); //-1 damit die
+        // Ecke linke untere Ecke im neuen Spielfeld frei bleibt
         for(int y = 0; y < smallerHeight; y++){
             for(int x = 0; x < smallerWidth; x++){
                 if(this.isFieldBorder(x, y)){
@@ -575,8 +576,10 @@ public class GameField {
     public GameField cloneGameField(){
         int width = this.gameField[0].length;
         int heigth = this.gameField.length;
-        GameField copy = new GameField(heigth - 2, width - 2, false); //neue Instanz eines neuen
-        // Spielfelds -2 da beim Spielfeld die groesse ohne Rand angegeben wird
+        GameField copy = new GameField(heigth - 2, width - 2, false, false); //neue
+        // Instanz eines neuen Spielfelds -2 da beim Spielfeld die groesse ohne Rand angegeben wird
+        //placeHoles = false da das zu kopierende Spielfeld schon die Loecher an den richtigen Positionen enthaelt
+        //colourBorder = false da das Spielfeld 1zu1 kopiert werden soll ohne dabei leere Randfelder zu faerben
 
         Tile currNotCopyTile;
         Tile copyTile;
