@@ -167,6 +167,6 @@ public class FakeGUI implements GUIConnector{
      * @param customException die Meldung welche ausgegeben werden soll
      */
     public void showCustomException(CustomException customException){
-
+        System.err.println(customException.getErrorOrMessageCode());
     }
 }

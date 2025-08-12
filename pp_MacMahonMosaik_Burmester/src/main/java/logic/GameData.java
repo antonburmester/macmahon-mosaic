@@ -3,6 +3,7 @@ package logic;
 import com.google.gson.*;
 
 import java.io.*;
+import java.net.URISyntaxException;
 
 /**
  * Klasse welche ein Spiel zum ist Zustand in einer json Datei speichert oder aus einer json Datei laedt
@@ -123,7 +124,18 @@ public class GameData {
         File initialDirectory = null;
         String betriebssystemName = System.getProperty("os.name").toLowerCase();
         if (betriebssystemName.contains("win")) { //Windows
-            initialDirectory = new File("src/main/resources/savedGames/");
+
+            try { //Pfad zum UserInterfaceController finden
+                initialDirectory = new File(
+                        gui.UserInterfaceController.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+                initialDirectory = initialDirectory.getParentFile().getParentFile(); //zwei verzeichnisse zurueck,
+                // da hier das src verzeichnis liegt
+                initialDirectory = new File(initialDirectory, "src/main/resources/savedGames/");
+            } catch (URISyntaxException ex) {
+                //oops... ¯\_(ツ)_/¯
+                //guess we won't be opening the dialog in the right directory
+            }
+
         } else if(betriebssystemName.contains("mac")) { //Mac
             initialDirectory = new File("src/main/resources/savedGames/");
         }
