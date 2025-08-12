@@ -200,7 +200,7 @@ public class Game {
      * Methode welche das Spiel beendet
      */
     public void endGame(){
-        this.setGameFlow(false, false);
+        this.setGameFlow(true, true);
     }
 
     /**
@@ -248,13 +248,18 @@ public class Game {
      */
     public void toggleEditorMode(boolean initial){
         boolean toggledEditorMode = !this.isEditorMode();
-        this.gui.displayEditorControls(toggledEditorMode); //Editor Elemente anzeigen wenn nicht angezeigt und andersrum
-        if(toggledEditorMode){ //wenn nun aktiviert
-            if(initial)
-                this.removeGameFieldTiles(true); //alle Steine die nicht Rand sind vom Spielfeld
-            // entfernen
-            this.updateTiles();
-            this.setGameFlow(false, true); //Spielfeldauswahl deaktivieren
+        if(!toggledEditorMode && !this.gameField.isGameFieldBorderSetted()){//soll deaktiviert werden aber Rand noch nicht gesetzt
+            this.gui.showCustomException(new CustomException(CustomException.ERROR_BORDER_NOT_SETTED));
+
+        } else {
+            this.gui.displayEditorControls(toggledEditorMode); //Editor Elemente anzeigen wenn nicht angezeigt und andersrum
+            if (toggledEditorMode) { //wenn nun aktiviert
+                if (initial)
+                    this.removeGameFieldTiles(true); //alle Steine die nicht Rand sind vom Spielfeld
+                // entfernen
+                this.updateTiles();
+                this.setGameFlow(false, true); //Spielfeldauswahl deaktivieren
+            }
         }
     }
 
