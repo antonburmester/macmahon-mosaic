@@ -263,6 +263,8 @@ public class Game {
                 // entfernen
                 this.updateTiles();
                 this.setGameFlow(false, true); //Spielfeldauswahl deaktivieren
+            } else {
+                this.setGameFlow(false, false); //Spielfeldauswahl deaktivieren
             }
         }
     }

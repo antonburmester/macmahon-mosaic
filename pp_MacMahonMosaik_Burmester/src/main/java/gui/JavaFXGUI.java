@@ -37,8 +37,8 @@ public class JavaFXGUI implements GUIConnector {
 
     //die HEX Farbkennungen des Randes damit die Randfarben den Spielsteinen gleichen
     static final String COLOR_HEX_CODE_GREEN = "#19F537;";
-    static final String COLOR_HEX_CODE_YELLOW = "#FF2341;";
-    static final String COLOR_HEX_CODE_RED = "#FFEB14;";
+    static final String COLOR_HEX_CODE_YELLOW = "#FFEB14;";
+    static final String COLOR_HEX_CODE_RED = "#FF2341;";
 
     /**
      * Konstruktor welcher diese Klasse initialisiert
