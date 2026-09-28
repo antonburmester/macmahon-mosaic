@@ -834,7 +834,7 @@ public class GameField {
      */
     Tile getTileByTileNamesIndexFromGameField(int index){
         for(int y = 1; y < this.getGameFieldHeight() - 1; y++){ //ohne oberen und unteren Rand
-            for(int x = 1; x < this.getGameFieldHeight() - 1; x++){ //ohne linken und rechten Rand
+            for(int x = 1; x < this.getGameFieldWidth() - 1; x++){ //ohne linken und rechten Rand
                 Tile currTile = this.getTile(x, y);
                 if(currTile.getTileIndex() == index){
                     return(currTile);

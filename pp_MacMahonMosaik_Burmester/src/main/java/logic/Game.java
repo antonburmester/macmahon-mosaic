@@ -443,7 +443,7 @@ public class Game {
         boolean win = this.gameField.checkIfGameFieldSolved(false);
         if (win) {
             this.gui.showCustomException(new CustomException(CustomException.MESSAGE_WIN));
-            this.setGameFlow(false, false);
+            this.setGameFlow(true, true);
         }
     }
 

@@ -36,9 +36,9 @@ public class JavaFXGUI implements GUIConnector {
     static final int MAX_HOLES_AMOUNT = 12;
 
     //die HEX Farbkennungen des Randes damit die Randfarben den Spielsteinen gleichen
-    static final String COLOR_HEX_CODE_GREEN = "#007F0E;";
-    static final String COLOR_HEX_CODE_YELLOW = "#FFD800;";
-    static final String COLOR_HEX_CODE_RED = "#B60000;";
+    static final String COLOR_HEX_CODE_GREEN = "#19F537;";
+    static final String COLOR_HEX_CODE_YELLOW = "#FF2341;";
+    static final String COLOR_HEX_CODE_RED = "#FFEB14;";
 
     /**
      * Konstruktor welcher diese Klasse initialisiert
